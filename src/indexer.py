@@ -18,6 +18,8 @@ class KnowledgeIndex:
     by_tag: dict[str, list[KnowledgeCard]] = field(default_factory=lambda: defaultdict(list))
     by_urgency: dict[str, list[KnowledgeCard]] = field(default_factory=lambda: defaultdict(list))
     duplicates: dict[str, list[KnowledgeCard]] = field(default_factory=dict)
+    # Входящие связи: target_id -> [(source_id, relation_type)]
+    inbound: dict[str, list[tuple[str, str]]] = field(default_factory=lambda: defaultdict(list))
 
 
 def build_index(cards: list[KnowledgeCard]) -> KnowledgeIndex:
@@ -41,6 +43,19 @@ def build_index(cards: list[KnowledgeCard]) -> KnowledgeIndex:
 
         for tag in card.tags:
             index.by_tag[normalize_text(tag)].append(card)
+
+        seen_targets: set[str] = set()
+        for relation in card.relations:
+            target = str(relation.get("target", "")).strip()
+            rel_type = str(relation.get("type", "")).strip() or "related_to"
+            if target and card.id:
+                index.inbound[target].append((card.id, rel_type))
+                seen_targets.add(target)
+        # Схема v1: плоский список related тоже считается входящей связью.
+        if card.schema_version < 2 and card.id:
+            for target in card.related:
+                if target not in seen_targets:
+                    index.inbound[target].append((card.id, "related"))
 
     index.duplicates = {
         card_id: repeated_cards

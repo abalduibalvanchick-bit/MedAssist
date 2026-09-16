@@ -1,0 +1,676 @@
+# =============================================================================
+# Схема базы знаний MedAssist, версия 2
+# =============================================================================
+# Единственный источник правды о структуре базы знаний.
+# Из этого файла читают:
+#   - валидатор (src/validator.py через src/schema.py);
+#   - загрузчик и материализация обратных связей (src/repository.py);
+#   - интерпретатор условий (src/conditions.py);
+#   - генераторы документации и шаблонов (scripts/).
+# Ручное дублирование этих сведений в коде или в docs/ не допускается.
+# =============================================================================
+
+schema_version: 2
+
+# -----------------------------------------------------------------------------
+# 1. Домены
+# -----------------------------------------------------------------------------
+# Инвариант: код домена == префикс ID (в верхнем регистре) == имя корневой
+# папки в kb/ == префикс имени файла.
+domains:
+  diag:
+    title: "Заболевания, симптомы и диагностика"
+    id_prefix: DIAG
+    folder: diag
+  pharm:
+    title: "Фармакология и терапия"
+    id_prefix: PHARM
+    folder: pharm
+  prot:
+    title: "Клинические протоколы и маршрутизация пациента"
+    id_prefix: PROT
+    folder: prot
+  glb:
+    title: "Глобальная предметная область"
+    id_prefix: GLB
+    folder: glb
+
+# Устаревшие обозначения доменов (схема v1). Используются только мигратором
+# и валидатором в режиме совместимости для карточек schema_version < 2.
+legacy_domain_aliases:
+  diagnostics: diag
+  therapy: pharm
+  protocols: prot
+  protocol: prot
+  global: glb
+
+# -----------------------------------------------------------------------------
+# 2. Категории
+# -----------------------------------------------------------------------------
+# folder — подпапка внутри папки домена. Соответствие папка <-> категория
+# проверяется валидатором.
+categories:
+  # --- diag ---
+  symptom:      {domain: diag,  folder: symptoms,               title: "Симптом / синдром"}
+  disease:      {domain: diag,  folder: diseases,               title: "Заболевание"}
+  exam:         {domain: diag,  folder: exams,                  title: "Метод обследования"}
+  difdiag:      {domain: diag,  folder: differential_diagnosis, title: "Дифференциальная диагностика"}
+  redflag:      {domain: diag,  folder: red_flags,              title: "Красный флаг"}
+  emergency:    {domain: diag,  folder: emergencies,            title: "Неотложное состояние (диагностика)"}
+  # --- pharm ---
+  drug:         {domain: pharm, folder: drugs,                  title: "Лекарственное средство"}
+  drugclass:    {domain: pharm, folder: drug_classes,           title: "Фармакологическая группа"}
+  interaction:  {domain: pharm, folder: interactions,           title: "Лекарственное взаимодействие"}
+  adr:          {domain: pharm, folder: adverse_reactions,      title: "Нежелательная лекарственная реакция"}
+  regimen:      {domain: pharm, folder: regimens,               title: "Терапевтическая схема"}
+  dosing:       {domain: pharm, folder: dosing,                 title: "Коррекция доз"}
+  nonpharm:     {domain: pharm, folder: nonpharm,               title: "Нефармакологический метод"}
+  # --- prot ---
+  protocol:     {domain: prot,  folder: clinical_protocols,     title: "Клинический протокол"}
+  emergency_p:  {domain: prot,  folder: emergency,              title: "Алгоритм неотложной помощи"}
+  routing:      {domain: prot,  folder: routing,                title: "Маршрутизация пациента"}
+  scale:        {domain: prot,  folder: scales,                 title: "Клиническая шкала"}
+  screening:    {domain: prot,  folder: screening,              title: "Скрининг"}
+  patient_info: {domain: prot,  folder: patient_info,           title: "Памятка для пациента"}
+  checklist:    {domain: prot,  folder: checklists,             title: "Чек-лист врача"}
+  follow_up:    {domain: prot,  folder: follow_up,              title: "Наблюдение пациента"}
+  vaccine:      {domain: prot,  folder: vaccines,               title: "Вакцина"}
+  # --- glb ---
+  glossary:     {domain: glb,   folder: glossary,               title: "Глоссарная статья"}
+  profile:      {domain: glb,   folder: patient_profiles,       title: "Профиль группы пациентов"}
+  disclaimer:   {domain: glb,   folder: disclaimers,            title: "Дисклеймер"}
+  lab:          {domain: glb,   folder: lab_reference,          title: "Лабораторный показатель"}
+  imaging:      {domain: glb,   folder: imaging_reference,      title: "Инструментальный метод (справочник)"}
+  anatomy:      {domain: glb,   folder: anatomy,                title: "Анатомо-физиологический раздел"}
+  cross:        {domain: glb,   folder: cross_domain,           title: "Межпредметный документ"}
+
+legacy_category_aliases:
+  drug_class: drugclass
+  adverse_reaction: adr
+
+# -----------------------------------------------------------------------------
+# 3. Идентификаторы и имена файлов
+# -----------------------------------------------------------------------------
+identifiers:
+  # DOMAIN-CATEGORY-NNN, где CATEGORY — код категории в верхнем регистре,
+  # NNN — трёхзначный номер. Номера внутри (домен, категория) уникальны,
+  # разрывы в нумерации допускаются, но должны быть описаны в docs/naming_rules.md.
+  id_pattern: '^(DIAG|PHARM|PROT|GLB)-([A-Z_]+)-(\d{3})$'
+  # Полная проверка имени: префикс "<domain>_<category>_" сравнивается с полями
+  # карточки буквально, остаток — [a-z0-9_]+. Регулярное выражение задаёт общую форму.
+  file_pattern: '^(diag|pharm|prot|glb)_[a-z][a-z0-9_]*\.md$'
+  rule_id_pattern: '^RULE-(DIAG|PROT|PHARM|GLB)-(\d{3})$'
+
+# -----------------------------------------------------------------------------
+# 4. Перечисления (контролируемые словари)
+# -----------------------------------------------------------------------------
+enums:
+  urgency: [routine, urgent, emergency, elective]
+  status: [draft, medical_review, approved, deprecated]
+  access_level: [professional, nursing, student, patient]
+  body_system:
+    - cardiovascular
+    - respiratory
+    - gastrointestinal
+    - nervous
+    - endocrine
+    - metabolic
+    - urinary
+    - musculoskeletal
+    - immune
+    - reproductive
+    - hematologic
+    - dermatologic
+    - multisystem
+  age_group: [neonate, infant, child, adolescent, adult, elderly, all_ages]
+  target_specialist:
+    - therapist
+    - general_practitioner
+    - cardiologist
+    - pulmonologist
+    - gastroenterologist
+    - neurologist
+    - endocrinologist
+    - nephrologist
+    - hematologist
+    - rheumatologist
+    - psychiatrist
+    - surgeon
+    - oncologist
+    - pediatrician
+    - obstetrician
+    - allergist
+    - infectious_disease
+    - radiologist
+    - dietitian
+    - rehabilitation_specialist
+    - icu
+    - intensivist
+    - emergency_physician
+    - nursing
+    - all_specialties
+  evidence_level: [Ia, Ib, IIa, IIb, III, IV]
+  recommendation_class: [I, IIa, IIb, III]
+  exam_role: [confirms, excludes, supports, monitors, stratifies]
+  route: [outpatient, urgent_referral, emergency, hospitalization]
+  interaction_severity: [critical, major, moderate, minor]
+  weight: [1, 2, 3]
+  frequency: [very_common, common, uncommon, rare]
+  prior: [high, medium, low]
+
+# Значение поля medical_reviewer, допустимое при отсутствии внешнего
+# рецензента. Пустая строка и прочерк в схеме v2 запрещены.
+model_review_marker: "модельная верификация (учебный проект)"
+
+# -----------------------------------------------------------------------------
+# 5. Поля метаданных
+# -----------------------------------------------------------------------------
+fields:
+  common_required:
+    - id
+    - schema_version
+    - title
+    - domain
+    - category
+    - body_system
+    - tags
+    - urgency
+    - access_level
+    - target_specialist
+    - age_group
+    - relations
+    - sources
+    - clinical_guidelines
+    - last_medical_review
+    - medical_reviewer
+    - author
+    - version
+    - date_created
+    - date_updated
+    - status
+    - disclaimer
+  common_optional:
+    - icd_10
+    - icd_11
+    - atc_code
+    - inn
+    - evidence_level
+    - recommendation_class
+    - synonyms
+    - notes
+  # Поля, удалённые в v2. Их присутствие в карточке v2 — ошибка.
+  removed_in_v2:
+    - related        # вычисляется из relations
+  min_sources: 2
+  date_pattern: '^\d{4}-\d{2}-\d{2}$'
+  # Правило: status: approved допустим только при полностью заполненном
+  # машиночитаемом слое (см. раздел 8) и непустом medical_reviewer.
+  approved_requires_machine_layer: true
+
+# -----------------------------------------------------------------------------
+# 6. Типы связей
+# -----------------------------------------------------------------------------
+# Каждая связь имеет обратную. Автор пишет связь в одном направлении;
+# загрузчик материализует обратную. Если автор написал обе — валидатор
+# проверяет согласованность. symmetric: true означает, что обратная связь
+# имеет тот же тип.
+relation_types:
+  # диагностика
+  has_symptom:            {inverse: symptom_of,            from: [disease, emergency], to: [symptom]}
+  symptom_of:             {inverse: has_symptom,           from: [symptom], to: [disease, emergency]}
+  diagnosed_by:           {inverse: diagnoses,             from: [disease, emergency, symptom, redflag], to: [exam]}
+  diagnoses:              {inverse: diagnosed_by,          from: [exam], to: [disease, emergency, symptom, redflag]}
+  has_red_flag:           {inverse: red_flag_for,          from: [disease, symptom, emergency, difdiag], to: [redflag]}
+  red_flag_for:           {inverse: has_red_flag,          from: [redflag], to: [disease, symptom, emergency, difdiag]}
+  differentiates_from:    {symmetric: true,                from: [disease, emergency, difdiag], to: [disease, emergency, difdiag]}
+  differential_for:       {inverse: has_differential,      from: [difdiag], to: [symptom]}
+  has_differential:       {inverse: differential_for,      from: [symptom], to: [difdiag]}
+  complicates:            {inverse: complicated_by,        from: [disease, redflag, emergency], to: [disease]}
+  complicated_by:         {inverse: complicates,           from: [disease], to: [disease, redflag, emergency]}
+  associated_with:        {symmetric: true}
+  # протоколы
+  protocol_for:           {inverse: has_protocol,          from: [protocol], to: [disease, emergency]}
+  has_protocol:           {inverse: protocol_for,          from: [disease, emergency], to: [protocol]}
+  emergency_protocol_for: {inverse: has_emergency_protocol, from: [emergency_p], to: [emergency, redflag, disease]}
+  has_emergency_protocol: {inverse: emergency_protocol_for, from: [emergency, redflag, disease], to: [emergency_p]}
+  routing_for:            {inverse: has_routing,           from: [routing], to: [disease, emergency, symptom, protocol]}
+  has_routing:            {inverse: routing_for,           from: [disease, emergency, symptom, protocol], to: [routing]}
+  assessed_by:            {inverse: assesses,              from: [disease, emergency, protocol, routing, symptom], to: [scale]}
+  assesses:               {inverse: assessed_by,           from: [scale], to: [disease, emergency, protocol, routing, symptom]}
+  checklist_for:          {inverse: has_checklist,         from: [checklist], to: [disease, protocol]}
+  has_checklist:          {inverse: checklist_for,         from: [disease, protocol], to: [checklist]}
+  screening_for:          {inverse: has_screening,         from: [screening], to: [disease, protocol]}
+  has_screening:          {inverse: screening_for,         from: [disease, protocol], to: [screening]}
+  follow_up_for:          {inverse: has_follow_up,         from: [follow_up], to: [disease, protocol]}
+  has_follow_up:          {inverse: follow_up_for,         from: [disease, protocol], to: [follow_up]}
+  patient_info_for:       {inverse: has_patient_info,      from: [patient_info], to: [disease, protocol, drug, emergency]}
+  has_patient_info:       {inverse: patient_info_for,      from: [disease, protocol, drug, emergency], to: [patient_info]}
+  next_step:              {inverse: previous_step,         from: [routing, protocol, emergency_p, screening, scale], to: [routing, protocol, emergency_p, follow_up]}
+  previous_step:          {inverse: next_step}
+  # фармакология
+  treats:                 {inverse: treated_with,          from: [regimen, drug, drugclass, nonpharm], to: [disease, emergency, symptom]}
+  treated_with:           {inverse: treats,                from: [disease, emergency, symptom], to: [regimen, drug, drugclass, nonpharm]}
+  recommends:             {inverse: recommended_by,        from: [protocol, emergency_p, follow_up, routing], to: [regimen, drug, drugclass, nonpharm]}
+  recommended_by:         {inverse: recommends,            from: [regimen, drug, drugclass, nonpharm], to: [protocol, emergency_p, follow_up, routing]}
+  includes:               {inverse: included_in,           from: [regimen, drugclass], to: [drug, drugclass, nonpharm]}
+  included_in:            {inverse: includes,              from: [drug, drugclass, nonpharm], to: [regimen, drugclass]}
+  has_interaction:        {inverse: interaction_for,       from: [drug, drugclass], to: [interaction]}
+  interaction_for:        {inverse: has_interaction,       from: [interaction], to: [drug, drugclass]}
+  causes_adr:             {inverse: adr_caused_by,         from: [drug, drugclass], to: [adr]}
+  adr_caused_by:          {inverse: causes_adr,            from: [adr], to: [drug, drugclass]}
+  dose_adjusted_by:       {inverse: dose_adjustment_for,   from: [drug, drugclass, regimen], to: [dosing]}
+  dose_adjustment_for:    {inverse: dose_adjusted_by,      from: [dosing], to: [drug, drugclass, regimen]}
+  contraindicated_in:     {inverse: contraindicates,       from: [drug, drugclass, exam], to: [disease, profile]}
+  contraindicates:        {inverse: contraindicated_in,    from: [disease, profile], to: [drug, drugclass, exam]}
+  # глобальный домен
+  defines:                {inverse: defined_by,            from: [glossary], to: []}
+  defined_by:             {inverse: defines,               to: [glossary]}
+  applies_to_profile:     {inverse: profile_applies_to,    to: [profile]}
+  profile_applies_to:     {inverse: applies_to_profile,    from: [profile]}
+  belongs_to_system:      {inverse: system_includes,       to: [anatomy]}
+  system_includes:        {inverse: belongs_to_system,     from: [anatomy]}
+
+# Соответствие типов связей схемы v1 типам схемы v2. Используется мигратором.
+# Формат: старый_тип: {type: новый_тип, flip: true|false}
+# flip: true — направление связи меняется на противоположное.
+legacy_relation_aliases:
+  related_to:            {type: associated_with}
+  uses_exam:             {type: diagnosed_by}
+  requires_exam:         {type: diagnosed_by}
+  confirmed_by:          {type: diagnosed_by}
+  excluded_by:           {type: diagnosed_by}
+  uses_redflag:          {type: has_red_flag}
+  requires_attention:    {type: has_red_flag}
+  may_indicate:          {type: symptom_of}
+  managed_by_protocol:   {type: has_protocol}
+  treated_by:            {type: treated_with}
+  used_by_protocol:      {type: recommended_by}
+  uses_protocol:         {type: has_protocol}
+  uses_routing:          {type: has_routing}
+  influences_routing:    {type: next_step}
+  uses_scale:            {type: assessed_by}
+  uses_checklist:        {type: has_checklist}
+  uses_screening:        {type: has_screening}
+  uses_follow_up:        {type: has_follow_up}
+  uses_regimen:          {type: recommends}
+  uses_drug:             {type: recommends}
+  uses_drugclass:        {type: includes}
+  uses_vaccine:          {type: recommends}
+  regimen_for:           {type: treats}
+  used_for:              {type: treats}
+  nonpharm_for:          {type: treats}
+  includes_drug:         {type: includes}
+  includes_nonpharm:     {type: includes}
+  drug_in_regimen:       {type: included_in}
+  used_by_regimen:       {type: included_in}
+  belongs_to_class:      {type: included_in}
+  class_contains_drug:   {type: includes}
+  may_cause_adr:         {type: causes_adr}
+  adverse_reaction_for:  {type: adr_caused_by}
+  requires_dose_adjustment: {type: dose_adjusted_by}
+
+# -----------------------------------------------------------------------------
+# 7. Параметры и факты пациента
+# -----------------------------------------------------------------------------
+# Контролируемый словарь величин, на которые могут ссылаться условия.
+# Решатель принимает на вход значения этих параметров.
+parameters:
+  age:            {type: number,  unit: "лет",           label: "Возраст"}
+  sbp:            {type: number,  unit: "мм рт. ст.",    label: "Систолическое АД"}
+  dbp:            {type: number,  unit: "мм рт. ст.",    label: "Диастолическое АД"}
+  hr:             {type: number,  unit: "уд/мин",        label: "Частота сердечных сокращений"}
+  rr:             {type: number,  unit: "в мин",         label: "Частота дыхания"}
+  spo2:           {type: number,  unit: "%",             label: "Сатурация кислорода"}
+  temperature:    {type: number,  unit: "°C",            label: "Температура тела"}
+  gcs:            {type: number,  unit: "баллы",         label: "Шкала комы Глазго"}
+  egfr:           {type: number,  unit: "мл/мин/1.73м²", label: "Расчётная СКФ"}
+  creatinine:     {type: number,  unit: "мкмоль/л",      label: "Креатинин"}
+  glucose:        {type: number,  unit: "ммоль/л",       label: "Глюкоза крови"}
+  hba1c:          {type: number,  unit: "%",             label: "Гликированный гемоглобин"}
+  bmi:            {type: number,  unit: "кг/м²",         label: "Индекс массы тела"}
+  pef_percent:    {type: number,  unit: "%",             label: "ПСВ, % от лучшего"}
+  symptom_duration_min: {type: number, unit: "мин",     label: "Длительность ведущего симптома"}
+  symptom_duration_days: {type: number, unit: "сут",    label: "Длительность ведущего симптома"}
+  urea:           {type: number,  unit: "ммоль/л",      label: "Мочевина"}
+  troponin_positive: {type: boolean,                     label: "Тропонин выше порога"}
+
+# Булевы факты о пациенте, не являющиеся ни симптомами, ни диагнозами.
+facts:
+  smoker:               {label: "Курение"}
+  pregnant:             {label: "Беременность"}
+  lactating:            {label: "Лактация"}
+  immunocompromised:    {label: "Иммунокомпрометированный"}
+  on_anticoagulants:    {label: "Принимает антикоагулянты"}
+  nsaid_use:            {label: "Принимает НПВС"}
+  recent_surgery:       {label: "Недавняя операция или травма"}
+  confusion:            {label: "Спутанность сознания"}
+  new_onset:            {label: "Впервые возникший симптом"}
+  exertional:           {label: "Связь с нагрузкой"}
+  at_rest:              {label: "Возникает в покое"}
+  nitrate_unresponsive: {label: "Не купируется нитратами"}
+
+# -----------------------------------------------------------------------------
+# 8. Мини-язык условий
+# -----------------------------------------------------------------------------
+# Условие — это либо атом, либо комбинатор. Одно и то же представление
+# используется в redflag.triggers, emergency.criteria, difdiag.branches,
+# scale.parameters, routing.decisions, protocol.branches, drug.contraindications,
+# profile.criteria и rules/*.yaml -> if.
+#
+# Атомы (ровно один ключ из списка + опциональные модификаторы):
+#   {symptom: DIAG-SYMPTOM-002}                    предъявлен симптом
+#   {feature: chest_pain.pressing}                  признак симптома (объявлен в symptom.features)
+#   {param: sbp, op: ">=", value: 180}              числовой параметр; op из [">", ">=", "<", "<=", "==", "!=", "between"]
+#   {param: age, op: between, value: [18, 65]}     диапазон включительно
+#   {fact: smoker}                                  булев факт (раздел 7)
+#   {disease: DIAG-DISEASE-001}                     установленный/предполагаемый диагноз
+#   {redflag: DIAG-REDFLAG-001}                     сработавший красный флаг (производный факт)
+#   {emergency: DIAG-EMERGENCY-001}                 распознанное неотложное состояние (производный факт)
+#   {profile: GLB-PROFILE-002}                      принадлежность к профилю пациентов
+#   {scale: PROT-SCALE-001, op: ">=", value: 4}     вычисленное значение шкалы
+#   {scale_category: PROT-SCALE-001, value: high}   категория по шкале
+#   {exam_result: DIAG-EXAM-002, value: st_elevation}  результат обследования (контролируемое значение)
+#
+# Комбинаторы:
+#   {all: [c1, c2, ...]}          конъюнкция
+#   {any: [c1, c2, ...]}          дизъюнкция
+#   {not: c}                      отрицание
+#   {at_least: {n: 2, of: [c1, c2, c3]}}   не менее n из списка
+#
+# Семантика неизвестного: если для оценки атома не хватает входных данных,
+# атом принимает значение unknown. all с unknown -> unknown (если нет false);
+# any с unknown -> unknown (если нет true); not unknown -> unknown.
+# Решатель трактует unknown как повод запросить уточнение, а не как false.
+condition_language:
+  atoms: [symptom, feature, param, fact, disease, redflag, emergency, profile, scale, scale_category, exam_result]
+  combinators: [all, any, not, at_least]
+  operators: [">", ">=", "<", "<=", "==", "!=", "between"]
+  truth_values: [true, false, unknown]
+
+# -----------------------------------------------------------------------------
+# 9. Машиночитаемый слой по категориям
+# -----------------------------------------------------------------------------
+# Каждая категория задаёт поля, которые решатель читает напрямую, минуя
+# прозу. "required_for_approved" — поля, обязательные для status: approved.
+# Типы: id(<категории>) — ссылка на карточку указанных категорий;
+# condition — выражение мини-языка; enum(<имя>) — значение из enums.
+machine_layer:
+  symptom:
+    required_for_approved: [features, synonyms]
+    fields:
+      synonyms: {type: "list[string]", doc: "Синонимы и разговорные формулировки для распознавания"}
+      features:
+        type: "list[object]"
+        doc: "Контролируемые признаки симптома; на них ссылаются атомы feature"
+        item:
+          code: {type: string, pattern: '^[a-z0-9_]+\.[a-z0-9_]+$', doc: "Код вида <symptom>.<feature>"}
+          label: {type: string}
+  disease:
+    required_for_approved: [presentation, exams]
+    fields:
+      presentation:
+        type: "list[object]"
+        doc: "Клиническая картина в машиночитаемом виде"
+        item:
+          symptom: {type: "id(symptom)"}
+          weight: {type: "enum(weight)", doc: "Диагностический вес: 3 — ключевой, 1 — второстепенный"}
+          frequency: {type: "enum(frequency)"}
+          features: {type: "list[feature_code]", optional: true, doc: "Характерные признаки симптома при этом заболевании"}
+      red_flags: {type: "list[id(redflag)]", optional: true}
+      exams:
+        type: "list[object]"
+        item:
+          exam: {type: "id(exam)"}
+          role: {type: "enum(exam_role)"}
+          expected: {type: string, optional: true, doc: "Ожидаемый результат (контролируемое значение или текст)"}
+      differentials: {type: "list[id(disease,emergency)]", optional: true}
+      applies_when: {type: condition, optional: true, doc: "Ограничение применимости карточки (возраст, профиль)"}
+  exam:
+    required_for_approved: [results]
+    fields:
+      results:
+        type: "list[object]"
+        doc: "Контролируемые значения результата, на которые ссылается атом exam_result"
+        item:
+          value: {type: string, pattern: '^[a-z0-9_]+$'}
+          label: {type: string}
+          indicates: {type: "list[id(disease,emergency)]", optional: true}
+      contraindications: {type: "list[condition]", optional: true}
+      turnaround: {type: string, optional: true, doc: "Ориентировочное время получения результата"}
+  difdiag:
+    required_for_approved: [leading_symptom, branches]
+    fields:
+      leading_symptom: {type: "id(symptom)"}
+      branches:
+        type: "list[object]"
+        item:
+          target: {type: "id(disease,emergency,redflag)"}
+          supporting: {type: condition, doc: "Признаки в пользу направления"}
+          against: {type: condition, optional: true, doc: "Признаки против направления"}
+          key_exam: {type: "id(exam)", optional: true}
+          prior: {type: "enum(prior)"}
+          urgency: {type: "enum(urgency)"}
+  redflag:
+    required_for_approved: [triggers, indicates]
+    fields:
+      triggers: {type: condition, doc: "Формальное условие срабатывания"}
+      indicates: {type: "list[id(emergency,disease)]", doc: "На какие состояния указывает"}
+      action: {type: "id(emergency_p,routing)", optional: true, doc: "Куда передать управление"}
+  emergency:
+    required_for_approved: [criteria]
+    fields:
+      criteria: {type: condition, doc: "Критерии распознавания"}
+      emergency_protocol: {type: "id(emergency_p)", optional: true}
+      time_critical: {type: boolean, optional: true}
+  scale:
+    required_for_approved: [parameters, interpretation]
+    fields:
+      parameters:
+        type: "list[object]"
+        item:
+          code: {type: string, pattern: '^[a-z0-9_]+$'}
+          label: {type: string}
+          options:
+            type: "list[object]"
+            item:
+              when: {type: condition}
+              points: {type: number}
+              label: {type: string, optional: true}
+      interpretation:
+        type: "list[object]"
+        doc: "Диапазоны включительно; должны покрывать все достижимые суммы без пересечений"
+        item:
+          min: {type: number}
+          max: {type: number, doc: "null означает 'и выше'", nullable: true}
+          category: {type: string, pattern: '^[a-z0-9_]+$'}
+          label: {type: string}
+          action: {type: "id(routing,protocol,emergency_p,follow_up)", optional: true}
+      missing_policy: {type: string, enum: [skip, fail], default: skip, doc: "Что делать при отсутствии данных по параметру"}
+  routing:
+    required_for_approved: [decisions, default]
+    fields:
+      for: {type: "list[id(disease,emergency,symptom)]"}
+      decisions:
+        type: "list[object]"
+        doc: "Оцениваются по порядку; срабатывает первое истинное условие"
+        item:
+          when: {type: condition}
+          route: {type: "enum(route)"}
+          timeframe: {type: string, optional: true}
+          actions: {type: "list[string]"}
+          next: {type: "list[id(protocol,emergency_p,follow_up,routing)]", optional: true}
+          explanation: {type: string}
+      default:
+        type: object
+        item:
+          route: {type: "enum(route)"}
+          actions: {type: "list[string]"}
+          explanation: {type: string}
+  protocol:
+    required_for_approved: [for, entry, steps]
+    fields:
+      for: {type: "list[id(disease,emergency)]"}
+      entry: {type: condition, doc: "Критерии начала применения протокола"}
+      steps:
+        type: "list[object]"
+        item:
+          id: {type: string, pattern: '^[a-z0-9_]+$'}
+          action: {type: string}
+          when: {type: condition, optional: true}
+          refs: {type: "list[id]", optional: true}
+      branches:
+        type: "list[object]"
+        optional: true
+        item:
+          when: {type: condition}
+          then: {type: "id(routing,emergency_p,protocol,regimen,follow_up)"}
+          explanation: {type: string}
+      targets: {type: "list[object]", optional: true, item: {param: {type: parameter}, op: {type: operator}, value: {type: number}, label: {type: string}}}
+  emergency_p:
+    required_for_approved: [criteria, phases]
+    fields:
+      criteria: {type: condition}
+      phases:
+        type: "list[object]"
+        item:
+          window: {type: string, doc: "Например '0–10 мин'"}
+          steps: {type: "list[string]"}
+      drugs:
+        type: "list[object]"
+        optional: true
+        item:
+          drug: {type: "id(drug,drugclass)"}
+          dose: {type: string}
+          route: {type: string}
+          when: {type: condition, optional: true}
+          contraindicated_when: {type: condition, optional: true}
+      stabilization: {type: condition, optional: true}
+      next: {type: "id(routing)", optional: true}
+  follow_up:
+    required_for_approved: [for, schedule, monitor]
+    fields:
+      for: {type: "list[id(disease,protocol)]"}
+      schedule: {type: "list[object]", item: {after: {type: string}, interval: {type: string}, purpose: {type: string}}}
+      monitor:
+        type: "list[object]"
+        item:
+          param: {type: parameter, optional: true}
+          exam: {type: "id(exam)", optional: true}
+          target: {type: condition, optional: true}
+          label: {type: string}
+      deterioration: {type: condition, optional: true}
+      on_deterioration: {type: "id(routing,emergency_p)", optional: true}
+  screening:
+    required_for_approved: [target, methods, interval]
+    fields:
+      target: {type: condition, doc: "Кому показан скрининг"}
+      methods: {type: "list[id(exam)]"}
+      interval: {type: string}
+      positive_when: {type: condition, optional: true}
+      on_positive: {type: "id(routing,protocol)", optional: true}
+  checklist:
+    required_for_approved: [items]
+    fields:
+      items: {type: "list[object]", item: {text: {type: string}, required: {type: boolean}, refs: {type: "list[id]", optional: true}}}
+  patient_info:
+    required_for_approved: [for]
+    fields:
+      for: {type: "list[id(disease,emergency,protocol,drug)]"}
+      seek_help_when: {type: "list[string]", optional: true}
+  vaccine:
+    required_for_approved: [indications]
+    fields:
+      indications: {type: condition}
+      contraindications: {type: "list[condition]", optional: true}
+      schedule: {type: string, optional: true}
+  drug:
+    required_for_approved: [contraindications]
+    fields:
+      contraindications: {type: "list[object]", item: {when: {type: condition}, absolute: {type: boolean}, explanation: {type: string}}}
+      interactions: {type: "list[object]", optional: true, item: {with: {type: "id(drug,drugclass)"}, severity: {type: "enum(interaction_severity)"}, card: {type: "id(interaction)", optional: true}}}
+      dose_adjustments: {type: "list[object]", optional: true, item: {when: {type: condition}, note: {type: string}}}
+      indications: {type: "list[id(disease,emergency,symptom)]", optional: true}
+  drugclass:
+    required_for_approved: [members]
+    fields:
+      members: {type: "list[id(drug)]"}
+      contraindications: {type: "list[object]", optional: true, item: {when: {type: condition}, absolute: {type: boolean}, explanation: {type: string}}}
+  regimen:
+    required_for_approved: [for, lines]
+    fields:
+      for: {type: "list[id(disease,emergency)]"}
+      lines:
+        type: "list[object]"
+        item:
+          line: {type: number}
+          options: {type: "list[object]", item: {agent: {type: "id(drug,drugclass,nonpharm)"}, when: {type: condition, optional: true}, note: {type: string, optional: true}}}
+  interaction:
+    required_for_approved: [between, severity]
+    fields:
+      between: {type: "list[id(drug,drugclass)]", doc: "Ровно два участника"}
+      severity: {type: "enum(interaction_severity)"}
+  adr:
+    required_for_approved: [caused_by]
+    fields:
+      caused_by: {type: "list[id(drug,drugclass)]"}
+      risk_factors: {type: "list[condition]", optional: true}
+  dosing:
+    required_for_approved: [rules]
+    fields:
+      rules: {type: "list[object]", item: {agent: {type: "id(drug,drugclass)"}, when: {type: condition}, adjustment: {type: string}}}
+  nonpharm:
+    required_for_approved: [for]
+    fields:
+      for: {type: "list[id(disease,emergency,symptom)]"}
+      contraindications: {type: "list[condition]", optional: true}
+  # glb
+  glossary:
+    required_for_approved: [term, definition]
+    fields:
+      term: {type: string}
+      definition: {type: string}
+      synonyms: {type: "list[string]", optional: true}
+      refers_to: {type: "list[id]", optional: true}
+  profile:
+    required_for_approved: [criteria]
+    fields:
+      criteria: {type: condition, doc: "Формальное определение принадлежности к профилю"}
+      considerations: {type: "list[string]", optional: true}
+  disclaimer:
+    required_for_approved: [text]
+    fields:
+      text: {type: string}
+      applies_to_access_level: {type: "list[enum(access_level)]", optional: true}
+  lab:
+    required_for_approved: [parameter, reference_range]
+    fields:
+      parameter: {type: parameter}
+      reference_range: {type: object, item: {min: {type: number, nullable: true}, max: {type: number, nullable: true}}}
+  imaging:
+    required_for_approved: []
+    fields: {}
+  anatomy:
+    required_for_approved: []
+    fields: {}
+  cross:
+    required_for_approved: []
+    fields: {}
+
+# -----------------------------------------------------------------------------
+# 10. Правила (kb/rules/*.yaml)
+# -----------------------------------------------------------------------------
+# Правило — единица процедурного знания. Не является карточкой, но проходит
+# валидацию по этой схеме. Файл может содержать одно правило или список.
+rules:
+  required: [id, domain, title, if, then, source_cards, explanation]
+  optional: [priority, evidence_level, status, tags, notes]
+  default_priority: 50
+  actions:
+    assert_hypothesis:  {target: "id(disease,emergency)", extra: {weight: "enum(weight)"}}
+    trigger_red_flag:   {target: "id(redflag)"}
+    set_urgency:        {value: "enum(urgency)"}
+    recommend_exam:     {target: "id(exam)", extra: {role: "enum(exam_role)"}}
+    route:              {value: "enum(route)", extra: {timeframe: string}}
+    apply_protocol:     {target: "id(protocol,emergency_p)"}
+    request_clarification: {value: "string", doc: "Какие данные запросить у пользователя"}
+    refuse:             {value: "string", doc: "Отказ с объяснением границы применимости"}

@@ -48,7 +48,8 @@ class KnowledgeRepository:
 
         if file_path.name in EXCLUDED_FILE_NAMES:
             return True
-        return any(part in EXCLUDED_DIR_NAMES for part in file_path.parts)
+        relative_parts = file_path.relative_to(self.kb_root).parts if file_path.is_relative_to(self.kb_root) else file_path.parts
+        return any(part in EXCLUDED_DIR_NAMES for part in relative_parts)
 
     def get_by_id(self, card_id: str) -> KnowledgeCard | None:
         return self.index.by_id.get(card_id)

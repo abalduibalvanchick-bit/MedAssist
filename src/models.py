@@ -58,11 +58,37 @@ class KnowledgeCard:
         return []
 
     @property
+    def schema_version(self) -> int:
+        """Версия схемы карточки. Карточки без поля считаются схемой v1."""
+        try:
+            return int(self.metadata.get("schema_version", 1))
+        except (TypeError, ValueError):
+            return 1
+
+    @property
     def related(self) -> list[str]:
-        related = self.metadata.get("related", [])
+        """Список ID связанных документов.
+
+        В схеме v1 это отдельное поле related. В схеме v2 поле удалено и список
+        вычисляется из relations, поэтому старый код навигации продолжает работать.
+        """
+        related = self.metadata.get("related")
         if isinstance(related, list):
             return [str(item).strip() for item in related if str(item).strip()]
-        return []
+        seen: list[str] = []
+        for relation in self.relations:
+            target = str(relation.get("target", "")).strip()
+            if target and target not in seen:
+                seen.append(target)
+        return seen
+
+    @property
+    def status(self) -> str:
+        return str(self.metadata.get("status", "")).strip()
+
+    def machine_field(self, name: str, default: Any = None) -> Any:
+        """Доступ к полю машиночитаемого слоя (схема v2)."""
+        return self.metadata.get(name, default)
 
     @property
     def relations(self) -> list[dict[str, Any]]:
