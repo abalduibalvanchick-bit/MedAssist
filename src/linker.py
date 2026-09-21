@@ -24,7 +24,10 @@ class Linker:
         related: list[RelatedCard] = []
         seen: set[tuple[str, str]] = set()
 
-        for target_id in source.related:
+        # Схема v1: плоский список related. В схеме v2 он вычисляется из relations,
+        # поэтому отдельно не разворачивается.
+        legacy_related = source.related if source.schema_version < 2 else []
+        for target_id in legacy_related:
             key = (target_id, "related")
             if key not in seen:
                 related.append(

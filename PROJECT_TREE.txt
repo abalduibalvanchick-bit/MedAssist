@@ -1,9 +1,4 @@
-medassist_course_project_final/
-    FULL_PROJECT_LISTING.md
-    PROJECT_TREE.txt
-    README.md
-    main.py
-    requirements.txt
+medassist/
     assets/
         diagrams/
             .gitkeep
@@ -12,19 +7,25 @@ medassist_course_project_final/
     bibliography/
         sources.md
     docs/
+        conditions.md
         link_types.md
         metadata_schema.md
+        migration_v1_to_v2.md
         mvp_modules.md
         naming_rules.md
+        schema.md
         verification_rules.md
     indices/
-        diagnostics_catalog.md
-        protocols_catalog.md
-        therapy_catalog.md
+        diag_catalog.md
+        glb_catalog.md
+        pharm_catalog.md
+        prot_catalog.md
+        statistics.md
         validation_report.md
     kb/
-        diagnostics/
-            index.md
+        _schema/
+            schema.yaml
+        diag/
             differential_diagnosis/
                 diag_difdiag_chest_pain.md
                 diag_difdiag_dyspnea.md
@@ -32,6 +33,7 @@ medassist_course_project_final/
                 index.md
             diseases/
                 diag_disease_asthma.md
+                diag_disease_diabetes_type2.md
                 diag_disease_hypertension.md
                 diag_disease_ihd.md
                 diag_disease_migraine.md
@@ -40,6 +42,9 @@ medassist_course_project_final/
             emergencies/
                 diag_emergency_acs.md
                 diag_emergency_acute_respiratory_failure.md
+                diag_emergency_hhs.md
+                diag_emergency_status_asthmaticus.md
+                diag_emergency_status_migrainosus.md
                 diag_emergency_stroke.md
                 index.md
             exams/
@@ -47,39 +52,154 @@ medassist_course_project_final/
                 diag_exam_cbc.md
                 diag_exam_chest_xray.md
                 diag_exam_ecg.md
+                diag_exam_fasting_glucose.md
+                diag_exam_hba1c.md
+                diag_exam_neuro_exam.md
+                diag_exam_spirometry.md
                 index.md
             red_flags/
+                diag_redflag_dka.md
                 diag_redflag_hypertensive_crisis.md
                 diag_redflag_severe_dyspnea_cyanosis.md
+                diag_redflag_status_asthmaticus.md
                 diag_redflag_thunderclap_headache.md
+                diag_redflag_unstable_angina.md
                 index.md
             symptoms/
                 diag_symptom_abdominal_pain.md
                 diag_symptom_chest_pain.md
+                diag_symptom_cough.md
                 diag_symptom_dyspnea.md
                 diag_symptom_fever.md
                 diag_symptom_headache.md
+                diag_symptom_polydipsia.md
+                diag_symptom_polyuria.md
+                diag_symptom_wheezing.md
                 index.md
-        global/
             index.md
-        protocols/
+        glb/
             index.md
+        pharm/
+            adverse_reactions/
+                index.md
+                pharm_adr_nsaid_gi_bleeding.md
+            dosing/
+                index.md
+                pharm_dosing_ckd.md
+            drug_classes/
+                index.md
+                pharm_drugclass_ace_inhibitors.md
+                pharm_drugclass_antiplatelet.md
+                pharm_drugclass_arb.md
+                pharm_drugclass_beta_blockers.md
+                pharm_drugclass_biguanides.md
+                pharm_drugclass_calcium_channel_blockers.md
+                pharm_drugclass_cephalosporins_3g.md
+                pharm_drugclass_dpp4_inhibitors.md
+                pharm_drugclass_fluoroquinolones_respiratory.md
+                pharm_drugclass_glp1_agonists.md
+                pharm_drugclass_ics.md
+                pharm_drugclass_lama.md
+                pharm_drugclass_macrolides.md
+                pharm_drugclass_nsaids.md
+                pharm_drugclass_penicillins.md
+                pharm_drugclass_saba.md
+                pharm_drugclass_sglt2_inhibitors.md
+                pharm_drugclass_statins.md
+                pharm_drugclass_sulfonylureas.md
+                pharm_drugclass_thiazide_diuretics.md
+                pharm_drugclass_triptans.md
+            drugs/
+                index.md
+                pharm_drug_amlodipine.md
+                pharm_drug_enalapril.md
+                pharm_drug_metformin.md
+            interactions/
+                index.md
+                pharm_interaction_metformin_contrast.md
+            nonpharm/
+                index.md
+                pharm_nonpharm_asthma.md
+                pharm_nonpharm_dash_diet.md
+                pharm_nonpharm_diabetes_lifestyle.md
+                pharm_nonpharm_ihd.md
+                pharm_nonpharm_migraine.md
+                pharm_nonpharm_pneumonia.md
+            regimens/
+                index.md
+                pharm_regimen_asthma.md
+                pharm_regimen_diabetes_type2.md
+                pharm_regimen_hypertension.md
+                pharm_regimen_ihd.md
+                pharm_regimen_migraine.md
+                pharm_regimen_pneumonia.md
+            index.md
+        prot/
             checklists/
+                index.md
+                prot_checklist_asthma_primary_visit.md
+                prot_checklist_diabetes_primary_visit.md
                 prot_checklist_hypertension_primary_visit.md
+                prot_checklist_ihd_primary_visit.md
+                prot_checklist_migraine_primary_visit.md
+                prot_checklist_pneumonia_primary_visit.md
             clinical_protocols/
+                index.md
+                prot_protocol_asthma.md
+                prot_protocol_diabetes_type2.md
                 prot_protocol_hypertension.md
+                prot_protocol_ihd.md
+                prot_protocol_migraine.md
+                prot_protocol_pneumonia.md
             emergency/
-                prot_emergency_hypertensive_crisis.md
+                index.md
+                prot_emergency_p_hyperglycemia.md
+                prot_emergency_p_hypertensive_crisis.md
+                prot_emergency_p_migrainosus.md
+                prot_emergency_p_severe_pneumonia.md
+                prot_emergency_p_status_asthmaticus.md
+                prot_emergency_p_unstable_angina.md
             follow_up/
+                index.md
+                prot_follow_up_asthma.md
+                prot_follow_up_diabetes.md
                 prot_follow_up_hypertension.md
+                prot_follow_up_ihd.md
+                prot_follow_up_migraine.md
+                prot_follow_up_pneumonia.md
             patient_info/
+                index.md
+                prot_patient_info_asthma.md
+                prot_patient_info_diabetes.md
                 prot_patient_info_hypertension.md
+                prot_patient_info_ihd.md
+                prot_patient_info_migraine.md
+                prot_patient_info_pneumonia.md
             routing/
+                index.md
+                prot_routing_asthma.md
+                prot_routing_diabetes_type2.md
                 prot_routing_hypertension.md
+                prot_routing_ihd.md
+                prot_routing_migraine.md
+                prot_routing_pneumonia.md
             scales/
+                index.md
+                prot_scale_act.md
+                prot_scale_curb65.md
+                prot_scale_diabetes_risk.md
                 prot_scale_hypertension_risk.md
+                prot_scale_ihd.md
+                prot_scale_midas.md
             screening/
+                index.md
+                prot_screening_asthma_risk.md
+                prot_screening_diabetes_type2.md
                 prot_screening_hypertension.md
+                prot_screening_ihd.md
+                prot_screening_migraine.md
+                prot_screening_pneumonia_risk.md
+            index.md
         templates/
             template_adr.md
             template_checklist.md
@@ -102,33 +222,15 @@ medassist_course_project_final/
             template_scale.md
             template_screening.md
             template_symptom.md
-        therapy/
-            index.md
-            adverse_reactions/
-                pharm_adr_nsaid_gi_bleeding.md
-            dosing/
-                pharm_dosing_ckd.md
-            drug_classes/
-                pharm_drugclass_ace_inhibitors.md
-                pharm_drugclass_arb.md
-                pharm_drugclass_calcium_channel_blockers.md
-                pharm_drugclass_nsaids.md
-                pharm_drugclass_thiazide_diuretics.md
-            drugs/
-                pharm_drug_amlodipine.md
-                pharm_drug_enalapril.md
-                pharm_drug_metformin.md
-            interactions/
-                pharm_interaction_metformin_contrast.md
-            nonpharm/
-                pharm_nonpharm_dash_diet.md
-            regimens/
-                pharm_regimen_hypertension.md
     scripts/
         .gitkeep
+        generate_docs.py
+        generate_indices.py
+        migrate_v1_to_v2.py
     src/
         __init__.py
         cli.py
+        conditions.py
         config.py
         indexer.py
         linker.py
@@ -136,10 +238,16 @@ medassist_course_project_final/
         models.py
         repository.py
         scenarios.py
+        schema.py
         search_engine.py
         validator.py
     tests/
+        expected_results/
+            .gitkeep
+        scenarios/
+            .gitkeep
         conftest.py
+        test_conditions.py
         test_linker.py
         test_log.md
         test_parser.py
@@ -148,7 +256,10 @@ medassist_course_project_final/
         test_repository.py
         test_search.py
         test_validator.py
-        expected_results/
-            .gitkeep
-        scenarios/
-            .gitkeep
+        test_validator_v2.py
+    .gitignore
+    CHANGELOG.md
+    PROJECT_TREE.txt
+    README.md
+    main.py
+    requirements.txt

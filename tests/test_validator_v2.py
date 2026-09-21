@@ -166,10 +166,20 @@ def test_relation_category_constraints(kb):
     assert "RELATION_SOURCE_CATEGORY" in codes(run(kb))
 
 
-def test_asymmetric_explicit_relations_warn(kb):
-    # disease пишет has_symptom, symptom отвечает associated_with вместо symptom_of
-    symptom(kb, relations=[{"target": "DIAG-DISEASE-001", "type": "associated_with"}])
-    assert "ASYMMETRIC_RELATION" in codes(run(kb), "WARNING")
+def test_contradictory_explicit_relations_error(kb):
+    # Два маршрута объявляют друг друга следующим шагом — противоречие направления.
+    base = {**COMMON, "domain": "prot", "category": "routing"}
+    write_card(kb, "prot", "routing", "prot_routing_a.md",
+               {**base, "id": "PROT-ROUTING-001", "title": "A", "relations": [{"target": "PROT-ROUTING-002", "type": "next_step"}]})
+    write_card(kb, "prot", "routing", "prot_routing_b.md",
+               {**base, "id": "PROT-ROUTING-002", "title": "B", "relations": [{"target": "PROT-ROUTING-001", "type": "next_step"}]})
+    assert "CONTRADICTORY_RELATION" in codes(run(kb))
+
+
+def test_different_types_between_same_pair_are_allowed(kb):
+    symptom(kb, relations=[{"target": "DIAG-DISEASE-001", "type": "symptom_of"},
+                           {"target": "DIAG-DISEASE-001", "type": "associated_with"}])
+    assert "CONTRADICTORY_RELATION" not in codes(run(kb))
 
 
 def test_broken_relation(kb):

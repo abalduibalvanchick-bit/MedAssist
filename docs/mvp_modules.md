@@ -1,53 +1,26 @@
-# Модули MVP MedAssist
+# Модули программной части
 
-## Назначение
-
-MVP состоит из набора простых Python-модулей. Каждый модуль отвечает за отдельную операцию над базой знаний.
-
-## Связь модулей
-
-```text
-main.py
-  ↓
-src/cli.py
-  ├── src/repository.py ──► src/markdown_parser.py ──► src/models.py
-  │         └────────────► src/indexer.py
-  ├── src/search_engine.py
-  ├── src/linker.py
-  ├── src/validator.py
-  └── src/scenarios.py
-```
-
-## Описание файлов
-
-| Файл | Назначение |
+| Модуль | Назначение |
 |---|---|
-| `main.py` | Точка запуска программы |
-| `src/config.py` | Настройки, обязательные поля, допустимые значения |
-| `src/models.py` | Модель карточки базы знаний |
-| `src/markdown_parser.py` | Разбор Markdown-файла и YAML-блока |
-| `src/repository.py` | Загрузка всех карточек из каталога `kb/` |
-| `src/indexer.py` | Построение индексов по ID, категории, тегам и срочности |
-| `src/search_engine.py` | Поиск карточек по запросу |
-| `src/linker.py` | Навигация по `related` и `relations` |
-| `src/validator.py` | Проверка структурной целостности базы знаний |
-| `src/scenarios.py` | Демонстрационные сценарии работы БЗ |
-| `src/cli.py` | Консольный интерфейс и команды запуска |
+| `main.py` | точка запуска |
+| `src/schema.py` | загрузка `kb/_schema/schema.yaml`, самопроверка схемы |
+| `src/config.py` | пути и константы совместимости со схемой v1 |
+| `src/conditions.py` | мини-язык условий: статическая проверка, трёхзначная оценка, трасса, описание |
+| `src/models.py` | модель карточки `KnowledgeCard` |
+| `src/markdown_parser.py` | разбор Markdown-файла и YAML-блока |
+| `src/repository.py` | загрузка карточек из `kb/` |
+| `src/indexer.py` | индексы по ID, домену, категории, тегам, срочности; входящие связи |
+| `src/linker.py` | исходящие и материализованные обратные связи |
+| `src/search_engine.py` | поиск по карточкам |
+| `src/validator.py` | структурная и качественная проверка карточек и правил |
+| `src/scenarios.py` | демонстрационные сценарии |
+| `src/cli.py` | консольный интерфейс |
 
 ## Поток данных
 
 ```text
-Markdown/YAML-карточки
-        ↓
-markdown_parser.py
-        ↓
-KnowledgeCard
-        ↓
-repository.py
-        ↓
-indexer.py
-        ↓
-search_engine.py / linker.py / validator.py / scenarios.py
-        ↓
-cli.py
+kb/_schema/schema.yaml ──► schema.py ──► conditions.py, validator.py, linker.py
+kb/**/*.md ──► markdown_parser.py ──► KnowledgeCard ──► repository.py ──► indexer.py
+                                                           │
+                          search_engine.py / linker.py / validator.py / scenarios.py ──► cli.py
 ```

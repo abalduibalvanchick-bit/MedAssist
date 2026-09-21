@@ -84,14 +84,15 @@ def run_interactive(repository: KnowledgeRepository) -> None:
                 print_card(card)
         elif choice == "4":
             card_id = input("Введите ID исходной карточки: ").strip()
-            related = linker.get_related_cards(card_id)
+            related = linker.get_all_links(card_id)
             if not related:
                 print("Связанные документы не найдены или карточка отсутствует.")
             for item in related:
                 if item.card is None:
                     print(f"{item.target_id} — отсутствует; тип связи: {item.relation_type}")
                 else:
-                    print(f"{item.card.short_description}; тип связи: {item.relation_type}")
+                    mark = " [обратная]" if item.description.startswith("Обратная связь") else ""
+                    print(f"{item.card.short_description}; тип связи: {item.relation_type}{mark}")
         elif choice == "5":
             category = input("Введите категорию: ").strip()
             for card in search_engine.filter_by_category(category):
@@ -158,12 +159,13 @@ def run_cli(argv: list[str] | None = None) -> None:
         return
 
     if args.related:
-        related = linker.get_related_cards(args.related)
+        related = linker.get_all_links(args.related)
         for item in related:
             if item.card is None:
                 print(f"{item.target_id} — отсутствует; тип связи: {item.relation_type}")
             else:
-                print(f"{item.card.short_description}; тип связи: {item.relation_type}")
+                mark = " [обратная]" if item.description.startswith("Обратная связь") else ""
+                print(f"{item.card.short_description}; тип связи: {item.relation_type}{mark}")
         return
 
     if args.scenario:

@@ -466,7 +466,14 @@ class KnowledgeBaseValidator:
 
     # ---------------------------------------------------------- симметрия
     def _validate_relation_symmetry(self, report: ValidationReport) -> None:
-        """Если автор явно записал обе стороны связи, их типы должны быть обратными."""
+        """Ищет противоречивые пары явных связей.
+
+        Между двумя карточками допустимо несколько связей разных типов (например,
+        маршрут ссылается на алгоритм неотложной помощи, а алгоритм — на маршрут как
+        на следующий шаг). Противоречием считается ситуация, когда обе карточки
+        утверждают одно и то же направленное отношение друг о друге: A has_symptom B
+        и B has_symptom A. Для симметричных типов это не противоречие.
+        """
         explicit: dict[tuple[str, str], set[str]] = defaultdict(set)
         for card in self.repository.cards:
             if card.schema_version < 2:
@@ -476,17 +483,18 @@ class KnowledgeBaseValidator:
                 rtype = str(relation.get("type", "")).strip()
                 if target and rtype:
                     explicit[(card.id, target)].add(rtype)
+        rel_types = self.schema.relation_types
         for (source, target), types in explicit.items():
-            back = explicit.get((target, source))
-            if not back:
-                continue
-            for rtype in types:
-                inverse = self.schema.inverse_relation(rtype)
-                if inverse and inverse not in back:
+            if source > target:
+                continue  # каждую пару проверяем один раз
+            back = explicit.get((target, source), set())
+            for rtype in types & back:
+                info = rel_types.get(rtype)
+                if info is not None and not info.symmetric:
                     card = self._cards_by_id.get(source)
                     if card is not None:
-                        self._add(report, card, "WARNING", "ASYMMETRIC_RELATION",
-                                  f"Связь {rtype} -> {target} записана, но у {target} обратная связь имеет тип {sorted(back)}, ожидается {inverse}.")
+                        self._add(report, card, "ERROR", "CONTRADICTORY_RELATION",
+                                  f"{source} и {target} оба утверждают связь {rtype} друг о друге; одна из сторон должна использовать {info.inverse_name()}.")
 
     # ------------------------------------------------------------ качество
     def _validate_quality(self, card: KnowledgeCard, report: ValidationReport) -> None:

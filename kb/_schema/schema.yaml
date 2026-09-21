@@ -220,9 +220,13 @@ relation_types:
   symptom_of:             {inverse: has_symptom,           from: [symptom], to: [disease, emergency]}
   diagnosed_by:           {inverse: diagnoses,             from: [disease, emergency, symptom, redflag], to: [exam]}
   diagnoses:              {inverse: diagnosed_by,          from: [exam], to: [disease, emergency, symptom, redflag]}
-  has_red_flag:           {inverse: red_flag_for,          from: [disease, symptom, emergency, difdiag], to: [redflag]}
-  red_flag_for:           {inverse: has_red_flag,          from: [redflag], to: [disease, symptom, emergency, difdiag]}
-  differentiates_from:    {symmetric: true,                from: [disease, emergency, difdiag], to: [disease, emergency, difdiag]}
+  has_red_flag:           {inverse: red_flag_for,          from: [disease, symptom, emergency, difdiag, routing], to: [redflag]}
+  red_flag_for:           {inverse: has_red_flag,          from: [redflag], to: [disease, symptom, emergency, difdiag, routing]}
+  uses_exam:              {inverse: exam_used_in,          from: [protocol, checklist, follow_up, screening, routing, emergency_p, difdiag], to: [exam]}
+  exam_used_in:           {inverse: uses_exam,             from: [exam], to: [protocol, checklist, follow_up, screening, routing, emergency_p, difdiag]}
+  differentiates_from:    {symmetric: true,                from: [disease, emergency], to: [disease, emergency]}
+  considers:              {inverse: considered_in,         from: [difdiag], to: [disease, emergency, redflag]}
+  considered_in:          {inverse: considers,             from: [disease, emergency, redflag], to: [difdiag]}
   differential_for:       {inverse: has_differential,      from: [difdiag], to: [symptom]}
   has_differential:       {inverse: differential_for,      from: [symptom], to: [difdiag]}
   complicates:            {inverse: complicated_by,        from: [disease, redflag, emergency], to: [disease]}
@@ -231,27 +235,27 @@ relation_types:
   # протоколы
   protocol_for:           {inverse: has_protocol,          from: [protocol], to: [disease, emergency]}
   has_protocol:           {inverse: protocol_for,          from: [disease, emergency], to: [protocol]}
-  emergency_protocol_for: {inverse: has_emergency_protocol, from: [emergency_p], to: [emergency, redflag, disease]}
-  has_emergency_protocol: {inverse: emergency_protocol_for, from: [emergency, redflag, disease], to: [emergency_p]}
-  routing_for:            {inverse: has_routing,           from: [routing], to: [disease, emergency, symptom, protocol]}
-  has_routing:            {inverse: routing_for,           from: [disease, emergency, symptom, protocol], to: [routing]}
-  assessed_by:            {inverse: assesses,              from: [disease, emergency, protocol, routing, symptom], to: [scale]}
-  assesses:               {inverse: assessed_by,           from: [scale], to: [disease, emergency, protocol, routing, symptom]}
+  emergency_protocol_for: {inverse: has_emergency_protocol, from: [emergency_p], to: [emergency, redflag, disease, protocol, routing, follow_up]}
+  has_emergency_protocol: {inverse: emergency_protocol_for, from: [emergency, redflag, disease, protocol, routing, follow_up], to: [emergency_p]}
+  routing_for:            {inverse: has_routing,           from: [routing], to: [disease, emergency, symptom, protocol, patient_info, checklist]}
+  has_routing:            {inverse: routing_for,           from: [disease, emergency, symptom, protocol, patient_info, checklist], to: [routing]}
+  assessed_by:            {inverse: assesses,              from: [disease, emergency, protocol, routing, symptom, emergency_p, follow_up, checklist, screening], to: [scale]}
+  assesses:               {inverse: assessed_by,           from: [scale], to: [disease, emergency, protocol, routing, symptom, emergency_p, follow_up, checklist, screening]}
   checklist_for:          {inverse: has_checklist,         from: [checklist], to: [disease, protocol]}
   has_checklist:          {inverse: checklist_for,         from: [disease, protocol], to: [checklist]}
   screening_for:          {inverse: has_screening,         from: [screening], to: [disease, protocol]}
   has_screening:          {inverse: screening_for,         from: [disease, protocol], to: [screening]}
   follow_up_for:          {inverse: has_follow_up,         from: [follow_up], to: [disease, protocol]}
   has_follow_up:          {inverse: follow_up_for,         from: [disease, protocol], to: [follow_up]}
-  patient_info_for:       {inverse: has_patient_info,      from: [patient_info], to: [disease, protocol, drug, emergency]}
-  has_patient_info:       {inverse: patient_info_for,      from: [disease, protocol, drug, emergency], to: [patient_info]}
-  next_step:              {inverse: previous_step,         from: [routing, protocol, emergency_p, screening, scale], to: [routing, protocol, emergency_p, follow_up]}
-  previous_step:          {inverse: next_step}
+  patient_info_for:       {inverse: has_patient_info,      from: [patient_info], to: [disease, protocol, drug, emergency, nonpharm]}
+  has_patient_info:       {inverse: patient_info_for,      from: [disease, protocol, drug, emergency, nonpharm], to: [patient_info]}
+  next_step:              {inverse: previous_step,         from: [routing, protocol, emergency_p, screening, scale, follow_up], to: [routing, protocol, emergency_p, follow_up]}
+  previous_step:          {inverse: next_step,             from: [routing, protocol, emergency_p, follow_up], to: [routing, protocol, emergency_p, screening, scale, follow_up]}
   # фармакология
   treats:                 {inverse: treated_with,          from: [regimen, drug, drugclass, nonpharm], to: [disease, emergency, symptom]}
   treated_with:           {inverse: treats,                from: [disease, emergency, symptom], to: [regimen, drug, drugclass, nonpharm]}
-  recommends:             {inverse: recommended_by,        from: [protocol, emergency_p, follow_up, routing], to: [regimen, drug, drugclass, nonpharm]}
-  recommended_by:         {inverse: recommends,            from: [regimen, drug, drugclass, nonpharm], to: [protocol, emergency_p, follow_up, routing]}
+  recommends:             {inverse: recommended_by,        from: [protocol, emergency_p, follow_up, routing, scale], to: [regimen, drug, drugclass, nonpharm]}
+  recommended_by:         {inverse: recommends,            from: [regimen, drug, drugclass, nonpharm], to: [protocol, emergency_p, follow_up, routing, scale]}
   includes:               {inverse: included_in,           from: [regimen, drugclass], to: [drug, drugclass, nonpharm]}
   included_in:            {inverse: includes,              from: [drug, drugclass, nonpharm], to: [regimen, drugclass]}
   has_interaction:        {inverse: interaction_for,       from: [drug, drugclass], to: [interaction]}
@@ -275,7 +279,6 @@ relation_types:
 # flip: true — направление связи меняется на противоположное.
 legacy_relation_aliases:
   related_to:            {type: associated_with}
-  uses_exam:             {type: diagnosed_by}
   requires_exam:         {type: diagnosed_by}
   confirmed_by:          {type: diagnosed_by}
   excluded_by:           {type: diagnosed_by}
