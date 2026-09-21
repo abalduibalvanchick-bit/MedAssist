@@ -46,6 +46,54 @@ relations:
 - target: PHARM-DRUG-020
   type: recommends
   description: перенесено из поля related (схема v1)
+for:
+- DIAG-DISEASE-006
+- PROT-PROTOCOL-002
+schedule:
+- after: начала или изменения терапии
+  interval: 3 месяца
+  purpose: HbA1c, коррекция терапии
+- after: достижения цели
+  interval: 6 месяцев
+  purpose: HbA1c, АД, масса тела
+- after: каждого года наблюдения
+  interval: 12 месяцев
+  purpose: 'скрининг осложнений: глазное дно, альбуминурия, СКФ, стопы'
+monitor:
+- param: hba1c
+  target:
+    param: hba1c
+    op: <
+    value: 7
+  label: HbA1c
+- param: sbp
+  target:
+    param: sbp
+    op: <
+    value: 130
+  label: систолическое АД
+- param: egfr
+  target:
+    param: egfr
+    op: '>='
+    value: 60
+  label: СКФ
+- param: microalbuminuria
+  target:
+    param: microalbuminuria
+    op: ==
+    value: false
+  label: альбуминурия
+- exam: DIAG-EXAM-006
+  label: HbA1c каждые 3–6 месяцев
+deterioration:
+  any:
+  - redflag: DIAG-REDFLAG-004
+  - emergency: DIAG-EMERGENCY-004
+  - param: hba1c
+    op: '>='
+    value: 9
+on_deterioration: PROT-ROUTING-002
 sources:
 - ADA Standards of Medical Care in Diabetes, 2025
 - Клинические рекомендации «Сахарный диабет 2 типа», 2024
@@ -54,12 +102,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-02'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for, schedule, monitor. См. docs/schema.md, раздел «follow_up».
 ---
 
 # Наблюдение пациента: Сахарный диабет 2 типа

@@ -34,6 +34,47 @@ relations:
 - target: PHARM-REGIMEN-004
   type: recommends
   description: перенесено из поля related (схема v1)
+for:
+- DIAG-DISEASE-003
+- PROT-PROTOCOL-004
+schedule:
+- after: начала антибактериальной терапии
+  interval: 48–72 часа
+  purpose: оценка ответа на лечение
+- after: завершения лечения
+  interval: 6–8 недель
+  purpose: контрольная рентгенография у курильщиков и лиц старше 50 лет при сохраняющихся симптомах
+monitor:
+- param: temperature
+  target:
+    param: temperature
+    op: <
+    value: 37.8
+  label: температура тела
+- param: spo2
+  target:
+    param: spo2
+    op: '>='
+    value: 95
+  label: сатурация
+- param: rr
+  target:
+    param: rr
+    op: <
+    value: 22
+  label: частота дыхания
+- exam: DIAG-EXAM-004
+  label: контрольная рентгенография по показаниям
+deterioration:
+  any:
+  - param: spo2
+    op: <
+    value: 92
+  - param: rr
+    op: '>='
+    value: 30
+  - feature: fever.prolonged
+on_deterioration: PROT-ROUTING-004
 sources:
 - Клинические рекомендации «Внебольничная пневмония у взрослых», 2024
 - IDSA/ATS Guidelines for CAP, 2023
@@ -42,12 +83,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-02'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for, schedule, monitor. См. docs/schema.md, раздел «follow_up».
 ---
 
 # Наблюдение пациента: После перенесённой внебольничной пневмонии

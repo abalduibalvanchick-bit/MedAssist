@@ -28,6 +28,17 @@ relations:
 - target: PHARM-DRUG-020
   type: interaction_for
   description: Взаимодействие описывает риск при применении метформина с йодсодержащим контрастом.
+between:
+- PHARM-DRUG-020
+other_agent: йодсодержащие рентгеноконтрастные вещества
+severity: major
+trigger:
+  all:
+  - fact: contrast_study_planned
+  - param: egfr
+    op: <
+    value: 60
+management: при СКФ менее 60 приостановить метформин в день исследования и возобновить через 48 часов после контроля функции почек
 sources:
 - Инструкция к метформину
 - ESUR Guidelines on Contrast Media, 2018
@@ -36,12 +47,11 @@ clinical_guidelines:
 last_medical_review: '2025-02-10'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.0'
+version: '2.1'
 date_created: '2025-02-05'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: between, severity. См. docs/schema.md, раздел «interaction».
 ---
 
 # Взаимодействие: Метформин + йодсодержащие контрастные вещества

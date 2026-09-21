@@ -36,6 +36,60 @@ relations:
 - target: PROT-SCALE-002
   type: assessed_by
   description: Оценка риска влияет на выбор маршрута.
+for:
+- DIAG-DISEASE-006
+decisions:
+- when:
+    any:
+    - emergency: DIAG-EMERGENCY-004
+    - redflag: DIAG-REDFLAG-004
+    - all:
+      - param: glucose
+        op: '>'
+        value: 25
+      - fact: confusion
+  route: emergency
+  timeframe: немедленно
+  actions:
+  - вызов скорой медицинской помощи
+  - переход к алгоритму неотложной помощи при тяжёлой гипергликемии
+  next:
+  - PROT-EMERGENCY_P-002
+  explanation: Гипергликемический криз (ГГС или ДКА) угрожает жизни.
+- when:
+    any:
+    - param: hba1c
+      op: '>='
+      value: 8
+    - param: microalbuminuria
+    - param: egfr
+      op: <
+      value: 60
+    - all:
+      - param: glucose
+        op: '>='
+        value: 15
+      - any:
+        - symptom: DIAG-SYMPTOM-006
+        - fact: weight_loss
+    - scale_category: PROT-SCALE-002
+      value: very_high
+  route: urgent_referral
+  timeframe: до 2 недель
+  actions:
+  - консультация эндокринолога
+  - дообследование на осложнения
+  - коррекция сахароснижающей терапии
+  next:
+  - PROT-PROTOCOL-002
+  explanation: Значимое недостижение целевого уровня гликемии, признаки поражения почек или выраженная симптоматика.
+default:
+  route: outpatient
+  actions:
+  - плановое ведение у терапевта или эндокринолога поликлиники
+  - обучение в школе диабета
+  - ежегодный скрининг осложнений
+  explanation: Стабильное течение без признаков декомпенсации и осложнений, требующих специализированной помощи.
 sources:
 - Клинические рекомендации «Сахарный диабет 2 типа», 2024
 - ADA Standards of Medical Care in Diabetes, 2025
@@ -44,12 +98,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: decisions, default. См. docs/schema.md, раздел «routing».
 ---
 
 # Маршрутизация пациента: Сахарный диабет 2 типа

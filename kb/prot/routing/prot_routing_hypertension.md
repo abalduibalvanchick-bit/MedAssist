@@ -32,19 +32,59 @@ relations:
 - target: PROT-SCALE-001
   type: assessed_by
   description: Оценка риска влияет на выбор маршрута.
+for:
+- DIAG-DISEASE-001
+decisions:
+- when:
+    redflag: DIAG-REDFLAG-001
+  route: emergency
+  timeframe: немедленно
+  actions:
+  - вызов скорой медицинской помощи
+  - переход к алгоритму неотложной помощи при гипертоническом кризе
+  next:
+  - PROT-EMERGENCY_P-001
+  explanation: Выраженное повышение АД с признаками острого поражения органов-мишеней — осложнённый гипертонический криз.
+- when:
+    any:
+    - param: sbp
+      op: '>='
+      value: 180
+    - param: dbp
+      op: '>='
+      value: 110
+    - scale_category: PROT-SCALE-001
+      value: high
+  route: urgent_referral
+  timeframe: 24–72 часа
+  actions:
+  - консультация врача в ближайшие 24–72 часа
+  - дообследование для оценки поражения органов-мишеней
+  - пересмотр антигипертензивной терапии
+  next:
+  - PROT-PROTOCOL-001
+  explanation: АГ 3 степени без признаков острого поражения органов-мишеней или высокий сердечно-сосудистый риск требуют ускоренной оценки.
+default:
+  route: outpatient
+  actions:
+  - наблюдение у терапевта
+  - модификация образа жизни
+  - плановое назначение или коррекция терапии по клиническому протоколу
+  explanation: Стабильное повышение АД без признаков неотложного состояния и без высокого риска.
 sources:
 - Клинические рекомендации по артериальной гипертензии
+- Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.
+- Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
 clinical_guidelines:
 - Клинические рекомендации по артериальной гипертензии, 2024
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-04-09'
 date_updated: '2026-09-16'
 status: draft
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: decisions, default. См. docs/schema.md, раздел «routing».
 ---
 
 # Маршрутизация пациента: Артериальная гипертензия

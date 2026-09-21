@@ -155,9 +155,29 @@ class KnowledgeBaseValidator:
         return report
 
     # ------------------------------------------------------------- реестры
+    def _condition_card_refs(self, value: Any, acc: set[str]) -> None:
+        """Собирает ID карточек, упомянутые в атомах условий внутри произвольной структуры."""
+        if isinstance(value, dict):
+            for atom in ("symptom", "disease", "redflag", "emergency", "profile", "scale", "scale_category", "exam_result"):
+                target = value.get(atom)
+                if isinstance(target, str) and self.schema.id_pattern.match(target):
+                    acc.add(target)
+            for child in value.values():
+                self._condition_card_refs(child, acc)
+        elif isinstance(value, list):
+            for child in value:
+                self._condition_card_refs(child, acc)
+
     def _collect_registries(self) -> None:
         self._known_ids = {card.id for card in self.repository.cards if card.id}
         self._cards_by_id = {card.id: card for card in self.repository.cards if card.id}
+        self._condition_refs: set[str] = set()
+        for card in self.repository.cards:
+            refs: set[str] = set()
+            for name in self.schema.machine_fields(card.category):
+                self._condition_card_refs(card.metadata.get(name), refs)
+            refs.discard(card.id)
+            self._condition_refs |= refs
         self._known_features = set()
         self._exam_values = {}
         self._scale_categories = {}
@@ -292,6 +312,11 @@ class KnowledgeBaseValidator:
 
         self._validate_identity(card, report)
 
+        known_fields = set(self.schema.common_required) | set(self.schema.common_optional) | set(self.schema.machine_fields(card.category))
+        for key in card.metadata:
+            if key not in known_fields:
+                self._add(report, card, "WARNING", "UNKNOWN_FIELD", f"Поле {key} не описано в схеме для категории {card.category}.")
+
         for name in ("urgency", "status", "access_level"):
             self._check_enum(card, report, name, scalar=True)
         for name in ("body_system", "age_group", "target_specialist"):
@@ -381,11 +406,55 @@ class KnowledgeBaseValidator:
         for field_name, field_spec in fields.items():
             if field_name in card.metadata:
                 self._validate_machine_value(card, report, field_name, card.metadata[field_name], field_spec)
+        if card.category == "scale":
+            self._validate_scale(card, report)
         if card.status == "approved" and self.schema.approved_requires_machine_layer:
             missing = [f for f in spec.get("required_for_approved", []) if card.metadata.get(f) in (None, [], {}, "")]
             if missing:
                 self._add(report, card, "ERROR", "APPROVED_WITHOUT_MACHINE_LAYER",
                           f"status: approved требует заполненных полей машиночитаемого слоя: {missing}.")
+
+    def _validate_scale(self, card: KnowledgeCard, report: ValidationReport) -> None:
+        """Проверяет, что диапазоны интерпретации покрывают все достижимые суммы без пересечений."""
+        params = card.metadata.get("parameters") or []
+        ranges = card.metadata.get("interpretation") or []
+        if not params or not ranges:
+            return
+        skip = (card.metadata.get("missing_policy") or "skip") == "skip"
+        lo = hi = 0.0
+        for i, prm in enumerate(params):
+            if not isinstance(prm, dict):
+                return
+            has_opts, has_from = bool(prm.get("options")), bool(prm.get("points_from"))
+            if has_opts == has_from:
+                self._add(report, card, "ERROR", "SCALE_PARAM_SOURCE", f"parameters[{i}]: нужно ровно одно из options или points_from.")
+                return
+            if has_opts:
+                pts = [float(o.get("points", 0)) for o in prm["options"] if isinstance(o, dict)]
+            else:
+                spec = self.schema.parameters.get(prm["points_from"], {})
+                if "min" not in spec or "max" not in spec:
+                    self._add(report, card, "ERROR", "SCALE_PARAM_RANGE", f"parameters[{i}]: у параметра {prm['points_from']} в схеме не задан диапазон min/max.")
+                    return
+                pts = [float(spec["min"]), float(spec["max"])]
+            if skip:
+                pts.append(0.0)
+            lo += min(pts)
+            hi += max(pts)
+        try:
+            spans = sorted(((float(r["min"]), None if r.get("max") is None else float(r["max"])) for r in ranges), key=lambda x: x[0])
+        except (KeyError, TypeError, ValueError):
+            return
+        if spans[0][0] > lo:
+            self._add(report, card, "ERROR", "SCALE_COVERAGE", f"Минимальная достижимая сумма {lo:g} не попадает ни в один диапазон интерпретации.")
+        for (a_min, a_max), (b_min, _b_max) in zip(spans, spans[1:]):
+            if a_max is None or a_max >= b_min:
+                self._add(report, card, "ERROR", "SCALE_OVERLAP", f"Диапазоны интерпретации пересекаются в районе {b_min:g}.")
+            elif b_min - a_max > 1:
+                self._add(report, card, "ERROR", "SCALE_GAP", f"Разрыв между диапазонами {a_max:g} и {b_min:g}.")
+        last_max = spans[-1][1]
+        if last_max is not None and last_max < hi:
+            self._add(report, card, "ERROR", "SCALE_COVERAGE", f"Максимальная достижимая сумма {hi:g} не покрыта интерпретацией (верхняя граница {last_max:g}).")
 
     def _validate_machine_value(self, card: KnowledgeCard, report: ValidationReport, path: str, value: Any, spec: dict[str, Any]) -> None:
         ftype = str(spec.get("type", "")).strip()
@@ -523,7 +592,8 @@ class KnowledgeBaseValidator:
         min_chars = self.schema.min_content_chars(card.category) if card.schema_version >= 2 else STUB_MIN_CONTENT_CHARS
         if any(marker in text for marker in STUB_MARKERS) or len(card.content) < min_chars:
             self._add(report, card, "WARNING", "STUB_CARD", f"Карточка выглядит заглушкой (длина {len(card.content)} символов).")
-        if card.id and not self.repository.index.inbound.get(card.id) and card.category not in {"disclaimer", "cross"}:
+        if card.id and not self.repository.index.inbound.get(card.id) and card.id not in self._condition_refs \
+                and card.category not in {"disclaimer", "cross"}:
             self._add(report, card, "INFO", "ORPHAN", "На карточку не ссылается ни один документ.")
 
     # -------------------------------------------------------------- правила

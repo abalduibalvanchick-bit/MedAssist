@@ -43,6 +43,50 @@ relations:
 - target: PHARM-DRUG-002
   type: recommends
   description: Контроль переносимости и эффективности препарата.
+- target: DIAG-EXAM-002
+  type: uses_exam
+  description: выведено из машиночитаемого слоя (monitor)
+for:
+- DIAG-DISEASE-001
+- PROT-PROTOCOL-001
+schedule:
+- after: начала или изменения терапии
+  interval: 1–3 месяца
+  purpose: оценка эффективности и переносимости
+- after: достижения целевого АД
+  interval: 3–6 месяцев
+  purpose: поддержание контроля
+- after: каждого года наблюдения
+  interval: 12 месяцев
+  purpose: ЭКГ, креатинин, СКФ, калий, липиды
+monitor:
+- param: sbp
+  target:
+    param: sbp
+    op: <
+    value: 130
+  label: систолическое АД
+- param: dbp
+  target:
+    param: dbp
+    op: <
+    value: 80
+  label: диастолическое АД
+- param: egfr
+  target:
+    param: egfr
+    op: '>='
+    value: 60
+  label: функция почек на фоне иАПФ/БРА
+- exam: DIAG-EXAM-002
+  label: ЭКГ ежегодно
+deterioration:
+  any:
+  - param: sbp
+    op: '>='
+    value: 180
+  - redflag: DIAG-REDFLAG-001
+on_deterioration: PROT-ROUTING-001
 sources:
 - Клинические рекомендации по артериальной гипертензии
 - 2023 ESH Guidelines for the management of arterial hypertension
@@ -52,12 +96,11 @@ clinical_guidelines:
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-04-09'
 date_updated: '2026-09-16'
 status: draft
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for, schedule, monitor. См. docs/schema.md, раздел «follow_up».
 ---
 
 # Наблюдение пациента: Артериальная гипертензия

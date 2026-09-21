@@ -36,6 +36,62 @@ relations:
 - target: PROT-SCALE-005
   type: assessed_by
   description: Результаты ACT влияют на маршрут (шаг вверх/вниз).
+for:
+- DIAG-DISEASE-004
+decisions:
+- when:
+    any:
+    - redflag: DIAG-REDFLAG-006
+    - emergency: DIAG-EMERGENCY-005
+    - param: pef_percent
+      op: <
+      value: 50
+  route: emergency
+  timeframe: немедленно
+  actions:
+  - вызов скорой медицинской помощи
+  - переход к алгоритму при тяжёлом обострении астмы
+  next:
+  - PROT-EMERGENCY_P-005
+  explanation: Тяжёлое жизнеугрожающее обострение бронхиальной астмы.
+- when:
+    all:
+    - param: pef_percent
+      op: <
+      value: 75
+    - feature: wheezing.reliever_unresponsive
+  route: hospitalization
+  timeframe: в течение суток
+  actions:
+  - госпитализация в пульмонологическое отделение
+  - системные глюкокортикостероиды
+  - кислородотерапия по показаниям
+  next:
+  - PROT-PROTOCOL-005
+  explanation: Обострение, не купирующееся ингаляциями короткодействующих β2-агонистов.
+- when:
+    any:
+    - scale_category: PROT-SCALE-005
+      value: partly_controlled
+    - scale_category: PROT-SCALE-005
+      value: uncontrolled
+    - fact: frequent_exacerbations
+  route: urgent_referral
+  timeframe: 2–4 недели
+  actions:
+  - направление к пульмонологу или аллергологу
+  - проверка техники ингаляции и приверженности
+  - рассмотреть шаг вверх терапии
+  next:
+  - PROT-PROTOCOL-005
+  explanation: Неполный контроль астмы или частые обострения.
+default:
+  route: outpatient
+  actions:
+  - плановое наблюдение 1 раз в 3–6 месяцев
+  - контроль техники ингаляции
+  - вакцинация против гриппа и пневмококка
+  explanation: Хороший контроль астмы без тяжёлых обострений.
 sources:
 - GINA Global Strategy for Asthma Management and Prevention, 2025
 - Клинические рекомендации «Бронхиальная астма», 2024
@@ -44,12 +100,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: decisions, default. См. docs/schema.md, раздел «routing».
 ---
 
 # Маршрутизация пациента: Бронхиальная астма

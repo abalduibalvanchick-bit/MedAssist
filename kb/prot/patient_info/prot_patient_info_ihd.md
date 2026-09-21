@@ -28,6 +28,14 @@ relations:
 - target: PROT-ROUTING-003
   type: has_routing
   description: Памятка содержит признаки, при которых нужно изменить маршрут обращения.
+for:
+- DIAG-DISEASE-002
+- PROT-PROTOCOL-003
+seek_help_when:
+- боль в груди длится более 20 минут, не проходит после отдыха или нитроглицерина
+- боль стала возникать при меньшей нагрузке или в покое (нестабильная стенокардия)
+- появились сильная одышка, холодный пот, слабость, тошнота
+- потеря сознания
 sources:
 - Клинические рекомендации по стабильной ИБС, 2024
 - 2023 ESC Guidelines for CCS (адаптировано)
@@ -36,12 +44,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for. См. docs/schema.md, раздел «patient_info».
 ---
 
 # Памятка для пациента: Ишемическая болезнь сердца (стенокардия)

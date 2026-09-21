@@ -32,6 +32,28 @@ relations:
 - target: PHARM-REGIMEN-001
   type: dose_adjustment_for
   description: Дозирование учитывается при выборе схемы лечения АГ.
+- target: GLB-PROFILE-003
+  type: applies_to_profile
+  description: коррекция доз для пациентов со сниженной СКФ
+rules:
+- agent: PHARM-DRUG-001
+  when:
+    param: egfr
+    op: <
+    value: 30
+  adjustment: начальная доза 2,5 мг/сут, контроль калия и креатинина
+- agent: PHARM-DRUG-002
+  when:
+    param: egfr
+    op: <
+    value: 30
+  adjustment: коррекция дозы не требуется
+- agent: PHARM-DRUGCLASS-004
+  when:
+    param: egfr
+    op: <
+    value: 30
+  adjustment: тиазидные диуретики неэффективны, заменить петлевым диуретиком
 sources:
 - KDIGO 2024 CKD Guidelines
 - Инструкции к препаратам
@@ -40,12 +62,11 @@ clinical_guidelines:
 last_medical_review: '2025-03-25'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.0'
+version: '2.2'
 date_created: '2025-03-20'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: rules. См. docs/schema.md, раздел «dosing».
 ---
 
 # Коррекция доз антигипертензивных препаратов при хронической болезни почек

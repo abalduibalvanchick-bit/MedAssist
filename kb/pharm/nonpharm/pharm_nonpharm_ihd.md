@@ -32,6 +32,10 @@ relations:
 - target: PHARM-REGIMEN-003
   type: included_in
   description: Немедикаментозные меры неотъемлемо дополняют терапию.
+for:
+- DIAG-DISEASE-002
+contraindications:
+- redflag: DIAG-REDFLAG-005
 sources:
 - 2023 ESC Guidelines for the management of chronic coronary syndromes
 - 2023 AHA/ACC Chronic Coronary Disease Guideline
@@ -40,12 +44,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for. См. docs/schema.md, раздел «nonpharm».
 ---
 
 # Немедикаментозное лечение ишемической болезни сердца

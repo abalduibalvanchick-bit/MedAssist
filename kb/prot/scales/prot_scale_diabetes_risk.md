@@ -33,6 +33,188 @@ relations:
 - target: PHARM-REGIMEN-002
   type: recommends
   description: Результат шкалы помогает выбрать интенсивность терапии.
+parameters:
+- code: age
+  label: Возраст
+  options:
+  - when:
+      param: age
+      op: <
+      value: 55
+    points: 0
+  - when:
+      param: age
+      op: between
+      value:
+      - 55
+      - 64
+    points: 1
+  - when:
+      param: age
+      op: '>='
+      value: 65
+    points: 2
+- code: duration
+  label: Длительность диабета
+  options:
+  - when:
+      param: diabetes_duration_years
+      op: <
+      value: 5
+    points: 0
+  - when:
+      all:
+      - param: diabetes_duration_years
+        op: '>='
+        value: 5
+      - param: diabetes_duration_years
+        op: <
+        value: 10
+    points: 1
+  - when:
+      param: diabetes_duration_years
+      op: '>='
+      value: 10
+    points: 2
+- code: bmi
+  label: Индекс массы тела
+  options:
+  - when:
+      param: bmi
+      op: <
+      value: 25
+    points: 0
+  - when:
+      all:
+      - param: bmi
+        op: '>='
+        value: 25
+      - param: bmi
+        op: <
+        value: 30
+    points: 1
+  - when:
+      param: bmi
+      op: '>='
+      value: 30
+    points: 2
+- code: hba1c
+  label: HbA1c
+  options:
+  - when:
+      param: hba1c
+      op: <
+      value: 7
+    points: 0
+  - when:
+      all:
+      - param: hba1c
+        op: '>='
+        value: 7
+      - param: hba1c
+        op: <
+        value: 8
+    points: 1
+  - when:
+      param: hba1c
+      op: '>='
+      value: 8
+    points: 2
+- code: sbp
+  label: Систолическое АД
+  options:
+  - when:
+      param: sbp
+      op: <
+      value: 130
+    points: 0
+  - when:
+      param: sbp
+      op: between
+      value:
+      - 130
+      - 139
+    points: 1
+  - when:
+      param: sbp
+      op: '>='
+      value: 140
+    points: 2
+- code: smoking
+  label: Курение
+  options:
+  - when:
+      fact: smoker
+    points: 1
+  - when:
+      not:
+        fact: smoker
+    points: 0
+- code: albuminuria
+  label: Альбуминурия
+  options:
+  - when:
+      param: microalbuminuria
+    points: 2
+  - when:
+      param: microalbuminuria
+      op: ==
+      value: false
+    points: 0
+- code: egfr
+  label: СКФ
+  options:
+  - when:
+      param: egfr
+      op: '>='
+      value: 60
+    points: 0
+  - when:
+      all:
+      - param: egfr
+        op: '>='
+        value: 45
+      - param: egfr
+        op: <
+        value: 60
+    points: 1
+  - when:
+      param: egfr
+      op: <
+      value: 45
+    points: 2
+- code: cv_event
+  label: Сердечно-сосудистое событие в анамнезе
+  options:
+  - when:
+      fact: prior_cv_event
+    points: 3
+  - when:
+      not:
+        fact: prior_cv_event
+    points: 0
+interpretation:
+- min: 0
+  max: 4
+  category: low
+  label: низкий риск
+  action: PROT-FOLLOW_UP-002
+- min: 5
+  max: 9
+  category: moderate
+  label: умеренный риск
+  action: PROT-PROTOCOL-002
+- min: 10
+  max: 14
+  category: high
+  label: высокий риск
+  action: PROT-PROTOCOL-002
+- min: 15
+  max: null
+  category: very_high
+  label: очень высокий риск
+  action: PROT-ROUTING-002
+missing_policy: skip
 sources:
 - ADA Standards of Medical Care in Diabetes, 2025
 - ESC/EASD Guidelines on diabetes, 2023
@@ -41,12 +223,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-02'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: parameters, interpretation. См. docs/schema.md, раздел «scale».
 ---
 
 # Клиническая шкала: Оценка риска осложнений при сахарном диабете 2 типа

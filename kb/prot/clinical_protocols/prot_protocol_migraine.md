@@ -49,6 +49,68 @@ relations:
 - target: PROT-SCREENING-006
   type: has_screening
   description: перенесено из поля related (схема v1)
+for:
+- DIAG-DISEASE-005
+entry:
+  any:
+  - disease: DIAG-DISEASE-005
+  - fact: known_migraine
+steps:
+- id: exclude_secondary
+  action: неврологический осмотр, исключение красных флагов вторичной головной боли
+  refs:
+  - DIAG-EXAM-009
+  - DIAG-REDFLAG-002
+- id: severity
+  action: оценка дезадаптации по MIDAS и числа дней с головной болью
+  refs:
+  - PROT-SCALE-006
+- id: acute
+  action: 'купирование приступа: НПВС или триптаны'
+  refs:
+  - PHARM-REGIMEN-006
+  - PHARM-DRUGCLASS-010
+  - PHARM-DRUGCLASS-022
+- id: prophylaxis
+  action: профилактическая терапия при 4 и более днях мигрени в месяц или выраженной дезадаптации
+  when:
+    any:
+    - param: migraine_days_per_month
+      op: '>='
+      value: 4
+    - scale: PROT-SCALE-006
+      op: '>='
+      value: 11
+  refs:
+  - PHARM-REGIMEN-006
+- id: triggers
+  action: дневник головной боли, контроль триггеров, профилактика лекарственного абузуса
+  refs:
+  - PHARM-NONPHARM-006
+- id: follow_up
+  action: оценка эффекта профилактики через 2–3 месяца
+  refs:
+  - PROT-FOLLOW_UP-006
+branches:
+- when:
+    redflag: DIAG-REDFLAG-002
+  then: PROT-ROUTING-006
+  explanation: вторичная головная боль — экстренный маршрут
+- when:
+    emergency: DIAG-EMERGENCY-006
+  then: PROT-EMERGENCY_P-006
+  explanation: мигренозный статус
+- when:
+    scale: PROT-SCALE-006
+    op: '>='
+    value: 11
+  then: PROT-ROUTING-006
+  explanation: умеренная или тяжёлая дезадаптация
+targets:
+- param: migraine_days_per_month
+  op: <
+  value: 4
+  label: менее 4 дней мигрени в месяц
 sources:
 - Клинические рекомендации «Мигрень», 2024
 - AHS Guidelines for Migraine
@@ -57,12 +119,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for, entry, steps. См. docs/schema.md, раздел «protocol».
 ---
 
 # Клинический протокол: Мигрень

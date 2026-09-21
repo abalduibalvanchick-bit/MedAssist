@@ -31,6 +31,16 @@ relations:
 - target: PHARM-REGIMEN-005
   type: included_in
   description: Входят в схемы лечения астмы для всех ступеней.
+representatives:
+- сальбутамол
+- фенотерол
+contraindications:
+- when:
+    param: hr
+    op: '>'
+    value: 140
+  absolute: false
+  explanation: выраженная тахикардия
 sources:
 - GINA Global Strategy for Asthma Management and Prevention, 2025
 - Клинические рекомендации «Бронхиальная астма», 2024
@@ -39,12 +49,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: members. См. docs/schema.md, раздел «drugclass».
 ---
 
 # Короткодействующие β2-агонисты (SABA)

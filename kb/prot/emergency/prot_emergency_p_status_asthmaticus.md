@@ -40,6 +40,43 @@ relations:
 - target: PHARM-REGIMEN-005
   type: recommends
   description: Коррекция ступени после выписки.
+- target: PHARM-DRUGCLASS-017
+  type: recommends
+  description: выведено из машиночитаемого слоя (drugs)
+criteria:
+  any:
+  - emergency: DIAG-EMERGENCY-005
+  - redflag: DIAG-REDFLAG-006
+phases:
+- window: 0–20 мин
+  steps:
+  - кислородотерапия с целевой SpO₂ 92–96 %
+  - сальбутамол 2,5–5 мг и ипратропия бромид 0,5 мг через небулайзер
+  - 'системные глюкокортикостероиды: преднизолон 40–50 мг внутрь или метилпреднизолон 40–80 мг внутривенно'
+- window: 20–60 мин
+  steps:
+  - повторные ингаляции каждые 20 минут в течение первого часа
+  - оценка ПСВ, SpO₂, ЧДД, способности говорить
+  - при отсутствии эффекта — магния сульфат 2 г внутривенно и перевод в ОРИТ
+- window: далее
+  steps:
+  - госпитализация при сохранении тяжёлых признаков
+  - подготовка к интубации при утомлении, спутанности сознания, «немом лёгком»
+drugs:
+- drug: PHARM-DRUGCLASS-017
+  dose: сальбутамол 2,5–5 мг через небулайзер каждые 20 минут в течение первого часа
+  route: ингаляционно
+stabilization:
+  all:
+  - param: spo2
+    op: '>='
+    value: 92
+  - param: pef_percent
+    op: '>='
+    value: 60
+  - not:
+      feature: dyspnea.unable_full_sentences
+next: PROT-ROUTING-005
 sources:
 - GINA Global Strategy for Asthma Management and Prevention, 2025
 - Клинические рекомендации «Бронхиальная астма», 2024
@@ -48,12 +85,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: criteria, phases. См. docs/schema.md, раздел «emergency_p».
 ---
 
 # Алгоритм неотложной помощи: Тяжёлое обострение бронхиальной астмы / Астматический статус

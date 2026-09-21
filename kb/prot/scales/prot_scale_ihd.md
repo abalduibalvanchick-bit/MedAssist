@@ -34,6 +34,105 @@ relations:
 - target: PHARM-REGIMEN-003
   type: recommends
   description: Категория риска влияет на выбор схемы лечения.
+parameters:
+- code: ccs
+  label: ФК стенокардии III–IV
+  options:
+  - when:
+      param: ccs_class
+      op: '>='
+      value: 3
+    points: 2
+  - when:
+      param: ccs_class
+      op: <
+      value: 3
+    points: 0
+- code: prior_mi
+  label: Перенесённый инфаркт миокарда
+  options:
+  - when:
+      fact: prior_mi
+    points: 1
+  - when:
+      not:
+        fact: prior_mi
+    points: 0
+- code: heart_failure
+  label: Сердечная недостаточность
+  options:
+  - when:
+      fact: heart_failure
+    points: 2
+  - when:
+      not:
+        fact: heart_failure
+    points: 0
+- code: diabetes
+  label: Сахарный диабет
+  options:
+  - when:
+      any:
+      - disease: DIAG-DISEASE-006
+      - fact: known_diabetes
+    points: 1
+  - when:
+      not:
+        any:
+        - disease: DIAG-DISEASE-006
+        - fact: known_diabetes
+    points: 0
+- code: lvef
+  label: ФВ ЛЖ менее 45 %
+  options:
+  - when:
+      param: lvef
+      op: <
+      value: 45
+    points: 2
+  - when:
+      param: lvef
+      op: '>='
+      value: 45
+    points: 0
+- code: troponin
+  label: Положительный высокочувствительный тропонин
+  options:
+  - when:
+      param: troponin_positive
+    points: 1
+  - when:
+      param: troponin_positive
+      op: ==
+      value: false
+    points: 0
+- code: refractory
+  label: Рефрактерная стенокардия
+  options:
+  - when:
+      fact: refractory_angina
+    points: 1
+  - when:
+      not:
+        fact: refractory_angina
+    points: 0
+interpretation:
+- min: 0
+  max: 1
+  category: low
+  label: низкий риск
+  action: PROT-PROTOCOL-003
+- min: 2
+  max: 3
+  category: moderate
+  label: умеренный риск
+  action: PROT-ROUTING-003
+- min: 4
+  max: null
+  category: high
+  label: высокий риск
+  action: PROT-ROUTING-003
+missing_policy: skip
 sources:
 - 2023 ESC Guidelines for CCS
 - Canadian Cardiovascular Society (CCS) grading of angina pectoris
@@ -42,12 +141,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: parameters, interpretation. См. docs/schema.md, раздел «scale».
 ---
 
 # Клиническая шкала: Функциональный класс стенокардии (CCS) и риск осложнений при ИБС

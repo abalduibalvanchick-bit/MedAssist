@@ -33,19 +33,68 @@ relations:
 - target: PROT-SCALE-006
   type: assessed_by
   description: Высокие баллы MIDAS направляют к неврологу.
+for:
+- DIAG-DISEASE-005
+decisions:
+- when:
+    any:
+    - redflag: DIAG-REDFLAG-002
+    - symptom: DIAG-SYMPTOM-010
+    - fact: confusion
+  route: emergency
+  timeframe: немедленно
+  actions:
+  - вызов скорой медицинской помощи
+  - экстренная нейровизуализация для исключения субарахноидального кровоизлияния и инсульта
+  explanation: Громоподобная головная боль, очаговый дефицит или нарушение сознания — признаки вторичной головной боли.
+- when:
+    emergency: DIAG-EMERGENCY-006
+  route: emergency
+  timeframe: в течение часов
+  actions:
+  - обращение за неотложной помощью
+  - переход к алгоритму при мигренозном статусе
+  next:
+  - PROT-EMERGENCY_P-006
+  explanation: Приступ мигрени длительностью более 72 часов.
+- when:
+    any:
+    - scale: PROT-SCALE-006
+      op: '>='
+      value: 11
+    - param: migraine_days_per_month
+      op: '>='
+      value: 4
+  route: urgent_referral
+  timeframe: 2–4 недели
+  actions:
+  - направление к неврологу
+  - решение о профилактической терапии
+  - дневник головной боли
+  next:
+  - PROT-PROTOCOL-006
+  explanation: Умеренная или тяжёлая дезадаптация по MIDAS или 4 и более дней мигрени в месяц.
+default:
+  route: outpatient
+  actions:
+  - купирующая терапия приступов
+  - обучение пациента, контроль триггеров
+  - наблюдение 1 раз в 6–12 месяцев
+  explanation: Редкие приступы, хорошо купирующиеся, без неврологического дефицита.
 sources:
 - AHS Guidelines for Migraine
+- Eigenbrodt A.K. et al. Diagnosis and management of migraine in ten steps. Nat Rev Neurol. 2021;17:501–514.
+- Клинические рекомендации «Мигрень». Минздрав РФ, 2024.
 clinical_guidelines:
 - AHS Migraine Guidelines
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: decisions, default. См. docs/schema.md, раздел «routing».
 ---
 
 # Маршрутизация пациента: Мигрень

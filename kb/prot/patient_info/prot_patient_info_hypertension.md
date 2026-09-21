@@ -27,19 +27,30 @@ relations:
 - target: PROT-ROUTING-001
   type: has_routing
   description: Памятка содержит признаки, при которых нужно изменить маршрут обращения.
+for:
+- DIAG-DISEASE-001
+- PROT-PROTOCOL-001
+seek_help_when:
+- очень высокое давление
+- сильная головная боль
+- боль в груди
+- одышка
+- нарушение зрения или речи
+- потеря сознания
 sources:
 - Клинические рекомендации по артериальной гипертензии
+- Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
+- 'NHS. High blood pressure (hypertension): patient information. National Health Service, 2023.'
 clinical_guidelines:
 - Клинические рекомендации по артериальной гипертензии, 2024
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.2'
 date_created: '2026-04-09'
 date_updated: '2026-09-16'
 status: draft
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for. См. docs/schema.md, раздел «patient_info».
 ---
 
 # Памятка для пациента: Повышенное артериальное давление

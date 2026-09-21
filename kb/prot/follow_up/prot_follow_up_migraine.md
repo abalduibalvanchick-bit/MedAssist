@@ -33,19 +33,44 @@ relations:
 - target: PROT-SCALE-006
   type: assessed_by
   description: Переоценка тяжести.
+for:
+- DIAG-DISEASE-005
+- PROT-PROTOCOL-006
+schedule:
+- after: начала профилактической терапии
+  interval: 2–3 месяца
+  purpose: оценка эффективности профилактики
+- after: стабилизации
+  interval: 6–12 месяцев
+  purpose: контроль частоты приступов и потребности в обезболивающих
+monitor:
+- param: migraine_days_per_month
+  target:
+    param: migraine_days_per_month
+    op: <
+    value: 4
+  label: дни с мигренью в месяц
+deterioration:
+  any:
+  - param: migraine_days_per_month
+    op: '>='
+    value: 15
+  - redflag: DIAG-REDFLAG-002
+  - feature: headache.new_pattern
+on_deterioration: PROT-ROUTING-006
 sources:
 - AHS Guidelines for Migraine
+- Eigenbrodt A.K. et al. Diagnosis and management of migraine in ten steps. Nat Rev Neurol. 2021;17:501–514.
 clinical_guidelines:
 - AHS Migraine Guidelines
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for, schedule, monitor. См. docs/schema.md, раздел «follow_up».
 ---
 
 # Наблюдение пациента: Мигрень

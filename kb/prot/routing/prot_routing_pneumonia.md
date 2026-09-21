@@ -35,6 +35,60 @@ relations:
 - target: PROT-SCALE-004
   type: assessed_by
   description: Результаты CURB-65 определяют маршрут.
+for:
+- DIAG-DISEASE-003
+decisions:
+- when:
+    any:
+    - scale: PROT-SCALE-004
+      op: '>='
+      value: 3
+    - param: spo2
+      op: <
+      value: 90
+    - redflag: DIAG-REDFLAG-003
+    - fact: hypotension
+  route: emergency
+  timeframe: немедленно
+  actions:
+  - экстренная госпитализация в ОРИТ
+  - переход к алгоритму при тяжёлой пневмонии
+  next:
+  - PROT-EMERGENCY_P-004
+  explanation: CURB-65 3 балла и более, выраженная гипоксемия или гипотензия — тяжёлая пневмония.
+- when:
+    any:
+    - scale: PROT-SCALE-004
+      op: ==
+      value: 2
+    - param: spo2
+      op: <
+      value: 92
+    - profile: GLB-PROFILE-005
+    - all:
+      - param: age
+        op: '>='
+        value: 65
+      - any:
+        - fact: known_diabetes
+        - fact: heart_failure
+        - fact: known_asthma
+  route: hospitalization
+  timeframe: в течение суток
+  actions:
+  - госпитализация в терапевтическое или пульмонологическое отделение
+  - парентеральная антибактериальная терапия
+  - оценка эффекта через 48–72 часа
+  next:
+  - PROT-PROTOCOL-004
+  explanation: CURB-65 2 балла, SpO₂ ниже 92 %, иммунодефицит или пожилой возраст с коморбидностью.
+default:
+  route: outpatient
+  actions:
+  - амбулаторная пероральная антибактериальная терапия
+  - контроль через 48–72 часа
+  - обильное питьё, режим
+  explanation: CURB-65 0–1 балл, нет гипоксемии и факторов риска неблагоприятного исхода.
 sources:
 - Клинические рекомендации «Внебольничная пневмония у взрослых», 2024
 - IDSA/ATS Guidelines for CAP, 2023
@@ -43,12 +97,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-02'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: decisions, default. См. docs/schema.md, раздел «routing».
 ---
 
 # Маршрутизация пациента: Внебольничная пневмония

@@ -38,6 +38,37 @@ relations:
 - target: PHARM-REGIMEN-005
   type: recommends
   description: Коррекция ступени терапии в зависимости от контроля.
+for:
+- DIAG-DISEASE-004
+- PROT-PROTOCOL-005
+schedule:
+- after: изменения терапии
+  interval: 1–3 месяца
+  purpose: оценка контроля по ACT
+- after: достижения контроля
+  interval: 3–6 месяцев
+  purpose: решение о шаге вниз
+- after: каждого года наблюдения
+  interval: 12 месяцев
+  purpose: спирометрия
+monitor:
+- param: pef_percent
+  target:
+    param: pef_percent
+    op: '>='
+    value: 80
+  label: пиковая скорость выдоха
+- exam: DIAG-EXAM-008
+  label: спирометрия ежегодно
+deterioration:
+  any:
+  - param: pef_percent
+    op: <
+    value: 60
+  - scale_category: PROT-SCALE-005
+    value: uncontrolled
+  - fact: frequent_exacerbations
+on_deterioration: PROT-ROUTING-005
 sources:
 - GINA Global Strategy for Asthma Management and Prevention, 2025
 - Клинические рекомендации «Бронхиальная астма», 2024
@@ -46,12 +77,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for, schedule, monitor. См. docs/schema.md, раздел «follow_up».
 ---
 
 # Наблюдение пациента: Бронхиальная астма

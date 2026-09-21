@@ -32,20 +32,63 @@ relations:
 - target: PHARM-REGIMEN-006
   type: recommends
   description: перенесено из поля related (схема v1)
+parameters:
+- code: q1
+  label: Пропущенные дни работы/учёбы
+  points_from: midas_q1
+- code: q2
+  label: Дни сниженной продуктивности на работе
+  points_from: midas_q2
+- code: q3
+  label: Пропущенные дни домашней работы
+  points_from: midas_q3
+- code: q4
+  label: Дни сниженной продуктивности дома
+  points_from: midas_q4
+- code: q5
+  label: Пропущенные социальные мероприятия
+  points_from: midas_q5
+interpretation:
+- min: 0
+  max: 5
+  category: minimal
+  label: минимальная степень (I)
+  action: PROT-FOLLOW_UP-006
+- min: 6
+  max: 10
+  category: mild
+  label: лёгкая степень (II)
+  action: PROT-PROTOCOL-006
+- min: 11
+  max: 20
+  category: moderate
+  label: умеренная степень (III)
+  action: PROT-PROTOCOL-006
+- min: 21
+  max: 40
+  category: severe
+  label: тяжёлая степень (IV)
+  action: PROT-ROUTING-006
+- min: 41
+  max: null
+  category: very_severe
+  label: очень тяжёлая степень
+  action: PROT-ROUTING-006
+missing_policy: fail
 sources:
 - AHS Guidelines for Migraine
 - MIDAS questionnaire validation
+- Stewart W.F. et al. Development and testing of the Migraine Disability Assessment (MIDAS) Questionnaire. Neurology. 2001;56(6 Suppl 1):S20–S28.
 clinical_guidelines:
 - AHS Migraine Guidelines
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: parameters, interpretation. См. docs/schema.md, раздел «scale».
 ---
 
 # Шкала MIDAS для оценки степени тяжести мигрени

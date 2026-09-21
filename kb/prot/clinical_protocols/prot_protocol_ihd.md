@@ -48,6 +48,71 @@ relations:
 - target: PROT-SCREENING-003
   type: has_screening
   description: Скрининг ИБС.
+for:
+- DIAG-DISEASE-002
+entry:
+  any:
+  - disease: DIAG-DISEASE-002
+  - fact: known_ihd
+  - all:
+    - feature: chest_pain.exertional
+    - feature: chest_pain.relieved_by_rest
+steps:
+- id: ecg
+  action: ЭКГ в покое
+  refs:
+  - DIAG-EXAM-002
+- id: exclude_acs
+  action: при впервые возникшей или прогрессирующей боли исключить ОКС
+  when:
+    feature: chest_pain.new_onset
+  refs:
+  - DIAG-EXAM-007
+- id: classify
+  action: определить функциональный класс стенокардии и риск
+  refs:
+  - PROT-SCALE-003
+- id: prevention
+  action: антиагрегант и статин высокой интенсивности
+  refs:
+  - PHARM-REGIMEN-003
+  - PHARM-DRUGCLASS-011
+  - PHARM-DRUGCLASS-012
+- id: antianginal
+  action: антиангинальная терапия, препараты первой линии — β-адреноблокаторы или БКК
+  refs:
+  - PHARM-DRUGCLASS-020
+  - PHARM-DRUGCLASS-003
+- id: lifestyle
+  action: отказ от курения, физическая реабилитация, контроль факторов риска
+  refs:
+  - PHARM-NONPHARM-003
+- id: follow_up
+  action: наблюдение 1 раз в 6–12 месяцев
+  refs:
+  - PROT-FOLLOW_UP-003
+branches:
+- when:
+    redflag: DIAG-REDFLAG-005
+  then: PROT-EMERGENCY_P-003
+  explanation: нестабильная стенокардия
+- when:
+    any:
+    - scale_category: PROT-SCALE-003
+      value: moderate
+    - scale_category: PROT-SCALE-003
+      value: high
+  then: PROT-ROUTING-003
+  explanation: умеренный или высокий риск — консультация кардиолога
+targets:
+- param: hr
+  op: <
+  value: 70
+  label: ЧСС покоя менее 70 уд/мин на фоне антиангинальной терапии
+- param: sbp
+  op: <
+  value: 130
+  label: САД менее 130 мм рт. ст.
 sources:
 - Клинические рекомендации «Стабильная ишемическая болезнь сердца», 2024
 - 2023 ESC Guidelines for the management of chronic coronary syndromes
@@ -56,12 +121,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for, entry, steps. См. docs/schema.md, раздел «protocol».
 ---
 
 # Клинический протокол: Ишемическая болезнь сердца (хроническая)

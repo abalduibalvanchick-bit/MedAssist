@@ -40,6 +40,27 @@ relations:
 - target: PHARM-NONPHARM-006
   type: includes
   description: Немедикаментозные меры для профилактики.
+for:
+- DIAG-DISEASE-005
+lines:
+- line: 1
+  options:
+  - agent: PHARM-NONPHARM-006
+    note: всем пациентам
+  - agent: PHARM-DRUGCLASS-010
+    note: купирование приступа
+- line: 2
+  options:
+  - agent: PHARM-DRUGCLASS-022
+    note: при неэффективности НПВС
+- line: 3
+  options:
+  - agent: PHARM-DRUGCLASS-020
+    when:
+      param: migraine_days_per_month
+      op: '>='
+      value: 4
+    note: профилактика при 4 и более днях мигрени в месяц
 sources:
 - Клинические рекомендации «Мигрень», 2024
 - AHS Guidelines for Migraine
@@ -48,12 +69,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for, lines. См. docs/schema.md, раздел «regimen».
 ---
 
 # Схема лечения мигрени (острого приступа и профилактики)

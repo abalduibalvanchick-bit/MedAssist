@@ -32,6 +32,12 @@ relations:
 - target: PHARM-REGIMEN-001
   type: included_in
   description: Немедикаментозные меры дополняют антигипертензивную схему.
+for:
+- DIAG-DISEASE-001
+contraindications:
+- param: egfr
+  op: <
+  value: 30
 sources:
 - DASH Collaborative Research Group, NEJM 1997
 - 2023 ESH Guidelines
@@ -40,12 +46,11 @@ clinical_guidelines:
 last_medical_review: '2025-03-10'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.0'
+version: '2.1'
 date_created: '2025-03-05'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for. См. docs/schema.md, раздел «nonpharm».
 ---
 
 # Диета DASH – диетический подход к остановке гипертензии

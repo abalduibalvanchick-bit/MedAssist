@@ -29,19 +29,36 @@ relations:
 - target: PROT-ROUTING-001
   type: next_step
   description: Результаты скрининга определяют дальнейший маршрут.
+target:
+  param: age
+  op: '>='
+  value: 18
+methods:
+- DIAG-EXAM-001
+interval: ежегодно с 40 лет и при факторах риска; каждые 3–5 лет в 18–39 лет при оптимальном АД
+positive_when:
+  any:
+  - param: sbp
+    op: '>='
+    value: 140
+  - param: dbp
+    op: '>='
+    value: 90
+on_positive: PROT-PROTOCOL-001
 sources:
 - Клинические рекомендации по артериальной гипертензии
+- Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.
+- Приказ Минздрава России от 27.04.2021 № 404н «Об утверждении Порядка проведения профилактического медицинского осмотра и диспансеризации».
 clinical_guidelines:
 - Артериальная гипертензия у взрослых, 2024
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-04-09'
 date_updated: '2026-09-16'
 status: draft
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: target, methods, interval. См. docs/schema.md, раздел «screening».
 ---
 
 # Скрининг: Артериальная гипертензия

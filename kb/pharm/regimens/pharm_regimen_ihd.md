@@ -46,6 +46,26 @@ relations:
 - target: PHARM-NONPHARM-003
   type: includes
   description: Немедикаментозные меры (контроль факторов риска, диета, физнагрузка).
+for:
+- DIAG-DISEASE-002
+lines:
+- line: 1
+  options:
+  - agent: PHARM-NONPHARM-003
+    note: всем пациентам
+  - agent: PHARM-DRUGCLASS-011
+    note: антиагрегант для профилактики событий
+  - agent: PHARM-DRUGCLASS-012
+    note: статин высокой интенсивности
+  - agent: PHARM-DRUGCLASS-020
+    note: антиангинальная терапия первой линии
+  - agent: PHARM-DRUGCLASS-003
+    note: при противопоказаниях к β-адреноблокаторам
+- line: 2
+  options:
+  - agent: PHARM-DRUGCLASS-020
+    note: комбинация β-адреноблокатора с дигидропиридиновым БКК
+  - agent: PHARM-DRUG-002
 sources:
 - Клинические рекомендации «Стабильная ишемическая болезнь сердца», 2024
 - 2023 ESC Guidelines for the management of chronic coronary syndromes
@@ -54,12 +74,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for, lines. См. docs/schema.md, раздел «regimen».
 ---
 
 # Схема лечения хронической ишемической болезни сердца (стабильная стенокардия)

@@ -49,6 +49,41 @@ relations:
 - target: PHARM-NONPHARM-002
   type: includes
   description: Немедикаментозные меры дополняют терапию.
+for:
+- DIAG-DISEASE-006
+lines:
+- line: 1
+  options:
+  - agent: PHARM-NONPHARM-002
+    note: всем пациентам
+  - agent: PHARM-DRUG-020
+    when:
+      param: egfr
+      op: '>='
+      value: 30
+  - agent: PHARM-DRUGCLASS-008
+    when:
+      any:
+      - fact: prior_cv_event
+      - fact: heart_failure
+      - param: egfr
+        op: <
+        value: 60
+    note: органопротекция независимо от HbA1c
+  - agent: PHARM-DRUGCLASS-009
+    when:
+      any:
+      - fact: prior_cv_event
+      - fact: obesity
+    note: при атеросклеротических ССЗ или ожирении
+- line: 2
+  options:
+  - agent: PHARM-DRUGCLASS-007
+  - agent: PHARM-DRUGCLASS-006
+    when:
+      not:
+        profile: GLB-PROFILE-001
+    note: риск гипогликемии
 sources:
 - Клинические рекомендации «Сахарный диабет 2 типа», 2024
 - ADA Standards of Medical Care in Diabetes, 2025
@@ -57,12 +92,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '3.0'
+version: '3.1'
 date_created: '2025-02-25'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for, lines. См. docs/schema.md, раздел «regimen».
 ---
 
 # Схема лечения сахарного диабета 2 типа

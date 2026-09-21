@@ -27,19 +27,35 @@ relations:
 - target: PROT-ROUTING-006
   type: next_step
   description: Направление к неврологу при положительном скрининге.
+- target: DIAG-EXAM-009
+  type: uses_exam
+  description: выведено из машиночитаемого слоя (methods)
+target:
+  feature: headache.recurrent_attacks
+methods:
+- DIAG-EXAM-009
+interval: при обращении с повторяющейся головной болью
+positive_when:
+  at_least:
+    n: 2
+    of:
+    - feature: headache.photophobia
+    - feature: headache.nausea
+    - feature: headache.worse_with_activity
+on_positive: PROT-PROTOCOL-006
 sources:
 - AHS Guidelines for Migraine
+- 'Lipton R.B. et al. A self-administered screener for migraine in primary care: the ID Migraine validation study. Neurology. 2003;61:375–382.'
 clinical_guidelines:
 - AHS Migraine Guidelines
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: target, methods, interval. См. docs/schema.md, раздел «screening».
 ---
 
 # Скрининг: Выявление пациентов с мигренью

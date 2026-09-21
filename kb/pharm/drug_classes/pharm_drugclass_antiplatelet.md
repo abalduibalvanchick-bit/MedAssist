@@ -31,6 +31,19 @@ relations:
 - target: PHARM-REGIMEN-003
   type: included_in
   description: Используются в схеме лечения ИБС для предотвращения тромботических осложнений.
+representatives:
+- ацетилсалициловая кислота
+- клопидогрел
+- тикагрелор
+contraindications:
+- when:
+    fact: gi_bleeding_history
+  absolute: false
+  explanation: ЖКТ-кровотечение в анамнезе — гастропротекция и оценка риска
+- when:
+    fact: on_anticoagulants
+  absolute: false
+  explanation: повышенный риск кровотечения при сочетании
 sources:
 - 2023 ESC Guidelines for the management of chronic coronary syndromes
 - Клинические рекомендации по стабильной ИБС, 2024
@@ -39,12 +52,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: members. См. docs/schema.md, раздел «drugclass».
 ---
 
 # Антитромбоцитарные препараты (антиагреганты)

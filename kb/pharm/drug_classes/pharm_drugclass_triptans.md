@@ -28,6 +28,31 @@ relations:
 - target: PHARM-REGIMEN-006
   type: included_in
   description: Применяются в схеме лечения мигрени.
+representatives:
+- суматриптан
+- золмитриптан
+- элетриптан
+contraindications:
+- when:
+    any:
+    - disease: DIAG-DISEASE-002
+    - fact: known_ihd
+  absolute: true
+  explanation: ишемическая болезнь сердца
+- when:
+    fact: prior_cv_event
+  absolute: true
+  explanation: инсульт или инфаркт в анамнезе
+- when:
+    param: sbp
+    op: '>='
+    value: 160
+  absolute: true
+  explanation: неконтролируемая артериальная гипертензия
+- when:
+    profile: GLB-PROFILE-002
+  absolute: false
+  explanation: беременность
 sources:
 - Клинические рекомендации «Мигрень», 2024
 - AHS Guidelines for Migraine
@@ -36,12 +61,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: members. См. docs/schema.md, раздел «drugclass».
 ---
 
 # Триптаны (агонисты 5-HT1B/1D-рецепторов)

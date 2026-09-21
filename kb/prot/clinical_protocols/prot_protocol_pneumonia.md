@@ -49,6 +49,65 @@ relations:
 - target: PROT-SCREENING-004
   type: has_screening
   description: Скрининг факторов риска пневмонии (вакцинация).
+for:
+- DIAG-DISEASE-003
+entry:
+  any:
+  - disease: DIAG-DISEASE-003
+  - all:
+    - symptom: DIAG-SYMPTOM-004
+    - symptom: DIAG-SYMPTOM-008
+steps:
+- id: xray
+  action: рентгенография органов грудной клетки
+  refs:
+  - DIAG-EXAM-004
+- id: spo2
+  action: пульсоксиметрия
+  refs:
+  - DIAG-EXAM-010
+- id: severity
+  action: оценка тяжести по CURB-65
+  refs:
+  - PROT-SCALE-004
+- id: antibiotics
+  action: эмпирическая антибактериальная терапия по тяжести и факторам риска
+  refs:
+  - PHARM-REGIMEN-004
+- id: reassess
+  action: оценка эффекта через 48–72 часа; при отсутствии эффекта — пересмотр диагноза и терапии
+- id: follow_up
+  action: контроль после выздоровления
+  refs:
+  - PROT-FOLLOW_UP-004
+branches:
+- when:
+    any:
+    - scale: PROT-SCALE-004
+      op: '>='
+      value: 3
+    - param: spo2
+      op: <
+      value: 90
+  then: PROT-EMERGENCY_P-004
+  explanation: тяжёлая пневмония
+- when:
+    any:
+    - scale: PROT-SCALE-004
+      op: ==
+      value: 2
+    - profile: GLB-PROFILE-005
+  then: PROT-ROUTING-004
+  explanation: показана госпитализация
+targets:
+- param: spo2
+  op: '>='
+  value: 92
+  label: SpO₂ 92 % и выше
+- param: temperature
+  op: <
+  value: 37.8
+  label: нормализация температуры в течение 48–72 часов
 sources:
 - Клинические рекомендации «Внебольничная пневмония у взрослых», 2024
 - IDSA/ATS Guidelines for CAP, 2023
@@ -57,12 +116,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-02'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for, entry, steps. См. docs/schema.md, раздел «protocol».
 ---
 
 # Клинический протокол: Внебольничная пневмония

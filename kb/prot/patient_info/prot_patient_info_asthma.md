@@ -29,6 +29,16 @@ relations:
 - target: PROT-ROUTING-005
   type: has_routing
   description: Памятка содержит признаки для срочного обращения.
+for:
+- DIAG-DISEASE-004
+- PROT-PROTOCOL-005
+seek_help_when:
+- Приступ не купируется ингалятором (даже после 2–3 доз)
+- Очень сильная одышка, вы не можете говорить полными фразами
+- Свистящее дыхание становится громким или, наоборот, исчезает («немое лёгкое»)
+- Посинение губ, ногтей
+- Спутанность сознания, сонливость, невозможность проснуться
+- При повышении температуры, появлении гнойной мокроты (может быть инфекция)
 sources:
 - GINA Global Strategy for Asthma Management and Prevention, 2025 (адаптировано)
 - Клинические рекомендации «Бронхиальная астма», 2024
@@ -37,12 +47,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for. См. docs/schema.md, раздел «patient_info».
 ---
 
 # Памятка для пациента: Бронхиальная астма

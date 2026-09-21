@@ -38,6 +38,40 @@ relations:
 - target: PHARM-INTERACTION-001
   type: has_interaction
   description: Взаимодействие с йодсодержащими контрастными веществами.
+contraindications:
+- when:
+    param: egfr
+    op: <
+    value: 30
+  absolute: true
+  explanation: СКФ менее 30 — риск лактатацидоза
+- when:
+    param: ketones_positive
+  absolute: true
+  explanation: кетоацидоз
+- when:
+    fact: hepatic_failure
+  absolute: true
+  explanation: тяжёлая печёночная недостаточность
+- when:
+    fact: alcohol_abuse
+  absolute: false
+  explanation: злоупотребление алкоголем
+interactions:
+- card: PHARM-INTERACTION-001
+  severity: major
+dose_adjustments:
+- when:
+    all:
+    - param: egfr
+      op: '>='
+      value: 30
+    - param: egfr
+      op: <
+      value: 45
+  note: максимальная доза 1000 мг/сут, не начинать терапию впервые
+indications:
+- DIAG-DISEASE-006
 sources:
 - Инструкция по медицинскому применению метформина
 - Клинические рекомендации «Сахарный диабет 2 типа», 2024
@@ -47,12 +81,11 @@ clinical_guidelines:
 last_medical_review: '2025-03-10'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '3.0'
+version: '3.1'
 date_created: '2025-04-08'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: contraindications. См. docs/schema.md, раздел «drug».
 ---
 
 # Метформин – Глюкофаж, Сиофор, Метфогамма

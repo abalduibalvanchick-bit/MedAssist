@@ -42,6 +42,34 @@ relations:
 - target: PHARM-DRUGCLASS-019
   type: includes
   description: перенесено из поля related (схема v1)
+for:
+- DIAG-DISEASE-004
+lines:
+- line: 1
+  options:
+  - agent: PHARM-NONPHARM-005
+    note: всем пациентам
+  - agent: PHARM-DRUGCLASS-018
+    note: 'ступени 1–2 GINA: низкие дозы ИГКС-формотерола по потребности'
+  - agent: PHARM-DRUGCLASS-017
+    note: 'альтернативный путь: SABA по потребности вместе с ИГКС'
+- line: 2
+  options:
+  - agent: PHARM-DRUGCLASS-018
+    when:
+      any:
+      - scale_category: PROT-SCALE-005
+        value: partly_controlled
+      - scale_category: PROT-SCALE-005
+        value: uncontrolled
+    note: 'ступени 3–4: базисная терапия ИГКС-формотеролом'
+- line: 3
+  options:
+  - agent: PHARM-DRUGCLASS-019
+    when:
+      scale_category: PROT-SCALE-005
+      value: uncontrolled
+    note: 'ступень 5: добавление LAMA, направление к пульмонологу'
 sources:
 - GINA Global Strategy for Asthma Management and Prevention, 2025
 - Клинические рекомендации «Бронхиальная астма», 2024
@@ -50,12 +78,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for, lines. См. docs/schema.md, раздел «regimen».
 ---
 
 # Схема лечения бронхиальной астмы (ступенчатый подход GINA)

@@ -50,6 +50,53 @@ relations:
 - target: PROT-SCREENING-005
   type: has_screening
   description: Скрининг аллергии и вакцинация.
+for:
+- DIAG-DISEASE-004
+entry:
+  any:
+  - disease: DIAG-DISEASE-004
+  - fact: known_asthma
+  - exam_result: DIAG-EXAM-008
+    value: reversible_obstruction
+steps:
+- id: spirometry
+  action: спирометрия с бронходилатационным тестом
+  refs:
+  - DIAG-EXAM-008
+- id: control
+  action: оценка контроля по ACT
+  refs:
+  - PROT-SCALE-005
+- id: therapy
+  action: 'ступенчатая терапия: низкие дозы ИГКС-формотерола по потребности или базисно'
+  refs:
+  - PHARM-REGIMEN-005
+  - PHARM-DRUGCLASS-018
+- id: technique
+  action: проверка техники ингаляции и приверженности на каждом визите
+- id: triggers
+  action: устранение триггеров, отказ от курения, вакцинация
+  refs:
+  - PHARM-NONPHARM-005
+- id: follow_up
+  action: контроль через 1–3 месяца после изменения терапии
+  refs:
+  - PROT-FOLLOW_UP-005
+branches:
+- when:
+    redflag: DIAG-REDFLAG-006
+  then: PROT-EMERGENCY_P-005
+  explanation: тяжёлое обострение
+- when:
+    scale_category: PROT-SCALE-005
+    value: uncontrolled
+  then: PROT-ROUTING-005
+  explanation: астма не контролируется
+targets:
+- param: pef_percent
+  op: '>='
+  value: 80
+  label: ПСВ 80 % от лучшего и выше
 sources:
 - GINA Global Strategy for Asthma Management and Prevention, 2025
 - Клинические рекомендации «Бронхиальная астма», 2024
@@ -58,12 +105,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for, entry, steps. См. docs/schema.md, раздел «protocol».
 ---
 
 # Клинический протокол: Бронхиальная астма

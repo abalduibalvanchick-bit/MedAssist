@@ -40,6 +40,36 @@ relations:
 - target: PHARM-REGIMEN-002
   type: recommends
   description: Коррекция терапии после выхода из критического состояния.
+criteria:
+  any:
+  - emergency: DIAG-EMERGENCY-004
+  - redflag: DIAG-REDFLAG-004
+phases:
+- window: 0–30 мин
+  steps:
+  - два периферических венозных доступа
+  - 'экспресс-анализ: глюкоза, кетоны, электролиты, газы крови, осмоляльность, креатинин'
+  - начало инфузии 0,9 % NaCl 15–20 мл/кг в первый час
+- window: 1–6 ч
+  steps:
+  - инсулин короткого действия внутривенно 0,1 ЕД/кг/ч только после начала инфузии
+  - снижение глюкозы на 3–5 ммоль/л в час
+  - контроль калия, коррекция при гипокалиемии
+- window: далее
+  steps:
+  - при глюкозе 13–15 ммоль/л — переход на 5 % глюкозу с инсулином
+  - поиск и лечение провоцирующего фактора
+  - перевод на подкожную инсулинотерапию после стабилизации
+stabilization:
+  all:
+  - param: glucose
+    op: <=
+    value: 15
+  - not:
+      fact: confusion
+  - not:
+      fact: hypotension
+next: PROT-ROUTING-002
 sources:
 - Клинические рекомендации «Сахарный диабет 2 типа», 2024
 - ADA Standards of Medical Care in Diabetes, 2025
@@ -48,12 +78,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: criteria, phases. См. docs/schema.md, раздел «emergency_p».
 ---
 
 # Алгоритм неотложной помощи: Тяжёлая гипергликемия / Гиперосмолярное гипергликемическое состояние (ГГС)

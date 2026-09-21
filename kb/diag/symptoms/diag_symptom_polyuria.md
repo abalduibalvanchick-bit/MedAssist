@@ -45,18 +45,17 @@ features:
   label: резкое нарастание за последние дни
 sources:
 - Алгоритмы специализированной медицинской помощи больным сахарным диабетом / Под ред. И.И. Дедова, М.В. Шестаковой, А.Ю. Майорова. — 11-й выпуск. — М., 2023.
+- 'American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Section 2: Diagnosis and Classification of Diabetes. Diabetes Care. 2025;48(Suppl 1):S27–S49.'
 clinical_guidelines:
 - Алгоритмы специализированной медицинской помощи больным сахарным диабетом, 2023
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.1'
+version: '2.2'
 date_created: '2026-05-01'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-add_sources:
-- 'American Diabetes Association. Standards of Care in Diabetes — 2025. Section 2: Diagnosis and Classification of Diabetes.'
 ---
 
 # Полиурия (частое мочеиспускание)

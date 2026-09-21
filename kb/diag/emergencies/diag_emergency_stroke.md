@@ -38,6 +38,9 @@ relations:
 - target: DIAG-DIFDIAG-002
   type: considered_in
   description: перенесено из поля related (схема v1)
+- target: DIAG-SYMPTOM-010
+  type: has_symptom
+  description: ведущее проявление — остро возникший очаговый неврологический дефицит
 criteria:
   any:
   - feature: focal_deficit.face_droop
@@ -59,7 +62,7 @@ clinical_guidelines:
 last_medical_review: '2026-04-30'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.1'
+version: '2.2'
 date_created: '2026-04-30'
 date_updated: '2026-09-16'
 status: medical_review

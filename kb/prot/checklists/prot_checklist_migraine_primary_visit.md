@@ -33,19 +33,91 @@ relations:
 - target: PROT-ROUTING-006
   type: has_routing
   description: Определение маршрута (наблюдение / невролог / экстренная помощь).
+items:
+- text: характер головной боли (пульсирующая, сдавливающая)
+  required: true
+- text: локализация (часто односторонняя)
+  required: true
+- text: интенсивность (ВБШ от 0 до 10)
+  required: true
+- text: наличие ауры (зрительные, сенсорные, речевые нарушения перед болью)
+  required: true
+- text: сопутствующие симптомы (тошнота, рвота, светобоязнь, звукобоязнь)
+  required: true
+- text: частота приступов (дней с мигренью в месяц)
+  required: true
+- text: триггеры (продукты, сон, стресс, гормональные факторы)
+  required: true
+- text: принимаемые препараты для купирования, частота использования
+  required: true
+- text: влияние на трудоспособность (MIDAS)
+  required: true
+- text: артериальное давление, пульс
+  required: true
+  refs:
+  - DIAG-EXAM-001
+- text: неврологический осмотр (черепные нервы, двигательная, чувствительная сфера, рефлексы)
+  required: true
+- text: оценка менингеальных знаков (при подозрении на инфекцию)
+  required: true
+- text: КТ / МРТ головного мозга (при внезапной сильнейшей боли, неврологическом дефиците)
+  required: true
+- text: ЭЭГ (не рутинно)
+  required: true
+- text: MIDAS – сумма баллов за 3 месяца
+  required: true
+  refs:
+  - PROT-SCALE-006
+- text: количество мигренозных дней/месяц (≥4 – показание к профилактике)
+  required: true
+- text: подтверждён диагноз (по критериям ICHD-3)
+  required: true
+  refs:
+  - DIAG-DISEASE-005
+- text: исключены вторичные причины ( неврологический дефицит, красные флаги)
+  required: true
+- text: назначить купирующую терапию (НПВС / триптаны) согласно
+  required: true
+  refs:
+  - PHARM-REGIMEN-006
+- text: при MIDAS ≥11 или ≥4 дней мигрени/месяц – назначить профилактическую терапию (β-блокатор, топирамат, амитриптилин)
+  required: true
+- text: дать рекомендации по изменению образа жизни (дневник, избегание триггеров, режим сна)
+  required: true
+- text: определить маршрут по (амбулаторно / невролог / экстренно)
+  required: true
+  refs:
+  - PROT-ROUTING-006
+- text: объяснить, что мигрень – хроническое заболевание, но поддающееся контролю
+  required: true
+- text: выдать памятку
+  required: true
+  refs:
+  - PROT-PATIENT_INFO-006
+- text: обучить приёму препаратов (не злоупотреблять анальгетиками, принимать триптаны в начале приступа)
+  required: true
+- text: указать признаки, когда надо срочно обращаться (изменение характера боли, неврологический дефицит)
+  required: true
+- text: назначить контрольный визит через 1–3 месяца (оценка эффективности профилактики)
+  required: true
+- text: выдать рецепты (триптаны, при необходимости профилактические препараты)
+  required: true
+- text: рекомендовать ведение дневника головной боли
+  required: true
 sources:
 - AHS Guidelines for Migraine
+- Headache Classification Committee of the International Headache Society. The International Classification of Headache Disorders, 3rd edition (ICHD-3). Cephalalgia. 2018;38:1–211.
+- Клинические рекомендации «Мигрень». Минздрав РФ, 2024.
 clinical_guidelines:
 - AHS Migraine Guidelines
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.2'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: items. См. docs/schema.md, раздел «checklist».
 ---
 
 # Чек-лист врача: первичный приём при мигрени

@@ -35,6 +35,94 @@ relations:
 - target: PHARM-REGIMEN-004
   type: recommends
   description: Категория тяжести влияет на выбор антибиотиков.
+parameters:
+- code: confusion
+  label: C — спутанность сознания
+  options:
+  - when:
+      fact: confusion
+    points: 1
+  - when:
+      not:
+        fact: confusion
+    points: 0
+- code: urea
+  label: U — мочевина более 7 ммоль/л
+  options:
+  - when:
+      param: urea
+      op: '>'
+      value: 7
+    points: 1
+  - when:
+      param: urea
+      op: <=
+      value: 7
+    points: 0
+- code: rr
+  label: R — ЧДД 30 в минуту и более
+  options:
+  - when:
+      param: rr
+      op: '>='
+      value: 30
+    points: 1
+  - when:
+      param: rr
+      op: <
+      value: 30
+    points: 0
+- code: bp
+  label: B — САД менее 90 или ДАД 60 мм рт. ст. и ниже
+  options:
+  - when:
+      any:
+      - param: sbp
+        op: <
+        value: 90
+      - param: dbp
+        op: <=
+        value: 60
+    points: 1
+  - when:
+      all:
+      - param: sbp
+        op: '>='
+        value: 90
+      - param: dbp
+        op: '>'
+        value: 60
+    points: 0
+- code: age
+  label: 65 — возраст 65 лет и старше
+  options:
+  - when:
+      param: age
+      op: '>='
+      value: 65
+    points: 1
+  - when:
+      param: age
+      op: <
+      value: 65
+    points: 0
+interpretation:
+- min: 0
+  max: 1
+  category: mild
+  label: лёгкое течение
+  action: PROT-PROTOCOL-004
+- min: 2
+  max: 2
+  category: moderate
+  label: среднетяжёлое течение
+  action: PROT-ROUTING-004
+- min: 3
+  max: 5
+  category: severe
+  label: тяжёлое течение
+  action: PROT-EMERGENCY_P-004
+missing_policy: skip
 sources:
 - IDSA/ATS Guidelines for CAP, 2023
 - Lim WS et al. Thorax. 2003
@@ -43,12 +131,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-02'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: parameters, interpretation. См. docs/schema.md, раздел «scale».
 ---
 
 # Клиническая шкала: CURB-65 для оценки тяжести внебольничной пневмонии

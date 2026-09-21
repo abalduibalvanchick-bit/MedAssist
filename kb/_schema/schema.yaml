@@ -343,6 +343,22 @@ parameters:
   urea:           {type: number,  unit: "ммоль/л",      label: "Мочевина"}
   troponin_positive: {type: boolean,                     label: "Тропонин выше порога"}
   ketones_positive: {type: boolean,                      label: "Кетоны в крови или моче повышены"}
+  diabetes_duration_years: {type: number, unit: "лет",   label: "Длительность сахарного диабета", min: 0, max: 80}
+  microalbuminuria: {type: boolean,                      label: "Альбуминурия (микро- или макро-)"}
+  ccs_class:      {type: number,  unit: "класс",         label: "Функциональный класс стенокардии (CCS)", min: 1, max: 4}
+  lvef:           {type: number,  unit: "%",             label: "Фракция выброса левого желудочка", min: 5, max: 90}
+  act_q1:         {type: number,  unit: "баллы",         label: "ACT, вопрос 1: ограничение повседневной активности", min: 1, max: 5}
+  act_q2:         {type: number,  unit: "баллы",         label: "ACT, вопрос 2: частота одышки", min: 1, max: 5}
+  act_q3:         {type: number,  unit: "баллы",         label: "ACT, вопрос 3: ночные пробуждения", min: 1, max: 5}
+  act_q4:         {type: number,  unit: "баллы",         label: "ACT, вопрос 4: использование препарата неотложной помощи", min: 1, max: 5}
+  act_q5:         {type: number,  unit: "баллы",         label: "ACT, вопрос 5: самооценка контроля", min: 1, max: 5}
+  midas_q1:       {type: number,  unit: "дни",           label: "MIDAS, вопрос 1: пропущенные дни работы/учёбы", min: 0, max: 90}
+  midas_q2:       {type: number,  unit: "дни",           label: "MIDAS, вопрос 2: дни сниженной продуктивности на работе", min: 0, max: 90}
+  midas_q3:       {type: number,  unit: "дни",           label: "MIDAS, вопрос 3: пропущенные дни домашней работы", min: 0, max: 90}
+  midas_q4:       {type: number,  unit: "дни",           label: "MIDAS, вопрос 4: дни сниженной продуктивности дома", min: 0, max: 90}
+  potassium:      {type: number,  unit: "ммоль/л",       label: "Калий сыворотки", min: 1, max: 10}
+  migraine_days_per_month: {type: number, unit: "дней/мес", label: "Число дней с мигренью в месяц", min: 0, max: 31}
+  midas_q5:       {type: number,  unit: "дни",           label: "MIDAS, вопрос 5: пропущенные социальные мероприятия", min: 0, max: 90}
 
 # Булевы факты о пациенте, не являющиеся ни симптомами, ни диагнозами.
 facts:
@@ -368,6 +384,18 @@ facts:
   sedentary:            {label: "Низкая физическая активность"}
   allergen_exposure:    {label: "Контакт с аллергеном или триггером"}
   therapy_nonadherence: {label: "Нарушение режима приёма назначенной терапии"}
+  prior_mi:             {label: "Перенесённый инфаркт миокарда"}
+  prior_cv_event:       {label: "Сердечно-сосудистое событие в анамнезе (ИМ, инсульт, реваскуляризация)"}
+  heart_failure:        {label: "Сердечная недостаточность"}
+  refractory_angina:    {label: "Стенокардия, рефрактерная к двум и более антиангинальным препаратам"}
+  frequent_exacerbations: {label: "Два и более обострения за последний год"}
+  angioedema_history:   {label: "Ангионевротический отёк в анамнезе"}
+  hepatic_failure:      {label: "Тяжёлая печёночная недостаточность"}
+  aortic_stenosis:      {label: "Выраженный аортальный стеноз"}
+  alcohol_abuse:        {label: "Злоупотребление алкоголем"}
+  gi_bleeding_history:  {label: "Язвенная болезнь или ЖКТ-кровотечение в анамнезе"}
+  penicillin_allergy:   {label: "Аллергия на пенициллины"}
+  contrast_study_planned: {label: "Планируется исследование с йодсодержащим контрастом"}
 # Характеристики конкретного симптома (связь с нагрузкой, ответ на нитраты,
 # иррадиация и т.п.) задаются признаками в поле features карточки симптома,
 # а не фактами, чтобы не было двух способов записать одно и то же.
@@ -499,10 +527,13 @@ machine_layer:
           label: {type: string}
           options:
             type: "list[object]"
+            optional: true
+            doc: "Варианты значения; баллы берутся из первого варианта с истинным условием"
             item:
               when: {type: condition}
               points: {type: number}
               label: {type: string, optional: true}
+          points_from: {type: parameter, optional: true, doc: "Баллы равны значению числового параметра (ответ на вопрос опросника)"}
       interpretation:
         type: "list[object]"
         doc: "Диапазоны включительно; должны покрывать все достижимые суммы без пересечений"
@@ -588,10 +619,10 @@ machine_layer:
       deterioration: {type: condition, optional: true}
       on_deterioration: {type: "id(routing,emergency_p)", optional: true}
   screening:
-    required_for_approved: [target, methods, interval]
+    required_for_approved: [target, interval]
     fields:
       target: {type: condition, doc: "Кому показан скрининг"}
-      methods: {type: "list[id(exam)]", implies: uses_exam}
+      methods: {type: "list[id(exam)]", optional: true, implies: uses_exam, doc: "Методы обследования; для программ вакцинации может отсутствовать"}
       interval: {type: string}
       positive_when: {type: condition, optional: true}
       on_positive: {type: "id(routing,protocol)", optional: true}
@@ -614,13 +645,14 @@ machine_layer:
     required_for_approved: [contraindications]
     fields:
       contraindications: {type: "list[object]", item: {when: {type: condition}, absolute: {type: boolean}, explanation: {type: string}}}
-      interactions: {type: "list[object]", optional: true, item: {with: {type: "id(drug,drugclass)"}, severity: {type: "enum(interaction_severity)"}, card: {type: "id(interaction)", optional: true, implies: has_interaction}}}
+      interactions: {type: "list[object]", optional: true, item: {with: {type: "id(drug,drugclass)", optional: true}, severity: {type: "enum(interaction_severity)"}, card: {type: "id(interaction)", optional: true, implies: has_interaction}}}
       dose_adjustments: {type: "list[object]", optional: true, item: {when: {type: condition}, note: {type: string}}}
       indications: {type: "list[id(disease,emergency,symptom)]", optional: true, implies: treats}
   drugclass:
-    required_for_approved: [members]
+    required_for_approved: [representatives]
     fields:
-      members: {type: "list[id(drug)]", implies: includes}
+      representatives: {type: "list[string]", doc: "МНН основных представителей группы"}
+      members: {type: "list[id(drug)]", optional: true, implies: includes, doc: "Представители, для которых есть карточки"}
       contraindications: {type: "list[object]", optional: true, item: {when: {type: condition}, absolute: {type: boolean}, explanation: {type: string}}}
   regimen:
     required_for_approved: [for, lines]
@@ -634,8 +666,11 @@ machine_layer:
   interaction:
     required_for_approved: [between, severity]
     fields:
-      between: {type: "list[id(drug,drugclass)]", doc: "Ровно два участника", implies: interaction_for}
+      between: {type: "list[id(drug,drugclass)]", doc: "Участники из базы знаний (один или два)", implies: interaction_for}
+      other_agent: {type: string, optional: true, doc: "Второй участник, не представленный карточкой (например, контрастное вещество)"}
       severity: {type: "enum(interaction_severity)"}
+      trigger: {type: condition, optional: true, doc: "Условие, при котором взаимодействие актуально для пациента"}
+      management: {type: string, optional: true}
   adr:
     required_for_approved: [caused_by]
     fields:

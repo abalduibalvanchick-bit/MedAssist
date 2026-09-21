@@ -2,7 +2,7 @@
 
 # Статистика базы знаний MedAssist
 
-Всего карточек: **136**. Всего связей: **569**, из них междоменных: **164**.
+Всего карточек: **166**. Всего связей: **630**, из них междоменных: **221**.
 
 ## По доменам и категориям
 
@@ -15,6 +15,7 @@
 | `diag` | `redflag` | 6 |
 | `diag` | `symptom` | 10 |
 | `glb` | `disclaimer` | 3 |
+| `glb` | `glossary` | 30 |
 | `glb` | `profile` | 5 |
 | `pharm` | `adr` | 1 |
 | `pharm` | `dosing` | 1 |
@@ -37,35 +38,36 @@
 | Статус | Карточек |
 |---|---|
 | `medical_review` | 117 |
-| `approved` | 11 |
+| `approved` | 41 |
 | `draft` | 8 |
 
 ## Типы связей
 
 | Тип | Количество |
 |---|---|
+| `defines` | 43 |
 | `treats` | 37 |
 | `includes` | 36 |
+| `recommends` | 36 |
 | `diagnosed_by` | 33 |
 | `included_in` | 32 |
+| `uses_exam` | 31 |
 | `diagnoses` | 30 |
-| `recommends` | 27 |
-| `uses_exam` | 26 |
 | `red_flag_for` | 23 |
 | `next_step` | 23 |
-| `has_symptom` | 21 |
+| `has_symptom` | 22 |
 | `has_red_flag` | 21 |
 | `assessed_by` | 20 |
 | `emergency_protocol_for` | 20 |
 | `has_emergency_protocol` | 17 |
 | `considers` | 16 |
 | `has_routing` | 15 |
+| `assesses` | 14 |
 | `patient_info_for` | 13 |
 | `routing_for` | 13 |
 | `symptom_of` | 12 |
 | `checklist_for` | 12 |
 | `follow_up_for` | 12 |
-| `assesses` | 12 |
 | `screening_for` | 12 |
 | `recommended_by` | 11 |
 | `has_patient_info` | 8 |
@@ -84,6 +86,7 @@
 | `complicated_by` | 2 |
 | `profile_applies_to` | 2 |
 | `adr_caused_by` | 1 |
+| `applies_to_profile` | 1 |
 | `causes_adr` | 1 |
 | `dose_adjusted_by` | 1 |
 | `has_interaction` | 1 |
@@ -94,8 +97,11 @@
 | Из домена | В домен | Количество |
 |---|---|---|
 | `diag` | `prot` | 3 |
-| `glb` | `pharm` | 2 |
+| `glb` | `diag` | 28 |
+| `glb` | `pharm` | 7 |
+| `glb` | `prot` | 9 |
 | `pharm` | `diag` | 37 |
+| `pharm` | `glb` | 1 |
 | `pharm` | `prot` | 13 |
-| `prot` | `diag` | 81 |
-| `prot` | `pharm` | 28 |
+| `prot` | `diag` | 86 |
+| `prot` | `pharm` | 37 |

@@ -35,6 +35,42 @@ relations:
 - target: PHARM-REGIMEN-005
   type: recommends
   description: Результат шкалы влияет на выбор ступени терапии.
+- target: PROT-FOLLOW_UP-005
+  type: assesses
+  description: выведено из машиночитаемого слоя (interpretation)
+parameters:
+- code: q1
+  label: Ограничение повседневной активности
+  points_from: act_q1
+- code: q2
+  label: Частота одышки
+  points_from: act_q2
+- code: q3
+  label: Ночные пробуждения
+  points_from: act_q3
+- code: q4
+  label: Использование препарата неотложной помощи
+  points_from: act_q4
+- code: q5
+  label: Самооценка контроля
+  points_from: act_q5
+interpretation:
+- min: 5
+  max: 15
+  category: uncontrolled
+  label: астма не контролируется
+  action: PROT-ROUTING-005
+- min: 16
+  max: 19
+  category: partly_controlled
+  label: частичный контроль
+  action: PROT-PROTOCOL-005
+- min: 20
+  max: 25
+  category: well_controlled
+  label: хороший контроль
+  action: PROT-FOLLOW_UP-005
+missing_policy: fail
 sources:
 - GINA Global Strategy for Asthma Management and Prevention, 2025
 - Клинические рекомендации «Бронхиальная астма», 2024
@@ -43,12 +79,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: parameters, interpretation. См. docs/schema.md, раздел «scale».
 ---
 
 # Клиническая шкала: Тест контроля астмы (ACT)

@@ -31,6 +31,22 @@ relations:
 - target: PROT-ROUTING-005
   type: next_step
   description: Результаты скрининга определяют маршрут.
+- target: DIAG-EXAM-008
+  type: uses_exam
+  description: выведено из машиночитаемого слоя (methods)
+target:
+  any:
+  - symptom: DIAG-SYMPTOM-009
+  - feature: cough.nocturnal
+  - feature: dyspnea.episodic
+  - fact: allergen_exposure
+methods:
+- DIAG-EXAM-008
+interval: при наличии респираторных симптомов
+positive_when:
+  exam_result: DIAG-EXAM-008
+  value: reversible_obstruction
+on_positive: PROT-PROTOCOL-005
 sources:
 - GINA Global Strategy for Asthma Management and Prevention, 2025
 - CDC Adult Immunization Schedule, 2025
@@ -39,12 +55,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: target, methods, interval. См. docs/schema.md, раздел «screening».
 ---
 
 # Скрининг: Оценка риска бронхиальной астмы и вакцинация

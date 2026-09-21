@@ -27,19 +27,65 @@ relations:
 - target: DIAG-EXAM-001
   type: uses_exam
   description: В чек-листе предусмотрено измерение артериального давления.
+items:
+- text: головная боль
+  required: true
+- text: головокружение
+  required: true
+- text: боль в груди
+  required: true
+- text: одышка
+  required: true
+- text: факторы риска (курение, ожирение, стресс)
+  required: true
+- text: измерение артериального давления
+  required: true
+  refs:
+  - DIAG-EXAM-001
+- text: частота сердечных сокращений
+  required: true
+- text: оценка общего состояния
+  required: true
+- text: неврологический статус
+  required: true
+- text: наличие поражения органов-мишеней
+  required: true
+- text: сопутствующие заболевания
+  required: true
+- text: общий сердечно-сосудистый риск
+  required: true
+- text: подтверждение диагноза
+  required: true
+  refs:
+  - DIAG-DISEASE-001
+- text: необходимость дополнительных обследований
+  required: true
+- text: определить план лечения
+  required: true
+  refs:
+  - PROT-PROTOCOL-001
+- text: определить маршрут пациента
+  required: true
+- text: дать рекомендации пациенту
+  required: true
+- text: назначить контрольный визит
+  required: true
+- text: объяснить пациенту план действий
+  required: true
 sources:
 - Клинические рекомендации по артериальной гипертензии
+- Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.
+- Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
 clinical_guidelines:
 - Клинические рекомендации по артериальной гипертензии, 2024
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.2'
 date_created: '2026-04-09'
 date_updated: '2026-09-16'
 status: draft
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: items. См. docs/schema.md, раздел «checklist».
 ---
 
 # Чек-лист врача: первичный приём при артериальной гипертензии

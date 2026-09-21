@@ -29,19 +29,28 @@ relations:
 - target: PROT-ROUTING-006
   type: has_routing
   description: перенесено из поля related (схема v1)
+for:
+- DIAG-DISEASE-005
+- PROT-PROTOCOL-006
+seek_help_when:
+- Приступ длится более 72 часов (мигренозный статус)
+- Необычно сильная головная боль («самая сильная в жизни»)
+- Появление неврологических симптомов (слабость в руке/ноге, нарушение речи, двоение, потеря сознания) – исключить инсульт
+- Температура, ригидность затылочных мышц (исключить менингит)
 sources:
 - Клинические рекомендации «Мигрень», 2024 (адаптировано)
+- Клинические рекомендации «Мигрень». Минздрав РФ, 2024.
+- 'NHS. Migraine: patient information. National Health Service, 2023.'
 clinical_guidelines:
 - AHS Migraine Guidelines
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.2'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for. См. docs/schema.md, раздел «patient_info».
 ---
 
 # Памятка для пациента: Мигрень

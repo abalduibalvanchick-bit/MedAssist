@@ -32,19 +32,107 @@ relations:
 - target: PHARM-REGIMEN-001
   type: recommends
   description: Категория риска может влиять на выбор режима терапии.
+- target: PROT-FOLLOW_UP-001
+  type: assesses
+  description: выведено из машиночитаемого слоя (interpretation)
+parameters:
+- code: sbp
+  label: Систолическое АД
+  options:
+  - when:
+      param: sbp
+      op: <
+      value: 140
+    points: 0
+    label: менее 140
+  - when:
+      param: sbp
+      op: between
+      value:
+      - 140
+      - 159
+    points: 1
+    label: 140–159
+  - when:
+      param: sbp
+      op: '>='
+      value: 160
+    points: 2
+    label: 160 и выше
+- code: smoking
+  label: Курение
+  options:
+  - when:
+      fact: smoker
+    points: 1
+    label: да
+  - when:
+      not:
+        fact: smoker
+    points: 0
+    label: нет
+- code: diabetes
+  label: Сахарный диабет
+  options:
+  - when:
+      any:
+      - disease: DIAG-DISEASE-006
+      - fact: known_diabetes
+    points: 1
+    label: да
+  - when:
+      not:
+        any:
+        - disease: DIAG-DISEASE-006
+        - fact: known_diabetes
+    points: 0
+    label: нет
+- code: age
+  label: Возраст
+  options:
+  - when:
+      param: age
+      op: <
+      value: 60
+    points: 0
+    label: менее 60 лет
+  - when:
+      param: age
+      op: '>='
+      value: 60
+    points: 1
+    label: 60 лет и старше
+interpretation:
+- min: 0
+  max: 1
+  category: low
+  label: низкий риск
+  action: PROT-FOLLOW_UP-001
+- min: 2
+  max: 3
+  category: moderate
+  label: умеренный риск
+  action: PROT-PROTOCOL-001
+- min: 4
+  max: null
+  category: high
+  label: высокий риск
+  action: PROT-ROUTING-001
+missing_policy: skip
 sources:
 - Клинические рекомендации по артериальной гипертензии
+- Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.
+- SCORE2 working group and ESC Cardiovascular risk collaboration. SCORE2 risk prediction algorithms. Eur Heart J. 2021;42:2439–2454.
 clinical_guidelines:
 - ESC/ESH Guidelines
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-04-09'
 date_updated: '2026-09-16'
 status: draft
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: parameters, interpretation. См. docs/schema.md, раздел «scale».
 ---
 
 # Клиническая шкала: Оценка сердечно-сосудистого риска при артериальной гипертензии

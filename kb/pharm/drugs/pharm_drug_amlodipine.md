@@ -36,6 +36,22 @@ relations:
 - target: PHARM-REGIMEN-001
   type: included_in
   description: Может входить в антигипертензивную схему.
+contraindications:
+- when:
+    fact: hypotension
+  absolute: true
+  explanation: выраженная гипотензия, кардиогенный шок
+- when:
+    fact: aortic_stenosis
+  absolute: false
+  explanation: выраженный аортальный стеноз
+dose_adjustments:
+- when:
+    fact: hepatic_failure
+  note: начинать с 2,5 мг/сут
+indications:
+- DIAG-DISEASE-001
+- DIAG-DISEASE-002
 sources:
 - Инструкция по медицинскому применению амлодипина
 - Клинические рекомендации «Артериальная гипертензия», 2024
@@ -44,12 +60,11 @@ clinical_guidelines:
 last_medical_review: '2025-03-15'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.0'
+version: '2.1'
 date_created: '2025-03-10'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: contraindications. См. docs/schema.md, раздел «drug».
 ---
 
 # Амлодипин – Норваск, Амлотоп, Тенокс

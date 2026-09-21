@@ -33,6 +33,63 @@ relations:
 - target: PROT-SCALE-003
   type: assessed_by
   description: Высокий риск или тяжёлые симптомы требуют направления.
+for:
+- DIAG-DISEASE-002
+decisions:
+- when:
+    any:
+    - redflag: DIAG-REDFLAG-005
+    - emergency: DIAG-EMERGENCY-001
+  route: emergency
+  timeframe: немедленно
+  actions:
+  - вызов скорой медицинской помощи
+  - ЭКГ в течение 10 минут
+  - переход к алгоритму при нестабильной стенокардии / ОКС
+  next:
+  - PROT-EMERGENCY_P-003
+  explanation: Нестабильная стенокардия или подозрение на ОКС.
+- when:
+    any:
+    - fact: refractory_angina
+    - all:
+      - param: ccs_class
+        op: '>='
+        value: 3
+      - fact: heart_failure
+  route: hospitalization
+  timeframe: плановая госпитализация
+  actions:
+  - госпитализация в кардиологическое отделение
+  - решение вопроса о коронарографии и реваскуляризации
+  next:
+  - PROT-PROTOCOL-003
+  explanation: Рефрактерная стенокардия или тяжёлая стенокардия с сердечной недостаточностью.
+- when:
+    any:
+    - param: ccs_class
+      op: '>='
+      value: 3
+    - scale_category: PROT-SCALE-003
+      value: moderate
+    - scale_category: PROT-SCALE-003
+      value: high
+  route: urgent_referral
+  timeframe: 2–4 недели
+  actions:
+  - направление к кардиологу
+  - нагрузочное тестирование или визуализация ишемии
+  - оптимизация антиангинальной терапии
+  next:
+  - PROT-PROTOCOL-003
+  explanation: Стенокардия III ФК и выше или умеренный/высокий риск по шкале.
+default:
+  route: outpatient
+  actions:
+  - наблюдение у терапевта или кардиолога поликлиники
+  - контроль факторов риска
+  - визит 1 раз в 6–12 месяцев
+  explanation: Стабильная стенокардия I–II ФК с низким риском.
 sources:
 - Клинические рекомендации по стабильной ИБС, 2024
 - 2023 ESC Guidelines for CCS
@@ -41,12 +98,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: decisions, default. См. docs/schema.md, раздел «routing».
 ---
 
 # Маршрутизация пациента: Ишемическая болезнь сердца (хроническая)

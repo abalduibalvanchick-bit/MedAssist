@@ -33,6 +33,83 @@ relations:
 - target: PROT-SCALE-002
   type: assessed_by
   description: В чек-листе оценивается риск по шкале.
+items:
+- text: полиурия, полидипсия
+  required: true
+- text: немотивированная потеря веса
+  required: true
+- text: общая слабость, утомляемость
+  required: true
+- text: рецидивирующие инфекции (мочевыводящие пути, кожа)
+  required: true
+- text: 'факторы риска: ожирение, наследственность, гиподинамия, возраст ≥ 45 лет'
+  required: true
+- text: глюкоза крови (капиллярная или венозная) – экспресс-тест
+  required: true
+  refs:
+  - DIAG-EXAM-005
+- text: HbA1c (если доступен)
+  required: true
+  refs:
+  - DIAG-EXAM-006
+- text: артериальное давление, частота сердечных сокращений
+  required: true
+- text: масса тела, рост, расчёт ИМТ
+  required: true
+- text: осмотр стоп (вибрационная чувствительность, пульсация, деформации)
+  required: true
+- text: оценка зрения (ориентировочно)
+  required: true
+- text: – расчёт баллов по шкале риска осложнений
+  required: true
+  refs:
+  - PROT-SCALE-002
+- text: наличие сердечно-сосудистых заболеваний (ИБС, инсульт, ХСН)
+  required: true
+- text: наличие ХБП (СКФ, альбуминурия)
+  required: true
+- text: курение, дислипидемия
+  required: true
+- text: подтверждён диагноз (по критериям глюкоза натощак ≥ 7.0 или HbA1c ≥ 6.5%)
+  required: true
+  refs:
+  - DIAG-DISEASE-006
+- text: необходимость дополнительных обследований (липидный профиль, креатинин, СКФ, ОАМ)
+  required: true
+- text: исключение острых осложнений (кетоз, ГГС)
+  required: true
+- text: назначить обучение в школе диабета (обязательно)
+  required: true
+- text: определить план лечения
+  required: true
+  refs:
+  - PROT-PROTOCOL-002
+- text: 'стартовая терапия: метформин (при отсутствии противопоказаний) – доза в соответствии с'
+  required: true
+  refs:
+  - PHARM-REGIMEN-002
+- text: определить маршрут пациента (амбулаторно / срочная консультация эндокринолога / госпитализация) по
+  required: true
+  refs:
+  - PROT-ROUTING-002
+- text: при наличии высокого сердечно-сосудистого риска – рассмотреть добавление ингибитора SGLT2 или агониста ГПП-1
+  required: true
+- text: объяснить суть заболевания и его хроническое течение
+  required: true
+- text: выдать памятку
+  required: true
+  refs:
+  - PROT-PATIENT_INFO-002
+- text: обучить правилам самоконтроля глюкозы (если есть глюкометр)
+  required: true
+- text: объяснить признаки гипогликемии и гипергликемии, когда срочно обратиться
+  required: true
+- text: назначить контрольный визит (через 2–4 недели)
+  required: true
+- text: записать план лечения в электронную карту
+  required: true
+- text: при необходимости выдать направления на анализы, консультации (окулист, невролог)
+  required: true
 sources:
 - ADA Standards of Medical Care in Diabetes, 2025
 - Клинические рекомендации «Сахарный диабет 2 типа», 2024
@@ -41,12 +118,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-02'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: items. См. docs/schema.md, раздел «checklist».
 ---
 
 # Чек-лист врача: первичный приём при сахарном диабете 2 типа

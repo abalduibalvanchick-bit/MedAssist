@@ -44,6 +44,43 @@ relations:
 - target: PHARM-NONPHARM-004
   type: includes
   description: Немедикаментозные меры (постельный режим, гидратация, оксигенотерапия при необходимости).
+for:
+- DIAG-DISEASE-003
+lines:
+- line: 1
+  options:
+  - agent: PHARM-NONPHARM-004
+    note: всем пациентам
+  - agent: PHARM-DRUGCLASS-014
+    when:
+      not:
+        fact: penicillin_allergy
+    note: амбулаторно без сопутствующих заболеваний — амоксициллин
+  - agent: PHARM-DRUGCLASS-013
+    when:
+      fact: penicillin_allergy
+    note: при аллергии на пенициллины
+  - agent: PHARM-DRUGCLASS-016
+    when:
+      all:
+      - not:
+          profile: GLB-PROFILE-002
+      - not:
+          profile: GLB-PROFILE-004
+    note: при сопутствующих заболеваниях или недавнем приёме антибиотиков
+- line: 2
+  options:
+  - agent: PHARM-DRUGCLASS-015
+    when:
+      scale: PROT-SCALE-004
+      op: '>='
+      value: 2
+    note: в стационаре в комбинации с макролидом
+  - agent: PHARM-DRUGCLASS-013
+    when:
+      scale: PROT-SCALE-004
+      op: '>='
+      value: 2
 sources:
 - Клинические рекомендации «Внебольничная пневмония у взрослых», 2024
 - IDSA/ATS Guidelines for CAP, 2023
@@ -52,12 +89,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for, lines. См. docs/schema.md, раздел «regimen».
 ---
 
 # Схема лечения внебольничной пневмонии у взрослых

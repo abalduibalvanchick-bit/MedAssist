@@ -37,6 +37,8 @@ relations:
 - target: PHARM-REGIMEN-002
   type: included_in
   description: Немедикаментозные меры дополняют терапевтическую схему.
+for:
+- DIAG-DISEASE-006
 sources:
 - ADA Standards of Medical Care in Diabetes, 2025
 - Клинические рекомендации «Сахарный диабет 2 типа», 2024
@@ -45,12 +47,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for. См. docs/schema.md, раздел «nonpharm».
 ---
 
 # Немедикаментозное лечение сахарного диабета 2 типа

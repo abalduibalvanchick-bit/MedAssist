@@ -46,19 +46,89 @@ relations:
 - target: PROT-SCREENING-001
   type: has_screening
   description: Протокол связан со скринингом артериальной гипертензии.
+for:
+- DIAG-DISEASE-001
+entry:
+  any:
+  - disease: DIAG-DISEASE-001
+  - fact: known_hypertension
+  - param: sbp
+    op: '>='
+    value: 140
+  - param: dbp
+    op: '>='
+    value: 90
+steps:
+- id: confirm
+  action: подтвердить диагноз повторными офисными измерениями, СМАД или домашним мониторированием АД
+  refs:
+  - DIAG-EXAM-001
+- id: risk
+  action: оценить сердечно-сосудистый риск
+  refs:
+  - PROT-SCALE-001
+- id: target_organs
+  action: 'обследовать органы-мишени: ЭКГ, креатинин и СКФ, альбуминурия, глюкоза, липиды'
+  refs:
+  - DIAG-EXAM-002
+  - DIAG-EXAM-005
+- id: lifestyle
+  action: 'модификация образа жизни: соль менее 5 г/сут, диета DASH, физическая активность, отказ от курения'
+  refs:
+  - PHARM-NONPHARM-001
+- id: therapy
+  action: начать антигипертензивную терапию, предпочтительно фиксированной комбинацией иАПФ или БРА с БКК или диуретиком
+  when:
+    any:
+    - param: sbp
+      op: '>='
+      value: 140
+    - param: dbp
+      op: '>='
+      value: 90
+  refs:
+  - PHARM-REGIMEN-001
+- id: follow_up
+  action: оценить эффект через 1–3 месяца
+  refs:
+  - PROT-FOLLOW_UP-001
+branches:
+- when:
+    redflag: DIAG-REDFLAG-001
+  then: PROT-EMERGENCY_P-001
+  explanation: осложнённый гипертонический криз
+- when:
+    profile: GLB-PROFILE-002
+  then: PROT-ROUTING-001
+  explanation: при беременности иАПФ и БРА противопоказаны, ведение совместно с акушером-гинекологом
+- when:
+    scale_category: PROT-SCALE-001
+    value: high
+  then: PROT-ROUTING-001
+  explanation: высокий сердечно-сосудистый риск
+targets:
+- param: sbp
+  op: <
+  value: 130
+  label: целевое САД менее 130 мм рт. ст. у большинства пациентов при хорошей переносимости
+- param: dbp
+  op: <
+  value: 80
+  label: целевое ДАД менее 80 мм рт. ст.
 sources:
 - Клинические рекомендации по артериальной гипертензии
+- Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.
+- Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
 clinical_guidelines:
 - ESC/ESH Guidelines
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-04-09'
 date_updated: '2026-09-16'
 status: draft
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for, entry, steps. См. docs/schema.md, раздел «protocol».
 ---
 
 # Клинический протокол: Артериальная гипертензия

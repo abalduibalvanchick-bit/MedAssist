@@ -37,6 +37,44 @@ relations:
 - target: PHARM-REGIMEN-003
   type: recommends
   description: Контроль эффективности и безопасности терапии.
+for:
+- DIAG-DISEASE-002
+- PROT-PROTOCOL-003
+schedule:
+- after: начала или изменения терапии
+  interval: 1–3 месяца
+  purpose: оценка симптомов и переносимости
+- after: стабилизации
+  interval: 6–12 месяцев
+  purpose: контроль факторов риска, ЭКГ
+monitor:
+- param: sbp
+  target:
+    param: sbp
+    op: <
+    value: 130
+  label: систолическое АД
+- param: hr
+  target:
+    param: hr
+    op: <
+    value: 70
+  label: ЧСС покоя
+- param: ccs_class
+  target:
+    param: ccs_class
+    op: <=
+    value: 2
+  label: функциональный класс стенокардии
+- exam: DIAG-EXAM-002
+  label: ЭКГ ежегодно
+deterioration:
+  any:
+  - redflag: DIAG-REDFLAG-005
+  - param: ccs_class
+    op: '>='
+    value: 3
+on_deterioration: PROT-ROUTING-003
 sources:
 - 2023 ESC Guidelines for CCS
 - Клинические рекомендации по стабильной ИБС, 2024
@@ -45,12 +83,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for, schedule, monitor. См. docs/schema.md, раздел «follow_up».
 ---
 
 # Наблюдение пациента: Ишемическая болезнь сердца (хроническая)

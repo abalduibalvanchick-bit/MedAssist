@@ -31,6 +31,15 @@ relations:
 - target: PHARM-NONPHARM-002
   type: patient_info_for
   description: Включает рекомендации по диете и физической активности.
+for:
+- DIAG-DISEASE-006
+- PROT-PROTOCOL-002
+seek_help_when:
+- уровень сахара крови > 15–20 ммоль/л и он не снижается, несмотря на лечение
+- появились тошнота, рвота, боль в животе
+- сильная слабость, спутанность сознания
+- очень высокий сахар (> 30 ммоль/л) даже при хорошем самочувствии – всё равно экстренно
+- потеря сознания
 sources:
 - Клинические рекомендации «Сахарный диабет 2 типа», 2024
 - ADA Standards of Medical Care in Diabetes, 2025 (адаптировано)
@@ -39,12 +48,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-02'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for. См. docs/schema.md, раздел «patient_info».
 ---
 
 # Памятка для пациента: Сахарный диабет 2 типа

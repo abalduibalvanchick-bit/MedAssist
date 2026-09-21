@@ -40,6 +40,72 @@ relations:
 - target: PHARM-REGIMEN-003
   type: recommends
   description: Дальнейшая фармакотерапия.
+- target: PHARM-DRUGCLASS-011
+  type: recommends
+  description: выведено из машиночитаемого слоя (drugs)
+- target: PHARM-DRUGCLASS-012
+  type: recommends
+  description: выведено из машиночитаемого слоя (drugs)
+- target: PHARM-DRUGCLASS-020
+  type: recommends
+  description: выведено из машиночитаемого слоя (drugs)
+criteria:
+  any:
+  - emergency: DIAG-EMERGENCY-001
+  - redflag: DIAG-REDFLAG-005
+phases:
+- window: 0–10 мин
+  steps:
+  - вызов скорой помощи
+  - ЭКГ в 12 отведениях в течение 10 минут от первого контакта
+  - кислород только при SpO₂ менее 90 %
+  - нитроглицерин 0,4 мг сублингвально каждые 5 минут до 3 доз при САД выше 90 мм рт. ст. и ЧСС более 50
+- window: 10–30 мин
+  steps:
+  - ацетилсалициловая кислота 150–300 мг разжевать
+  - ингибитор P2Y12 по решению врача
+  - транспортировка в стационар с возможностью ЧКВ
+- window: стационар
+  steps:
+  - антикоагулянтная терапия
+  - тропонин по алгоритму 0/1–2 ч
+  - статин высокой интенсивности в первые 24 часа
+  - β-адреноблокатор при отсутствии противопоказаний
+  - стратификация риска и решение о коронарографии
+drugs:
+- drug: PHARM-DRUGCLASS-011
+  dose: ацетилсалициловая кислота 150–300 мг однократно, затем 75–100 мг/сут
+  route: внутрь, разжевать
+  contraindicated_when:
+    fact: on_anticoagulants
+- drug: PHARM-DRUGCLASS-012
+  dose: аторвастатин 80 мг/сут
+  route: внутрь
+  when:
+    not:
+      profile: GLB-PROFILE-002
+- drug: PHARM-DRUGCLASS-020
+  dose: бисопролол 2,5–5 мг или метопролол 25–50 мг
+  route: внутрь
+  contraindicated_when:
+    any:
+    - fact: heart_failure
+    - fact: hypotension
+    - param: hr
+      op: <
+      value: 60
+    - feature: wheezing.silent_chest
+stabilization:
+  all:
+  - param: sbp
+    op: '>'
+    value: 100
+  - param: hr
+    op: between
+    value:
+    - 50
+    - 100
+next: PROT-ROUTING-003
 sources:
 - 2023 ESC Guidelines for the management of acute coronary syndromes
 - Клинические рекомендации по ОКС, 2024
@@ -48,12 +114,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: criteria, phases. См. docs/schema.md, раздел «emergency_p».
 ---
 
 # Алгоритм неотложной помощи: Нестабильная стенокардия / подозрение на ОКС

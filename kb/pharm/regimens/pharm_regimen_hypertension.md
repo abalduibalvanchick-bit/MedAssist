@@ -49,6 +49,44 @@ relations:
 - target: PHARM-NONPHARM-001
   type: includes
   description: Немедикаментозные меры дополняют терапевтическую схему.
+for:
+- DIAG-DISEASE-001
+lines:
+- line: 1
+  options:
+  - agent: PHARM-NONPHARM-001
+    note: всем пациентам
+  - agent: PHARM-DRUGCLASS-001
+    when:
+      not:
+        profile: GLB-PROFILE-002
+    note: в комбинации с БКК или диуретиком
+  - agent: PHARM-DRUGCLASS-002
+    when:
+      not:
+        profile: GLB-PROFILE-002
+    note: при непереносимости иАПФ
+  - agent: PHARM-DRUGCLASS-003
+    note: в комбинации с иАПФ или БРА
+  - agent: PHARM-DRUGCLASS-004
+    note: в комбинации с иАПФ или БРА
+- line: 2
+  options:
+  - agent: PHARM-DRUGCLASS-001
+    note: тройная комбинация иАПФ/БРА + БКК + диуретик
+  - agent: PHARM-DRUGCLASS-003
+  - agent: PHARM-DRUGCLASS-004
+- line: 3
+  options:
+  - agent: PHARM-DRUGCLASS-020
+    when:
+      any:
+      - fact: known_ihd
+      - fact: heart_failure
+      - param: hr
+        op: '>'
+        value: 80
+    note: при ИБС, ХСН или ЧСС более 80
 sources:
 - Клинические рекомендации «АГ у взрослых», 2024
 - 2023 ESH Guidelines
@@ -57,12 +95,11 @@ clinical_guidelines:
 last_medical_review: '2025-03-01'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.0'
+version: '2.1'
 date_created: '2025-02-25'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for, lines. См. docs/schema.md, раздел «regimen».
 ---
 
 # Схема лечения артериальной гипертензии

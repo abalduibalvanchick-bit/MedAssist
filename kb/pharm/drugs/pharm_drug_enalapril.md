@@ -34,6 +34,32 @@ relations:
 - target: PHARM-REGIMEN-001
   type: included_in
   description: Может входить в антигипертензивную схему.
+contraindications:
+- when:
+    profile: GLB-PROFILE-002
+  absolute: true
+  explanation: противопоказан при беременности и лактации
+- when:
+    fact: angioedema_history
+  absolute: true
+  explanation: ангионевротический отёк в анамнезе
+- when:
+    param: potassium
+    op: '>'
+    value: 5.5
+  absolute: false
+  explanation: гиперкалиемия
+interactions:
+- with: PHARM-DRUGCLASS-010
+  severity: moderate
+dose_adjustments:
+- when:
+    param: egfr
+    op: <
+    value: 30
+  note: начальная доза 2,5 мг/сут, титрация под контролем калия и креатинина
+indications:
+- DIAG-DISEASE-001
 sources:
 - Инструкция по медицинскому применению эналаприла
 - Клинические рекомендации «Артериальная гипертензия у взрослых», 2024
@@ -42,12 +68,11 @@ clinical_guidelines:
 last_medical_review: '2025-03-15'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.0'
+version: '2.1'
 date_created: '2025-03-10'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: contraindications. См. docs/schema.md, раздел «drug».
 ---
 
 # Эналаприл – Энап, Ренитек, Берлиприл

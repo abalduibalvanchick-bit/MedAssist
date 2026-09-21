@@ -86,6 +86,38 @@ medassist/
                 glb_disclaimer_patient.md
                 glb_disclaimer_professional.md
                 index.md
+            glossary/
+                glb_glossary_ace_inhibitors.md
+                glb_glossary_acs.md
+                glb_glossary_act.md
+                glb_glossary_angina.md
+                glb_glossary_arb.md
+                glb_glossary_blood_pressure.md
+                glb_glossary_curb65.md
+                glb_glossary_diabetes2.md
+                glb_glossary_differential_diagnosis.md
+                glb_glossary_dka.md
+                glb_glossary_ecg.md
+                glb_glossary_egfr.md
+                glb_glossary_fev1.md
+                glb_glossary_hba1c.md
+                glb_glossary_hhs.md
+                glb_glossary_hypertension.md
+                glb_glossary_ics.md
+                glb_glossary_ihd.md
+                glb_glossary_midas.md
+                glb_glossary_nsaids.md
+                glb_glossary_pef.md
+                glb_glossary_red_flag.md
+                glb_glossary_respiratory_failure.md
+                glb_glossary_routing.md
+                glb_glossary_saba.md
+                glb_glossary_spo2.md
+                glb_glossary_status_asthmaticus.md
+                glb_glossary_status_migrainosus.md
+                glb_glossary_stroke.md
+                glb_glossary_troponin.md
+                index.md
             patient_profiles/
                 glb_profile_ckd.md
                 glb_profile_elderly.md

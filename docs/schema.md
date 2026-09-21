@@ -133,7 +133,7 @@
 
 | Ключ | Тип | Обяз. | Описание |
 |---|---|---|---|
-| `with` | `id(drug,drugclass)` | да |  |
+| `with` | `id(drug,drugclass)` | нет |  |
 | `severity` | `enum(interaction_severity)` | да |  |
 | `card` | `id(interaction)` | нет |  |
 
@@ -145,11 +145,12 @@
 | `note` | `string` | да |  |
 
 ### drugclass — Фармакологическая группа
-Обязательны для approved: `members`
+Обязательны для approved: `representatives`
 
 | Поле | Тип | Обяз. | Описание |
 |---|---|---|---|
-| `members` | `list[id(drug)]` | да |  |
+| `representatives` | `list[string]` | да | МНН основных представителей группы |
+| `members` | `list[id(drug)]` | нет | Представители, для которых есть карточки |
 | `contraindications` | `list[object]` | нет |  |
 
 Структура элемента `contraindications`:
@@ -165,8 +166,11 @@
 
 | Поле | Тип | Обяз. | Описание |
 |---|---|---|---|
-| `between` | `list[id(drug,drugclass)]` | да | Ровно два участника |
+| `between` | `list[id(drug,drugclass)]` | да | Участники из базы знаний (один или два) |
+| `other_agent` | `string` | нет | Второй участник, не представленный карточкой (например, контрастное вещество) |
 | `severity` | `enum(interaction_severity)` | да |  |
+| `trigger` | `condition` | нет | Условие, при котором взаимодействие актуально для пациента |
+| `management` | `string` | нет |  |
 
 ### adr — Нежелательная лекарственная реакция
 Обязательны для approved: `caused_by`
@@ -322,7 +326,8 @@
 |---|---|---|---|
 | `code` | `string` | да |  |
 | `label` | `string` | да |  |
-| `options` | `list[object]` | да |  |
+| `options` | `list[object]` | нет | Варианты значения; баллы берутся из первого варианта с истинным условием |
+| `points_from` | `parameter` | нет | Баллы равны значению числового параметра (ответ на вопрос опросника) |
 
 Структура элемента `interpretation`:
 
@@ -335,12 +340,12 @@
 | `action` | `id(routing,protocol,emergency_p,follow_up)` | нет |  |
 
 ### screening — Скрининг
-Обязательны для approved: `target`, `methods`, `interval`
+Обязательны для approved: `target`, `interval`
 
 | Поле | Тип | Обяз. | Описание |
 |---|---|---|---|
 | `target` | `condition` | да | Кому показан скрининг |
-| `methods` | `list[id(exam)]` | да |  |
+| `methods` | `list[id(exam)]` | нет | Методы обследования; для программ вакцинации может отсутствовать |
 | `interval` | `string` | да |  |
 | `positive_when` | `condition` | нет |  |
 | `on_positive` | `id(routing,protocol)` | нет |  |

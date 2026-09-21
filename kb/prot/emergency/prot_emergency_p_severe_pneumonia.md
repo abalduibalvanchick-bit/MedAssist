@@ -41,6 +41,65 @@ relations:
 - target: PHARM-REGIMEN-004
   type: recommends
   description: Эмпирическая антибактериальная терапия для тяжёлой пневмонии.
+- target: PHARM-DRUGCLASS-015
+  type: recommends
+  description: выведено из машиночитаемого слоя (drugs)
+- target: PHARM-DRUGCLASS-013
+  type: recommends
+  description: выведено из машиночитаемого слоя (drugs)
+- target: PHARM-DRUGCLASS-016
+  type: recommends
+  description: выведено из машиночитаемого слоя (drugs)
+criteria:
+  any:
+  - scale: PROT-SCALE-004
+    op: '>='
+    value: 3
+  - param: spo2
+    op: <
+    value: 90
+  - redflag: DIAG-REDFLAG-003
+phases:
+- window: 0–15 мин
+  steps:
+  - первичная оценка ABCDE
+  - кислородотерапия с целевой SpO₂ 92–96 %
+  - венозный доступ, посев крови до начала антибиотиков
+  - оценка признаков сепсиса и шока
+- window: в течение 1 ч
+  steps:
+  - 'парентеральная антибактериальная терапия: цефалоспорин III поколения в комбинации с макролидом или респираторный фторхинолон'
+  - инфузионная терапия при гипотензии
+- window: далее
+  steps:
+  - перевод в ОРИТ
+  - респираторная поддержка по показаниям
+  - оценка эффекта через 48–72 часа
+drugs:
+- drug: PHARM-DRUGCLASS-015
+  dose: цефтриаксон 2 г/сут
+  route: внутривенно
+- drug: PHARM-DRUGCLASS-013
+  dose: азитромицин 500 мг/сут
+  route: внутривенно
+- drug: PHARM-DRUGCLASS-016
+  dose: левофлоксацин 750 мг/сут (альтернатива комбинации)
+  route: внутривенно
+  contraindicated_when:
+    any:
+    - profile: GLB-PROFILE-002
+    - profile: GLB-PROFILE-004
+stabilization:
+  all:
+  - param: spo2
+    op: '>='
+    value: 92
+  - not:
+      fact: hypotension
+  - param: rr
+    op: <
+    value: 30
+next: PROT-ROUTING-004
 sources:
 - IDSA/ATS Guidelines for CAP, 2023
 - Surviving Sepsis Campaign, 2021
@@ -49,12 +108,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-02'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: criteria, phases. См. docs/schema.md, раздел «emergency_p».
 ---
 
 # Алгоритм неотложной помощи: Тяжёлая внебольничная пневмония / ОРДС / септический шок

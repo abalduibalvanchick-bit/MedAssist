@@ -47,6 +47,86 @@ relations:
 - target: PROT-SCREENING-002
   type: has_screening
   description: Протокол связан со скринингом сахарного диабета 2 типа.
+for:
+- DIAG-DISEASE-006
+entry:
+  any:
+  - disease: DIAG-DISEASE-006
+  - fact: known_diabetes
+  - param: hba1c
+    op: '>='
+    value: 6.5
+  - param: glucose
+    op: '>='
+    value: 7
+steps:
+- id: confirm
+  action: 'подтвердить диагноз: глюкоза плазмы натощак и HbA1c'
+  refs:
+  - DIAG-EXAM-005
+  - DIAG-EXAM-006
+- id: risk
+  action: оценить риск осложнений
+  refs:
+  - PROT-SCALE-002
+- id: lifestyle
+  action: питание, снижение массы тела, физическая активность, обучение в школе диабета
+  refs:
+  - PHARM-NONPHARM-002
+- id: metformin
+  action: начать метформин при отсутствии противопоказаний
+  when:
+    param: egfr
+    op: '>='
+    value: 30
+  refs:
+  - PHARM-DRUG-020
+  - PHARM-REGIMEN-002
+- id: organ_protection
+  action: при атеросклеротических ССЗ, ХСН или ХБП добавить иНГЛТ-2 или арГПП-1 независимо от HbA1c
+  when:
+    any:
+    - fact: prior_cv_event
+    - fact: heart_failure
+    - param: egfr
+      op: <
+      value: 60
+  refs:
+  - PHARM-DRUGCLASS-008
+  - PHARM-DRUGCLASS-009
+- id: complications
+  action: 'ежегодный скрининг осложнений: глазное дно, альбуминурия, СКФ, осмотр стоп'
+- id: follow_up
+  action: контроль HbA1c каждые 3 месяца до достижения цели
+  refs:
+  - PROT-FOLLOW_UP-002
+branches:
+- when:
+    any:
+    - emergency: DIAG-EMERGENCY-004
+    - redflag: DIAG-REDFLAG-004
+  then: PROT-EMERGENCY_P-002
+  explanation: гипергликемический криз
+- when:
+    param: egfr
+    op: <
+    value: 30
+  then: PROT-ROUTING-002
+  explanation: метформин противопоказан, требуется пересмотр терапии эндокринологом
+- when:
+    scale_category: PROT-SCALE-002
+    value: very_high
+  then: PROT-ROUTING-002
+  explanation: очень высокий риск осложнений
+targets:
+- param: hba1c
+  op: <
+  value: 7
+  label: HbA1c менее 7 % для большинства взрослых
+- param: sbp
+  op: <
+  value: 130
+  label: САД менее 130 мм рт. ст.
 sources:
 - Клинические рекомендации «Сахарный диабет 2 типа», 2024
 - ADA Standards of Medical Care in Diabetes, 2025
@@ -55,12 +135,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-02'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: for, entry, steps. См. docs/schema.md, раздел «protocol».
 ---
 
 # Клинический протокол: Сахарный диабет 2 типа

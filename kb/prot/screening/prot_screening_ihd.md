@@ -30,6 +30,29 @@ relations:
 - target: DIAG-EXAM-002
   type: uses_exam
   description: ЭКГ в покое и/или нагрузочные тесты.
+- target: DIAG-EXAM-001
+  type: uses_exam
+  description: выведено из машиночитаемого слоя (methods)
+- target: DIAG-EXAM-005
+  type: uses_exam
+  description: выведено из машиночитаемого слоя (methods)
+target:
+  param: age
+  op: '>='
+  value: 40
+methods:
+- DIAG-EXAM-001
+- DIAG-EXAM-002
+- DIAG-EXAM-005
+interval: оценка сердечно-сосудистого риска каждые 5 лет, при высоком риске ежегодно
+positive_when:
+  any:
+  - scale_category: PROT-SCALE-001
+    value: high
+  - all:
+    - symptom: DIAG-SYMPTOM-002
+    - feature: chest_pain.exertional
+on_positive: PROT-ROUTING-003
 sources:
 - 2023 ESC Guidelines for CCS
 - Клинические рекомендации по стабильной ИБС, 2024
@@ -38,12 +61,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: target, methods, interval. См. docs/schema.md, раздел «screening».
 ---
 
 # Скрининг: Ишемическая болезнь сердца (оценка риска)

@@ -32,6 +32,28 @@ relations:
 - target: PHARM-REGIMEN-001
   type: included_in
   description: Группа используется в схеме лечения АГ.
+representatives:
+- эналаприл
+- рамиприл
+- периндоприл
+- лизиноприл
+members:
+- PHARM-DRUG-001
+contraindications:
+- when:
+    profile: GLB-PROFILE-002
+  absolute: true
+  explanation: противопоказан при беременности и лактации
+- when:
+    fact: angioedema_history
+  absolute: true
+  explanation: ангионевротический отёк в анамнезе
+- when:
+    param: potassium
+    op: '>'
+    value: 5.5
+  absolute: false
+  explanation: гиперкалиемия
 sources:
 - Клинические рекомендации по АГ, 2024
 - 2023 ESH Guidelines
@@ -40,12 +62,11 @@ clinical_guidelines:
 last_medical_review: '2025-03-01'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.0'
+version: '2.1'
 date_created: '2025-02-20'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: members. См. docs/schema.md, раздел «drugclass».
 ---
 
 # Ингибиторы ангиотензинпревращающего фермента (иАПФ)
