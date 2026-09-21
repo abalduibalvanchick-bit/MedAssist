@@ -6,4 +6,4 @@
 
 | ID | Название | Категория | Срочность | Статус | Связей | Файл |
 |---|---|---|---|---|---|---|
-| `PHARM-INTERACTION-001` | Взаимодействие: Метформин + йодсодержащие контрастные вещества | `interaction` | `urgent` | `medical_review` | 1 | [pharm_interaction_metformin_contrast.md](pharm_interaction_metformin_contrast.md) |
+| `PHARM-INTERACTION-001` | Взаимодействие: Метформин + йодсодержащие контрастные вещества | `interaction` | `urgent` | `approved` | 1 | [pharm_interaction_metformin_contrast.md](pharm_interaction_metformin_contrast.md) |

@@ -6,4 +6,4 @@
 
 | ID | Название | Категория | Срочность | Статус | Связей | Файл |
 |---|---|---|---|---|---|---|
-| `PHARM-ADR-001` | Желудочно-кишечное кровотечение, связанное с приёмом НПВС | `adr` | `urgent` | `medical_review` | 1 | [pharm_adr_nsaid_gi_bleeding.md](pharm_adr_nsaid_gi_bleeding.md) |
+| `PHARM-ADR-001` | Желудочно-кишечное кровотечение, связанное с приёмом НПВС | `adr` | `urgent` | `approved` | 1 | [pharm_adr_nsaid_gi_bleeding.md](pharm_adr_nsaid_gi_bleeding.md) |

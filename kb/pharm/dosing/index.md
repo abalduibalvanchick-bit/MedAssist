@@ -6,4 +6,4 @@
 
 | ID | Название | Категория | Срочность | Статус | Связей | Файл |
 |---|---|---|---|---|---|---|
-| `PHARM-DOSING-001` | Коррекция доз антигипертензивных препаратов при хронической болезни почек | `dosing` | `routine` | `medical_review` | 4 | [pharm_dosing_ckd.md](pharm_dosing_ckd.md) |
+| `PHARM-DOSING-001` | Коррекция доз антигипертензивных препаратов при хронической болезни почек | `dosing` | `routine` | `approved` | 4 | [pharm_dosing_ckd.md](pharm_dosing_ckd.md) |

@@ -49,7 +49,7 @@ author: Инженер знаний №2
 version: '2.1'
 date_created: '2025-03-05'
 date_updated: '2026-09-16'
-status: medical_review
+status: approved
 disclaimer: true
 ---
 

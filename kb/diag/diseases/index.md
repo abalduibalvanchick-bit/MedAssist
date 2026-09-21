@@ -6,9 +6,9 @@
 
 | ID | Название | Категория | Срочность | Статус | Связей | Файл |
 |---|---|---|---|---|---|---|
-| `DIAG-DISEASE-001` | Артериальная гипертензия | `disease` | `routine` | `medical_review` | 7 | [diag_disease_hypertension.md](diag_disease_hypertension.md) |
-| `DIAG-DISEASE-002` | Ишемическая болезнь сердца | `disease` | `urgent` | `medical_review` | 7 | [diag_disease_ihd.md](diag_disease_ihd.md) |
-| `DIAG-DISEASE-003` | Пневмония | `disease` | `urgent` | `medical_review` | 8 | [diag_disease_pneumonia.md](diag_disease_pneumonia.md) |
-| `DIAG-DISEASE-004` | Бронхиальная астма | `disease` | `routine` | `medical_review` | 6 | [diag_disease_asthma.md](diag_disease_asthma.md) |
-| `DIAG-DISEASE-005` | Мигрень | `disease` | `routine` | `medical_review` | 4 | [diag_disease_migraine.md](diag_disease_migraine.md) |
-| `DIAG-DISEASE-006` | Сахарный диабет 2 типа | `disease` | `routine` | `medical_review` | 7 | [diag_disease_diabetes_type2.md](diag_disease_diabetes_type2.md) |
+| `DIAG-DISEASE-001` | Артериальная гипертензия | `disease` | `routine` | `approved` | 7 | [diag_disease_hypertension.md](diag_disease_hypertension.md) |
+| `DIAG-DISEASE-002` | Ишемическая болезнь сердца | `disease` | `urgent` | `approved` | 7 | [diag_disease_ihd.md](diag_disease_ihd.md) |
+| `DIAG-DISEASE-003` | Пневмония | `disease` | `urgent` | `approved` | 8 | [diag_disease_pneumonia.md](diag_disease_pneumonia.md) |
+| `DIAG-DISEASE-004` | Бронхиальная астма | `disease` | `routine` | `approved` | 6 | [diag_disease_asthma.md](diag_disease_asthma.md) |
+| `DIAG-DISEASE-005` | Мигрень | `disease` | `routine` | `approved` | 4 | [diag_disease_migraine.md](diag_disease_migraine.md) |
+| `DIAG-DISEASE-006` | Сахарный диабет 2 типа | `disease` | `routine` | `approved` | 7 | [diag_disease_diabetes_type2.md](diag_disease_diabetes_type2.md) |

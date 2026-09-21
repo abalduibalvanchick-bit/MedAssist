@@ -1,0 +1,73 @@
+# Границы применимости и особенности групп пациентов.
+# Правила этого файла имеют высокий приоритет и проверяются раньше диагностических.
+
+- id: RULE-GLB-001
+  domain: glb
+  title: Пациент младше 18 лет — вне области применимости
+  priority: 100
+  if: {profile: GLB-PROFILE-004}
+  then:
+    - refuse: "База знаний MedAssist подготовлена для взрослых пациентов. Пороговые значения и шкалы для детей отличаются; требуется консультация педиатра."
+  source_cards: [GLB-PROFILE-004]
+  explanation: Нормы жизненно важных показателей и шкалы (CURB-65, ACT, MIDAS) валидированы для взрослых.
+
+- id: RULE-GLB-002
+  domain: glb
+  title: Повышение АД при беременности
+  priority: 90
+  if:
+    all:
+      - {profile: GLB-PROFILE-002}
+      - any:
+          - {param: sbp, op: ">=", value: 140}
+          - {param: dbp, op: ">=", value: 90}
+  then:
+    - set_urgency: urgent
+    - route: {value: urgent_referral, timeframe: "в течение суток"}
+    - warn: "Ингибиторы АПФ и блокаторы рецепторов ангиотензина II противопоказаны при беременности. Ведение совместно с акушером-гинекологом (риск преэклампсии)."
+  source_cards: [GLB-PROFILE-002, DIAG-DISEASE-001, PHARM-DRUGCLASS-001, PHARM-DRUGCLASS-002]
+  explanation: Артериальная гипертензия у беременной требует оценки риска преэклампсии и особого выбора препаратов.
+
+- id: RULE-GLB-003
+  domain: glb
+  title: Лихорадка у иммунокомпрометированного пациента
+  priority: 80
+  if:
+    all:
+      - {profile: GLB-PROFILE-005}
+      - {symptom: DIAG-SYMPTOM-004}
+  then:
+    - set_urgency: urgent
+    - recommend_exam: {target: DIAG-EXAM-003, role: supports}
+    - recommend_exam: {target: DIAG-EXAM-004, role: confirms}
+  source_cards: [GLB-PROFILE-005, DIAG-SYMPTOM-004, DIAG-EXAM-003, DIAG-EXAM-004]
+  explanation: У иммунокомпрометированных пациентов инфекции протекают со стёртой клиникой и быстро прогрессируют.
+
+- id: RULE-GLB-004
+  domain: glb
+  title: Спутанность сознания у пожилого пациента
+  priority: 80
+  if:
+    all:
+      - {profile: GLB-PROFILE-001}
+      - {fact: confusion}
+  then:
+    - set_urgency: urgent
+    - recommend_exam: {target: DIAG-EXAM-005, role: excludes}
+    - request_clarification: "Уточните, когда появилась спутанность сознания, есть ли лихорадка, одышка, слабость в конечностях или нарушение речи."
+  source_cards: [GLB-PROFILE-001, DIAG-EXAM-005]
+  explanation: У пожилых остро возникшая спутанность сознания бывает единственным проявлением инфекции, гипогликемии или инсульта.
+
+- id: RULE-GLB-005
+  domain: glb
+  title: Одышка у пожилого — исключить атипичный ОКС
+  priority: 70
+  if:
+    all:
+      - {profile: GLB-PROFILE-001}
+      - {symptom: DIAG-SYMPTOM-003}
+  then:
+    - assert_hypothesis: {target: DIAG-EMERGENCY-001, weight: 1}
+    - recommend_exam: {target: DIAG-EXAM-002, role: excludes}
+  source_cards: [GLB-PROFILE-001, DIAG-EMERGENCY-001, DIAG-EXAM-002]
+  explanation: У пожилых ишемия миокарда нередко проявляется одышкой без типичной боли.

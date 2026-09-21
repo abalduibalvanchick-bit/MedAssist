@@ -1,0 +1,153 @@
+# Первичное обследование и запрос недостающих данных.
+# Правила запроса уточнений используют метаатом known: срабатывают, только если
+# значение ещё не сообщено, и формулируют конкретный вопрос пользователю.
+
+- id: RULE-DIAG-023
+  domain: diag
+  title: Боль в груди — ЭКГ в течение 10 минут
+  priority: 85
+  if: {symptom: DIAG-SYMPTOM-002}
+  then:
+    - recommend_exam: {target: DIAG-EXAM-002, role: confirms}
+    - set_urgency: urgent
+  source_cards: [DIAG-SYMPTOM-002, DIAG-EXAM-002, DIAG-DIFDIAG-001]
+  explanation: При боли в груди ЭКГ регистрируется в течение 10 минут от первого контакта для исключения ОКС.
+
+- id: RULE-DIAG-024
+  domain: diag
+  title: Одышка — пульсоксиметрия
+  priority: 80
+  if: {symptom: DIAG-SYMPTOM-003}
+  then:
+    - recommend_exam: {target: DIAG-EXAM-010, role: stratifies}
+  source_cards: [DIAG-SYMPTOM-003, DIAG-EXAM-010, DIAG-DIFDIAG-003]
+  explanation: Сатурация — базовый показатель тяжести при одышке любого генеза.
+
+- id: RULE-DIAG-025
+  domain: diag
+  title: Головная боль — измерение АД и неврологический осмотр
+  priority: 70
+  if: {symptom: DIAG-SYMPTOM-001}
+  then:
+    - recommend_exam: {target: DIAG-EXAM-001, role: stratifies}
+    - recommend_exam: {target: DIAG-EXAM-009, role: excludes}
+  source_cards: [DIAG-SYMPTOM-001, DIAG-EXAM-001, DIAG-EXAM-009, DIAG-DIFDIAG-002]
+  explanation: Измерение АД и неврологический осмотр позволяют выявить гипертонический криз и признаки вторичной головной боли.
+
+- id: RULE-DIAG-026
+  domain: diag
+  title: Лихорадка с кашлем — рентгенография и общий анализ крови
+  priority: 60
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-004}
+      - {symptom: DIAG-SYMPTOM-008}
+  then:
+    - recommend_exam: {target: DIAG-EXAM-004, role: confirms}
+    - recommend_exam: {target: DIAG-EXAM-003, role: supports}
+  source_cards: [DIAG-SYMPTOM-004, DIAG-SYMPTOM-008, DIAG-EXAM-004, DIAG-EXAM-003]
+  explanation: Рентгенография подтверждает пневмонию, лейкоцитоз поддерживает бактериальную природу процесса.
+
+- id: RULE-DIAG-027
+  domain: diag
+  title: Боль в груди — уточнить длительность
+  priority: 75
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-002}
+      - not: {known: symptom_duration_min}
+  then:
+    - request_clarification: "Сколько минут длится боль? Связана ли она с нагрузкой, проходит ли в покое или после нитроглицерина?"
+  source_cards: [DIAG-SYMPTOM-002, DIAG-REDFLAG-005]
+  explanation: Длительность более 20 минут, боль в покое и отсутствие эффекта нитроглицерина отличают нестабильную стенокардию от стабильной.
+
+- id: RULE-DIAG-028
+  domain: diag
+  title: Головная боль — уточнить АД
+  priority: 65
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-001}
+      - not: {known: sbp}
+  then:
+    - request_clarification: "Измерьте артериальное давление и сообщите результат."
+  source_cards: [DIAG-SYMPTOM-001, DIAG-EXAM-001, DIAG-REDFLAG-001]
+  explanation: Без значения АД нельзя исключить осложнённый гипертонический криз.
+
+- id: RULE-DIAG-029
+  domain: diag
+  title: Одышка — уточнить сатурацию и частоту дыхания
+  priority: 75
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-003}
+      - any:
+          - not: {known: spo2}
+          - not: {known: rr}
+  then:
+    - request_clarification: "Сообщите сатурацию (SpO₂) по пульсоксиметру и частоту дыхания в минуту. Может ли пациент говорить полными фразами?"
+  source_cards: [DIAG-SYMPTOM-003, DIAG-REDFLAG-003, DIAG-EXAM-010]
+  explanation: SpO₂ менее 90 % и ЧДД 30 и более — критерии острой дыхательной недостаточности.
+
+- id: RULE-DIAG-030
+  domain: diag
+  title: Подозрение на пневмонию — данные для CURB-65
+  priority: 60
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-004}
+      - {symptom: DIAG-SYMPTOM-008}
+      - any:
+          - not: {known: age}
+          - not: {known: rr}
+          - not: {known: sbp}
+  then:
+    - request_clarification: "Для оценки тяжести по CURB-65 сообщите возраст, частоту дыхания, АД, наличие спутанности сознания и уровень мочевины (если известен)."
+  source_cards: [PROT-SCALE-004, DIAG-DISEASE-003]
+  explanation: Решение о месте лечения пневмонии принимается по шкале CURB-65.
+
+- id: RULE-DIAG-031
+  domain: diag
+  title: Полиурия или жажда — уточнить гликемию
+  priority: 60
+  if:
+    all:
+      - any:
+          - {symptom: DIAG-SYMPTOM-006}
+          - {symptom: DIAG-SYMPTOM-007}
+      - not: {known: glucose}
+  then:
+    - request_clarification: "Сообщите уровень глюкозы крови (натощак или в любое время) и HbA1c, если известен."
+  source_cards: [DIAG-SYMPTOM-006, DIAG-SYMPTOM-007, DIAG-EXAM-005]
+  explanation: Диагноз сахарного диабета и исключение гипергликемического криза требуют значения гликемии.
+
+- id: RULE-DIAG-032
+  domain: diag
+  title: Очаговый дефицит — уточнить время появления
+  priority: 95
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-010}
+      - not: {known: symptom_duration_min}
+  then:
+    - request_clarification: "Когда появились симптомы (точное время или сколько минут назад)? Это определяет возможность тромболизиса."
+  source_cards: [DIAG-SYMPTOM-010, DIAG-EMERGENCY-002]
+  explanation: Реперфузионная терапия ишемического инсульта возможна в пределах 4,5 часа от появления симптомов.
+
+- id: RULE-DIAG-033
+  domain: diag
+  title: Обострение астмы — уточнить ПСВ
+  priority: 70
+  if:
+    all:
+      - any:
+          - {fact: known_asthma}
+          - {disease: DIAG-DISEASE-004}
+      - any:
+          - {symptom: DIAG-SYMPTOM-003}
+          - {symptom: DIAG-SYMPTOM-009}
+      - not: {known: pef_percent}
+  then:
+    - request_clarification: "Сообщите пиковую скорость выдоха в процентах от лучшего значения и сколько ингаляций сальбутамола потребовалось за последние сутки."
+  source_cards: [DIAG-DISEASE-004, DIAG-REDFLAG-006, PROT-ROUTING-005]
+  explanation: ПСВ менее 50 % от лучшего значения — критерий тяжёлого обострения.

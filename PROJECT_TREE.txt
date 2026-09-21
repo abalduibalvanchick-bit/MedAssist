@@ -247,6 +247,12 @@ medassist/
                 prot_screening_migraine.md
                 prot_screening_pneumonia_risk.md
             index.md
+        rules/
+            diag_hypotheses.yaml
+            diag_workup.yaml
+            glb_boundaries.yaml
+            pharm_safety.yaml
+            prot_routing.yaml
         templates/
             template_adr.md
             template_checklist.md
@@ -307,6 +313,7 @@ medassist/
         test_protocols.py
         test_repository.py
         test_search.py
+        test_stage3.py
         test_validator.py
         test_validator_v2.py
     .gitignore

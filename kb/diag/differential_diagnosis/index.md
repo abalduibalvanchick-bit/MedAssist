@@ -6,6 +6,6 @@
 
 | ID | Название | Категория | Срочность | Статус | Связей | Файл |
 |---|---|---|---|---|---|---|
-| `DIAG-DIFDIAG-001` | Дифференциальная диагностика боли в груди | `difdiag` | `urgent` | `medical_review` | 8 | [diag_difdiag_chest_pain.md](diag_difdiag_chest_pain.md) |
-| `DIAG-DIFDIAG-002` | Дифференциальная диагностика головной боли | `difdiag` | `urgent` | `medical_review` | 9 | [diag_difdiag_headache.md](diag_difdiag_headache.md) |
-| `DIAG-DIFDIAG-003` | Дифференциальная диагностика одышки | `difdiag` | `urgent` | `medical_review` | 11 | [diag_difdiag_dyspnea.md](diag_difdiag_dyspnea.md) |
+| `DIAG-DIFDIAG-001` | Дифференциальная диагностика боли в груди | `difdiag` | `urgent` | `approved` | 8 | [diag_difdiag_chest_pain.md](diag_difdiag_chest_pain.md) |
+| `DIAG-DIFDIAG-002` | Дифференциальная диагностика головной боли | `difdiag` | `urgent` | `approved` | 9 | [diag_difdiag_headache.md](diag_difdiag_headache.md) |
+| `DIAG-DIFDIAG-003` | Дифференциальная диагностика одышки | `difdiag` | `urgent` | `approved` | 11 | [diag_difdiag_dyspnea.md](diag_difdiag_dyspnea.md) |

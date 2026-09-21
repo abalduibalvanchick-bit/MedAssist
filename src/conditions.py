@@ -255,6 +255,9 @@ def validate_condition(
     elif atom == "fact":
         if value not in schema.facts:
             add(f"Неизвестный факт {value}")
+    elif atom == "known":
+        if value not in schema.parameters and value not in schema.facts:
+            add(f"known ссылается на неизвестный параметр или факт {value}")
     elif atom == "feature":
         if not isinstance(value, str) or "." not in value:
             add(f"Код признака должен иметь вид <symptom>.<feature>: {value!r}")
@@ -346,7 +349,9 @@ def collect_references(node: Any, schema: Schema | None = None, refs: ConditionR
     if atom is None:
         return refs
     value = node[atom]
-    if atom == "param":
+    if atom == "known":
+        (refs.params if value in schema.parameters else refs.facts).add(str(value))
+    elif atom == "param":
         refs.params.add(str(value))
     elif atom == "fact":
         refs.facts.add(str(value))
@@ -415,6 +420,9 @@ def evaluate(
         raise ConditionError(f"Неизвестный узел условия: {sorted(node)}")
     value = node[atom]
 
+    if atom == "known":
+        known = value in facts.params or value in facts.facts
+        return record(Truth.TRUE if known else Truth.FALSE, f"{value} {'сообщено' if known else 'не сообщено'}")
     if atom == "symptom":
         return record(facts.has_symptom(value))
     if atom == "feature":
@@ -506,6 +514,9 @@ def describe(node: Any, schema: Schema | None = None, labels: dict[str, str] | N
         return f"{label} = {node.get('value', True)}"
     if atom == "fact":
         return schema.facts.get(value, {}).get("label", value)
+    if atom == "known":
+        label = schema.parameters.get(value, schema.facts.get(value, {})).get("label", value)
+        return f"известно: {label}"
     if atom == "scale":
         return f"{name(value)} {node['op']} {node['value']}"
     if atom in ("scale_category", "exam_result"):

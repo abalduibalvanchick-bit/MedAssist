@@ -1,0 +1,369 @@
+# Формирование диагностических гипотез по сочетаниям признаков.
+# Правила дополняют взвешенную клиническую картину карточек заболеваний (presentation):
+# они фиксируют сочетания, которые в клинических рекомендациях считаются характерными.
+# Классификация неотложных состояний выполняется по критериям карточек emergency и
+# условиям карточек redflag; правила здесь её не дублируют, а добавляют гипотезы и срочность.
+
+- id: RULE-DIAG-001
+  domain: diag
+  title: Типичная стенокардия напряжения
+  priority: 60
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-002}
+      - {feature: chest_pain.pressing}
+      - {feature: chest_pain.exertional}
+      - {feature: chest_pain.relieved_by_rest}
+  then:
+    - assert_hypothesis: {target: DIAG-DISEASE-002, weight: 3}
+    - recommend_exam: {target: DIAG-EXAM-002, role: supports}
+  source_cards: [DIAG-SYMPTOM-002, DIAG-DISEASE-002, DIAG-EXAM-002]
+  explanation: Давящая загрудинная боль, провоцируемая нагрузкой и проходящая в покое, соответствует критериям типичной стенокардии.
+
+- id: RULE-DIAG-002
+  domain: diag
+  title: Боль в груди с признаками нестабильности — подозрение на ОКС
+  priority: 90
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-002}
+      - any:
+          - {feature: chest_pain.at_rest}
+          - {feature: chest_pain.new_onset}
+          - {feature: chest_pain.nitrate_unresponsive}
+          - {param: symptom_duration_min, op: ">", value: 20}
+  then:
+    - assert_hypothesis: {target: DIAG-EMERGENCY-001, weight: 3}
+    - set_urgency: emergency
+    - recommend_exam: {target: DIAG-EXAM-002, role: confirms}
+    - recommend_exam: {target: DIAG-EXAM-007, role: confirms}
+  source_cards: [DIAG-SYMPTOM-002, DIAG-REDFLAG-005, DIAG-EMERGENCY-001, DIAG-EXAM-002, DIAG-EXAM-007]
+  explanation: Боль в покое, впервые возникшая, не купирующаяся нитроглицерином или длящаяся более 20 минут — признаки нестабильности, требующие исключения ОКС.
+
+- id: RULE-DIAG-003
+  domain: diag
+  title: Боль в груди у пациента с факторами риска ИБС
+  priority: 40
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-002}
+      - {param: age, op: ">=", value: 40}
+      - at_least:
+          n: 1
+          of:
+            - {fact: smoker}
+            - {fact: known_diabetes}
+            - {fact: known_hypertension}
+            - {fact: dyslipidemia}
+            - {fact: family_history_cvd}
+  then:
+    - assert_hypothesis: {target: DIAG-DISEASE-002, weight: 1}
+  source_cards: [DIAG-SYMPTOM-002, DIAG-DISEASE-002, PROT-SCREENING-003]
+  explanation: Возраст старше 40 лет и сердечно-сосудистые факторы риска повышают претестовую вероятность ИБС.
+
+- id: RULE-DIAG-004
+  domain: diag
+  title: Лихорадка с продуктивным кашлем — подозрение на пневмонию
+  priority: 60
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-004}
+      - {symptom: DIAG-SYMPTOM-008}
+      - any:
+          - {feature: cough.productive}
+          - {feature: cough.purulent_sputum}
+          - {feature: cough.rusty_sputum}
+  then:
+    - assert_hypothesis: {target: DIAG-DISEASE-003, weight: 3}
+    - recommend_exam: {target: DIAG-EXAM-004, role: confirms}
+  source_cards: [DIAG-SYMPTOM-004, DIAG-SYMPTOM-008, DIAG-DISEASE-003, DIAG-EXAM-004]
+  explanation: Острая лихорадка в сочетании с продуктивным кашлем — основное клиническое основание для подозрения на внебольничную пневмонию.
+
+- id: RULE-DIAG-005
+  domain: diag
+  title: Пневмония с признаками дыхательной недостаточности
+  priority: 70
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-008}
+      - {symptom: DIAG-SYMPTOM-004}
+      - any:
+          - {param: spo2, op: "<", value: 94}
+          - {param: rr, op: ">=", value: 22}
+  then:
+    - assert_hypothesis: {target: DIAG-DISEASE-003, weight: 3}
+    - set_urgency: urgent
+    - recommend_exam: {target: DIAG-EXAM-010, role: stratifies}
+  source_cards: [DIAG-DISEASE-003, DIAG-EXAM-010, PROT-SCALE-004]
+  explanation: Снижение сатурации или тахипноэ при лихорадке и кашле указывают на поражение лёгочной ткани и требуют оценки тяжести.
+
+- id: RULE-DIAG-006
+  domain: diag
+  title: Эпизодическая одышка со свистящим дыханием — подозрение на астму
+  priority: 60
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-009}
+      - {feature: wheezing.expiratory}
+      - any:
+          - {feature: dyspnea.episodic}
+          - {feature: wheezing.after_trigger}
+  then:
+    - assert_hypothesis: {target: DIAG-DISEASE-004, weight: 3}
+    - recommend_exam: {target: DIAG-EXAM-008, role: confirms}
+  source_cards: [DIAG-SYMPTOM-009, DIAG-SYMPTOM-003, DIAG-DISEASE-004, DIAG-EXAM-008]
+  explanation: Вариабельные респираторные симптомы с экспираторными хрипами, связанные с триггерами, характерны для бронхиальной астмы (GINA).
+
+- id: RULE-DIAG-007
+  domain: diag
+  title: Ночной кашель у пациента с атопией
+  priority: 40
+  if:
+    all:
+      - {feature: cough.nocturnal}
+      - {fact: allergen_exposure}
+  then:
+    - assert_hypothesis: {target: DIAG-DISEASE-004, weight: 2}
+  source_cards: [DIAG-SYMPTOM-008, DIAG-DISEASE-004]
+  explanation: Ночной кашель, связанный с контактом с аллергеном, может быть кашлевым вариантом астмы.
+
+- id: RULE-DIAG-008
+  domain: diag
+  title: Критерии мигрени без ауры
+  priority: 60
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-001}
+      - {feature: headache.recurrent_attacks}
+      - at_least:
+          n: 2
+          of:
+            - {feature: headache.unilateral}
+            - {feature: headache.pulsating}
+            - {feature: headache.worse_with_activity}
+      - any:
+          - {feature: headache.nausea}
+          - {feature: headache.photophobia}
+      - not:
+          any:
+            - {feature: headache.sudden_onset}
+            - {symptom: DIAG-SYMPTOM-010}
+  then:
+    - assert_hypothesis: {target: DIAG-DISEASE-005, weight: 3}
+    - recommend_exam: {target: DIAG-EXAM-009, role: excludes}
+  source_cards: [DIAG-SYMPTOM-001, DIAG-DISEASE-005, DIAG-EXAM-009]
+  explanation: Повторяющиеся приступы с двумя характеристиками боли из трёх и тошнотой или свето-/звукобоязнью соответствуют критериям ICHD-3 при отсутствии признаков вторичной головной боли.
+
+- id: RULE-DIAG-009
+  domain: diag
+  title: Мигрень с аурой требует исключения ТИА
+  priority: 60
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-001}
+      - {feature: headache.aura}
+  then:
+    - assert_hypothesis: {target: DIAG-DISEASE-005, weight: 2}
+    - recommend_exam: {target: DIAG-EXAM-009, role: excludes}
+  source_cards: [DIAG-DISEASE-005, DIAG-EXAM-009, DIAG-EMERGENCY-002]
+  explanation: Аура характерна для мигрени, но впервые возникшие очаговые симптомы требуют исключения транзиторной ишемической атаки.
+
+- id: RULE-DIAG-010
+  domain: diag
+  title: Повышенное АД при измерении
+  priority: 50
+  if:
+    any:
+      - {param: sbp, op: ">=", value: 140}
+      - {param: dbp, op: ">=", value: 90}
+  then:
+    - assert_hypothesis: {target: DIAG-DISEASE-001, weight: 2}
+    - recommend_exam: {target: DIAG-EXAM-001, role: confirms}
+  source_cards: [DIAG-EXAM-001, DIAG-DISEASE-001]
+  explanation: АД 140/90 мм рт. ст. и выше — повод заподозрить артериальную гипертензию; диагноз подтверждается повторными измерениями.
+
+- id: RULE-DIAG-011
+  domain: diag
+  title: Затылочная головная боль на фоне высокого АД
+  priority: 50
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-001}
+      - {feature: headache.occipital}
+      - {param: sbp, op: ">=", value: 160}
+  then:
+    - assert_hypothesis: {target: DIAG-DISEASE-001, weight: 2}
+  source_cards: [DIAG-SYMPTOM-001, DIAG-DISEASE-001]
+  explanation: Затылочная головная боль при АГ 2 степени и выше может быть связана с повышением давления.
+
+- id: RULE-DIAG-012
+  domain: diag
+  title: Полиурия и полидипсия — подозрение на сахарный диабет
+  priority: 60
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-006}
+      - {symptom: DIAG-SYMPTOM-007}
+  then:
+    - assert_hypothesis: {target: DIAG-DISEASE-006, weight: 3}
+    - recommend_exam: {target: DIAG-EXAM-005, role: confirms}
+    - recommend_exam: {target: DIAG-EXAM-006, role: confirms}
+  source_cards: [DIAG-SYMPTOM-006, DIAG-SYMPTOM-007, DIAG-DISEASE-006, DIAG-EXAM-005, DIAG-EXAM-006]
+  explanation: Сочетание полиурии и жажды — классическое проявление гипергликемии.
+
+- id: RULE-DIAG-013
+  domain: diag
+  title: Случайная гликемия 11,1 ммоль/л и выше с симптомами
+  priority: 70
+  if:
+    all:
+      - {param: glucose, op: ">=", value: 11.1}
+      - any:
+          - {symptom: DIAG-SYMPTOM-006}
+          - {symptom: DIAG-SYMPTOM-007}
+          - {fact: weight_loss}
+  then:
+    - assert_hypothesis: {target: DIAG-DISEASE-006, weight: 3}
+  source_cards: [DIAG-DISEASE-006, DIAG-EXAM-005]
+  explanation: Гликемия 11,1 ммоль/л и выше в любое время суток при классических симптомах достаточна для диагноза сахарного диабета (ADA, ВОЗ).
+
+- id: RULE-DIAG-014
+  domain: diag
+  title: HbA1c в диабетическом диапазоне
+  priority: 60
+  if: {param: hba1c, op: ">=", value: 6.5}
+  then:
+    - assert_hypothesis: {target: DIAG-DISEASE-006, weight: 3}
+  source_cards: [DIAG-EXAM-006, DIAG-DISEASE-006]
+  explanation: HbA1c 6,5 % и выше — диагностический критерий сахарного диабета, требующий подтверждения при отсутствии симптомов.
+
+- id: RULE-DIAG-015
+  domain: diag
+  title: Очаговый неврологический дефицит — подозрение на ОНМК
+  priority: 95
+  if:
+    any:
+      - {feature: focal_deficit.face_droop}
+      - {feature: focal_deficit.arm_weakness}
+      - {feature: focal_deficit.speech_disturbance}
+      - {symptom: DIAG-SYMPTOM-010}
+  then:
+    - assert_hypothesis: {target: DIAG-EMERGENCY-002, weight: 3}
+    - set_urgency: emergency
+    - route: {value: emergency, timeframe: немедленно}
+  source_cards: [DIAG-SYMPTOM-010, DIAG-EMERGENCY-002]
+  explanation: Любой из признаков теста FAST — основание для немедленного вызова скорой помощи; эффективность лечения инсульта зависит от времени.
+
+- id: RULE-DIAG-016
+  domain: diag
+  title: Очаговый дефицит у пациента с диабетом — исключить гипогликемию
+  priority: 90
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-010}
+      - any:
+          - {fact: known_diabetes}
+          - {disease: DIAG-DISEASE-006}
+  then:
+    - recommend_exam: {target: DIAG-EXAM-005, role: excludes}
+  source_cards: [DIAG-SYMPTOM-010, DIAG-DISEASE-006, DIAG-EXAM-005]
+  explanation: Гипогликемия может имитировать инсульт; глюкоза измеряется до принятия решения о реперфузии.
+
+- id: RULE-DIAG-017
+  domain: diag
+  title: Громоподобная головная боль
+  priority: 95
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-001}
+      - any:
+          - {feature: headache.sudden_onset}
+          - {feature: headache.worst_ever}
+  then:
+    - assert_hypothesis: {target: DIAG-EMERGENCY-002, weight: 2}
+    - set_urgency: emergency
+    - route: {value: emergency, timeframe: немедленно}
+  source_cards: [DIAG-SYMPTOM-001, DIAG-REDFLAG-002, DIAG-EMERGENCY-002]
+  explanation: Внезапная сильнейшая головная боль требует экстренного исключения субарахноидального кровоизлияния и инсульта.
+
+- id: RULE-DIAG-018
+  domain: diag
+  title: Головная боль с лихорадкой и ригидностью затылочных мышц
+  priority: 95
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-001}
+      - {symptom: DIAG-SYMPTOM-004}
+      - {feature: headache.meningism}
+  then:
+    - set_urgency: emergency
+    - route: {value: emergency, timeframe: немедленно}
+    - warn: "Сочетание указывает на возможную нейроинфекцию (менингит), которая не представлена отдельной карточкой базы знаний; требуется экстренная госпитализация."
+  source_cards: [DIAG-SYMPTOM-001, DIAG-SYMPTOM-004, DIAG-DIFDIAG-002]
+  explanation: Лихорадка, головная боль и менингеальные знаки — классическая триада менингита.
+
+- id: RULE-DIAG-019
+  domain: diag
+  title: Внезапная одышка с болью в груди
+  priority: 90
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-003}
+      - {feature: dyspnea.sudden_onset}
+      - {symptom: DIAG-SYMPTOM-002}
+  then:
+    - assert_hypothesis: {target: DIAG-EMERGENCY-001, weight: 2}
+    - set_urgency: emergency
+    - recommend_exam: {target: DIAG-EXAM-002, role: confirms}
+    - warn: "Внезапная одышка с болью в груди требует исключения ТЭЛА и пневмоторакса, которые не представлены отдельными карточками базы знаний."
+  source_cards: [DIAG-SYMPTOM-002, DIAG-SYMPTOM-003, DIAG-DIFDIAG-001, DIAG-DIFDIAG-003]
+  explanation: Внезапное сочетание одышки и боли в груди характерно для жизнеугрожающих состояний.
+
+- id: RULE-DIAG-020
+  domain: diag
+  title: Эпигастральная боль у пациента с ИБС или факторами риска
+  priority: 60
+  if:
+    all:
+      - {feature: abdominal_pain.epigastric}
+      - any:
+          - {fact: known_ihd}
+          - {fact: known_diabetes}
+          - {param: age, op: ">=", value: 65}
+  then:
+    - assert_hypothesis: {target: DIAG-EMERGENCY-001, weight: 1}
+    - recommend_exam: {target: DIAG-EXAM-002, role: excludes}
+  source_cards: [DIAG-SYMPTOM-005, DIAG-EMERGENCY-001, DIAG-EXAM-002]
+  explanation: Нижний инфаркт миокарда может проявляться болью в эпигастрии, особенно у пожилых и пациентов с диабетом.
+
+- id: RULE-DIAG-021
+  domain: diag
+  title: Боль в животе и рвота у пациента с диабетом
+  priority: 85
+  if:
+    all:
+      - any:
+          - {fact: known_diabetes}
+          - {disease: DIAG-DISEASE-006}
+      - {symptom: DIAG-SYMPTOM-005}
+      - {feature: abdominal_pain.vomiting}
+  then:
+    - set_urgency: urgent
+    - recommend_exam: {target: DIAG-EXAM-005, role: confirms}
+    - request_clarification: "Измерьте уровень глюкозы крови и, если возможно, кетонов в крови или моче."
+  source_cards: [DIAG-DISEASE-006, DIAG-SYMPTOM-005, DIAG-REDFLAG-004]
+  explanation: Боль в животе и рвота у пациента с диабетом — возможное проявление кетоацидоза.
+
+- id: RULE-DIAG-022
+  domain: diag
+  title: Затяжная лихорадка при кашле
+  priority: 50
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-008}
+      - {feature: fever.prolonged}
+  then:
+    - assert_hypothesis: {target: DIAG-DISEASE-003, weight: 2}
+    - recommend_exam: {target: DIAG-EXAM-004, role: confirms}
+  source_cards: [DIAG-SYMPTOM-004, DIAG-SYMPTOM-008, DIAG-DISEASE-003, PROT-FOLLOW_UP-004]
+  explanation: Лихорадка более 3 суток при кашле требует рентгенологического исключения пневмонии или её осложнений.

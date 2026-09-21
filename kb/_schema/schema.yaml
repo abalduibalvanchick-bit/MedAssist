@@ -433,7 +433,9 @@ facts:
 # any с unknown -> unknown (если нет true); not unknown -> unknown.
 # Решатель трактует unknown как повод запросить уточнение, а не как false.
 condition_language:
-  atoms: [symptom, feature, param, fact, disease, redflag, emergency, profile, scale, scale_category, exam_result]
+  # known — метаатом: истинен, если значение параметра или факта сообщено (никогда не unknown);
+  # используется в правилах запроса уточнений.
+  atoms: [symptom, feature, param, fact, disease, redflag, emergency, profile, scale, scale_category, exam_result, known]
   combinators: [all, any, not, at_least]
   operators: [">", ">=", "<", "<=", "==", "!=", "between"]
   truth_values: [true, false, unknown]
@@ -735,4 +737,7 @@ rules:
     route:              {value: "enum(route)", extra: {timeframe: string}}
     apply_protocol:     {target: "id(protocol,emergency_p)"}
     request_clarification: {value: "string", doc: "Какие данные запросить у пользователя"}
+    warn:
+      value: string
+      doc: Предупреждение о безопасности (противопоказание, взаимодействие), выводится вместе с рекомендацией
     refuse:             {value: "string", doc: "Отказ с объяснением границы применимости"}

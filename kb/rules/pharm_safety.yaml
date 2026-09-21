@@ -1,0 +1,170 @@
+# Предупреждения фармакологической безопасности.
+# Срабатывают, когда для пациента с определённым состоянием рекомендуемая схема
+# содержит группы препаратов с противопоказаниями (см. contraindications карточек).
+
+- id: RULE-PHARM-001
+  domain: pharm
+  title: СКФ менее 30 при сахарном диабете — метформин противопоказан
+  priority: 80
+  if:
+    all:
+      - any:
+          - {disease: DIAG-DISEASE-006}
+          - {fact: known_diabetes}
+      - {param: egfr, op: "<", value: 30}
+  then:
+    - warn: "Метформин противопоказан при СКФ менее 30 мл/мин/1,73 м² (риск лактатацидоза). Требуется пересмотр сахароснижающей терапии."
+    - route: {value: urgent_referral, timeframe: "до 2 недель"}
+  source_cards: [PHARM-DRUG-020, PHARM-DRUGCLASS-005, GLB-PROFILE-003, PROT-PROTOCOL-002]
+  explanation: Противопоказание указано в карточках метформина и группы бигуанидов.
+
+- id: RULE-PHARM-002
+  domain: pharm
+  title: Исследование с контрастом у пациента на метформине
+  priority: 80
+  if:
+    all:
+      - any:
+          - {disease: DIAG-DISEASE-006}
+          - {fact: known_diabetes}
+      - {fact: contrast_study_planned}
+      - {param: egfr, op: "<", value: 60}
+  then:
+    - warn: "При СКФ менее 60 метформин приостанавливают в день исследования с йодсодержащим контрастом и возобновляют через 48 часов после контроля функции почек."
+  source_cards: [PHARM-INTERACTION-001, PHARM-DRUG-020]
+  explanation: Взаимодействие метформина с йодсодержащими контрастными веществами повышает риск лактатацидоза при нарушенной функции почек.
+
+- id: RULE-PHARM-003
+  domain: pharm
+  title: Мигрень у пациента с ИБС или высоким АД — триптаны противопоказаны
+  priority: 80
+  if:
+    all:
+      - {disease: DIAG-DISEASE-005}
+      - any:
+          - {fact: known_ihd}
+          - {disease: DIAG-DISEASE-002}
+          - {fact: prior_cv_event}
+          - {param: sbp, op: ">=", value: 160}
+  then:
+    - warn: "Триптаны противопоказаны при ИБС, перенесённом инсульте или инфаркте и неконтролируемой АГ. Для купирования приступа используются НПВС при отсутствии их противопоказаний."
+  source_cards: [PHARM-DRUGCLASS-022, PHARM-REGIMEN-006, DIAG-DISEASE-005]
+  explanation: Триптаны вызывают вазоконстрикцию коронарных и церебральных артерий.
+
+- id: RULE-PHARM-004
+  domain: pharm
+  title: Мигрень у пациента с язвенным анамнезом — НПВС противопоказаны
+  priority: 80
+  if:
+    all:
+      - {disease: DIAG-DISEASE-005}
+      - any:
+          - {fact: gi_bleeding_history}
+          - {param: egfr, op: "<", value: 30}
+  then:
+    - warn: "НПВС противопоказаны при язвенной болезни, ЖКТ-кровотечении в анамнезе и тяжёлой почечной недостаточности."
+  source_cards: [PHARM-DRUGCLASS-010, PHARM-ADR-001, PHARM-REGIMEN-006]
+  explanation: НПВС повышают риск ЖКТ-кровотечения и острого почечного повреждения.
+
+- id: RULE-PHARM-005
+  domain: pharm
+  title: Профилактика мигрени при бронхиальной астме
+  priority: 70
+  if:
+    all:
+      - {disease: DIAG-DISEASE-005}
+      - {param: migraine_days_per_month, op: ">=", value: 4}
+      - any:
+          - {fact: known_asthma}
+          - {disease: DIAG-DISEASE-004}
+  then:
+    - warn: "β-адреноблокаторы для профилактики мигрени при бронхиальной астме нежелательны; выбор альтернативного препарата — за неврологом."
+  source_cards: [PHARM-DRUGCLASS-020, PHARM-REGIMEN-006, DIAG-DISEASE-004]
+  explanation: Неселективные β-адреноблокаторы провоцируют бронхоспазм.
+
+- id: RULE-PHARM-006
+  domain: pharm
+  title: ИБС у пациента на антикоагулянтах
+  priority: 70
+  if:
+    all:
+      - any:
+          - {disease: DIAG-DISEASE-002}
+          - {fact: known_ihd}
+      - {fact: on_anticoagulants}
+  then:
+    - warn: "Сочетание антиагрегантов с антикоагулянтами повышает риск кровотечения; комбинацию и длительность определяет кардиолог."
+  source_cards: [PHARM-DRUGCLASS-011, PHARM-REGIMEN-003]
+  explanation: Противопоказание (относительное) указано в карточке антитромбоцитарных препаратов.
+
+- id: RULE-PHARM-007
+  domain: pharm
+  title: Гиперкалиемия при АГ — осторожность с иАПФ и БРА
+  priority: 70
+  if:
+    all:
+      - any:
+          - {disease: DIAG-DISEASE-001}
+          - {fact: known_hypertension}
+      - {param: potassium, op: ">", value: 5.5}
+  then:
+    - warn: "При калии выше 5,5 ммоль/л ингибиторы АПФ и БРА не начинают до коррекции гиперкалиемии."
+  source_cards: [PHARM-DRUGCLASS-001, PHARM-DRUGCLASS-002, PHARM-REGIMEN-001]
+  explanation: Блокада ренин-ангиотензиновой системы усиливает задержку калия.
+
+- id: RULE-PHARM-008
+  domain: pharm
+  title: Пневмония при аллергии на пенициллины
+  priority: 70
+  if:
+    all:
+      - {disease: DIAG-DISEASE-003}
+      - {fact: penicillin_allergy}
+  then:
+    - warn: "Пенициллины противопоказаны; цефалоспорины применяются с осторожностью при анафилаксии в анамнезе. Альтернатива — макролид или респираторный фторхинолон."
+  source_cards: [PHARM-DRUGCLASS-014, PHARM-DRUGCLASS-015, PHARM-REGIMEN-004]
+  explanation: Противопоказания указаны в карточках пенициллинов и цефалоспоринов.
+
+- id: RULE-PHARM-009
+  domain: pharm
+  title: Пневмония у пожилого — осторожность с фторхинолонами
+  priority: 50
+  if:
+    all:
+      - {disease: DIAG-DISEASE-003}
+      - {profile: GLB-PROFILE-001}
+  then:
+    - warn: "У пожилых пациентов респираторные фторхинолоны повышают риск тендинопатий и удлинения интервала QT."
+  source_cards: [PHARM-DRUGCLASS-016, GLB-PROFILE-001, PHARM-REGIMEN-004]
+  explanation: Относительное противопоказание указано в карточке фторхинолонов.
+
+- id: RULE-PHARM-010
+  domain: pharm
+  title: АГ при СКФ менее 30 — коррекция терапии
+  priority: 60
+  if:
+    all:
+      - any:
+          - {disease: DIAG-DISEASE-001}
+          - {fact: known_hypertension}
+      - {param: egfr, op: "<", value: 30}
+  then:
+    - warn: "При СКФ менее 30 тиазидные диуретики неэффективны (заменяются петлевыми), начальная доза эналаприла — 2,5 мг/сут под контролем калия и креатинина."
+  source_cards: [PHARM-DOSING-001, PHARM-DRUGCLASS-004, PHARM-DRUG-001, GLB-PROFILE-003]
+  explanation: Правила коррекции доз указаны в карточке PHARM-DOSING-001.
+
+- id: RULE-PHARM-011
+  domain: pharm
+  title: Сахарный диабет при беременности
+  priority: 80
+  if:
+    all:
+      - any:
+          - {disease: DIAG-DISEASE-006}
+          - {fact: known_diabetes}
+      - {profile: GLB-PROFILE-002}
+  then:
+    - warn: "Препараты сульфонилмочевины, ингибиторы ДПП-4, иНГЛТ-2 и арГПП-1 противопоказаны при беременности; ведение совместно с эндокринологом и акушером-гинекологом."
+    - route: {value: urgent_referral, timeframe: "в течение недели"}
+  source_cards: [GLB-PROFILE-002, PHARM-DRUGCLASS-006, PHARM-DRUGCLASS-007, PHARM-DRUGCLASS-008, PHARM-DRUGCLASS-009]
+  explanation: Противопоказания указаны в карточках групп сахароснижающих препаратов.

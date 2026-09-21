@@ -8,7 +8,7 @@
 | `id` | Уникальный идентификатор `DOMAIN-CATEGORY-NNN` |
 | `schema_version` | Версия схемы карточки (2) |
 | `title` | Название карточки |
-| `domain` | Код домена: `prot`, `glb`, `diag`, `pharm` |
+| `domain` | Код домена: `diag`, `prot`, `glb`, `pharm` |
 | `category` | Код категории (см. ниже) |
 | `body_system` | Системы организма (список, enum body_system) |
 | `tags` | Теги для поиска |

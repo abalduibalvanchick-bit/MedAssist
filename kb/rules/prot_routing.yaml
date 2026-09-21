@@ -1,0 +1,106 @@
+# Сквозные правила срочности и маршрутизации, не привязанные к одной нозологии.
+# Нозологические маршруты задаются таблицами решений в карточках routing.
+
+- id: RULE-PROT-001
+  domain: prot
+  title: Гипотензия при остром симптоме
+  priority: 95
+  if:
+    all:
+      - {fact: hypotension}
+      - any:
+          - {symptom: DIAG-SYMPTOM-002}
+          - {symptom: DIAG-SYMPTOM-003}
+          - {symptom: DIAG-SYMPTOM-004}
+  then:
+    - set_urgency: emergency
+    - route: {value: emergency, timeframe: немедленно}
+  source_cards: [DIAG-EMERGENCY-001, DIAG-EMERGENCY-003, PROT-ROUTING-004]
+  explanation: Гипотензия в сочетании с болью в груди, одышкой или лихорадкой указывает на возможный шок.
+
+- id: RULE-PROT-002
+  domain: prot
+  title: Обморок с болью в груди
+  priority: 95
+  if:
+    all:
+      - {fact: syncope}
+      - {symptom: DIAG-SYMPTOM-002}
+  then:
+    - set_urgency: emergency
+    - route: {value: emergency, timeframe: немедленно}
+    - recommend_exam: {target: DIAG-EXAM-002, role: confirms}
+  source_cards: [DIAG-SYMPTOM-002, DIAG-EMERGENCY-001, DIAG-EXAM-002]
+  explanation: Синкопе при боли в груди — признак гемодинамически значимого состояния.
+
+- id: RULE-PROT-003
+  domain: prot
+  title: Лихорадка со спутанностью сознания
+  priority: 90
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-004}
+      - {fact: confusion}
+  then:
+    - set_urgency: emergency
+    - route: {value: emergency, timeframe: немедленно}
+  source_cards: [DIAG-SYMPTOM-004, PROT-SCALE-004, PROT-EMERGENCY_P-004]
+  explanation: Нарушение сознания при лихорадке — признак сепсиса, тяжёлой пневмонии или нейроинфекции.
+
+- id: RULE-PROT-004
+  domain: prot
+  title: Снижение сатурации у пациента с астмой
+  priority: 85
+  if:
+    all:
+      - any:
+          - {fact: known_asthma}
+          - {disease: DIAG-DISEASE-004}
+      - {param: spo2, op: "<", value: 92}
+  then:
+    - set_urgency: emergency
+    - apply_protocol: PROT-EMERGENCY_P-005
+  source_cards: [DIAG-DISEASE-004, DIAG-EMERGENCY-005, PROT-EMERGENCY_P-005]
+  explanation: SpO₂ менее 92 % при обострении астмы — критерий тяжёлого обострения (GINA).
+
+- id: RULE-PROT-005
+  domain: prot
+  title: Хроническая мигрень
+  priority: 50
+  if: {param: migraine_days_per_month, op: ">=", value: 15}
+  then:
+    - route: {value: urgent_referral, timeframe: "2–4 недели"}
+    - apply_protocol: PROT-PROTOCOL-006
+  source_cards: [DIAG-DISEASE-005, PROT-ROUTING-006, PROT-PROTOCOL-006]
+  explanation: Головная боль 15 и более дней в месяц соответствует хронической мигрени и требует ведения неврологом.
+
+- id: RULE-PROT-006
+  domain: prot
+  title: Впервые выявленная АГ — клинический протокол
+  priority: 40
+  if:
+    all:
+      - any:
+          - {param: sbp, op: ">=", value: 140}
+          - {param: dbp, op: ">=", value: 90}
+      - not: {fact: known_hypertension}
+  then:
+    - apply_protocol: PROT-PROTOCOL-001
+  source_cards: [PROT-SCREENING-001, PROT-PROTOCOL-001]
+  explanation: При впервые выявленном повышении АД выполняется подтверждение диагноза и оценка риска по клиническому протоколу.
+
+- id: RULE-PROT-007
+  domain: prot
+  title: Тяжёлая пневмония — неотложный алгоритм
+  priority: 90
+  if:
+    any:
+      - {scale: PROT-SCALE-004, op: ">=", value: 3}
+      - all:
+          - {disease: DIAG-DISEASE-003}
+          - {param: spo2, op: "<", value: 90}
+  then:
+    - set_urgency: emergency
+    - apply_protocol: PROT-EMERGENCY_P-004
+  source_cards: [PROT-SCALE-004, DIAG-DISEASE-003, PROT-EMERGENCY_P-004]
+  explanation: CURB-65 3 балла и более или выраженная гипоксемия соответствуют тяжёлой пневмонии.

@@ -123,7 +123,7 @@ author: Инженер знаний №1
 version: '2.1'
 date_created: '2026-04-30'
 date_updated: '2026-09-16'
-status: medical_review
+status: approved
 disclaimer: true
 ---
 

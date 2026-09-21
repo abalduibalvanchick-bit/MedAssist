@@ -95,7 +95,7 @@ author: Инженер знаний №2
 version: '3.1'
 date_created: '2025-02-25'
 date_updated: '2026-09-16'
-status: medical_review
+status: approved
 disclaimer: true
 ---
 

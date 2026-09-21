@@ -473,4 +473,5 @@
 | `route` | `enum(route)` | `timeframe` |  |
 | `apply_protocol` | `id(protocol,emergency_p)` |  |  |
 | `request_clarification` | `string` |  | Какие данные запросить у пользователя |
+| `warn` | `string` |  | Предупреждение о безопасности (противопоказание, взаимодействие), выводится вместе с рекомендацией |
 | `refuse` | `string` |  | Отказ с объяснением границы применимости |

@@ -593,7 +593,7 @@ class KnowledgeBaseValidator:
         if any(marker in text for marker in STUB_MARKERS) or len(card.content) < min_chars:
             self._add(report, card, "WARNING", "STUB_CARD", f"Карточка выглядит заглушкой (длина {len(card.content)} символов).")
         if card.id and not self.repository.index.inbound.get(card.id) and card.id not in self._condition_refs \
-                and card.category not in {"disclaimer", "cross"}:
+                and card.category not in {"disclaimer", "cross", "glossary"}:
             self._add(report, card, "INFO", "ORPHAN", "На карточку не ссылается ни один документ.")
 
     # -------------------------------------------------------------- правила

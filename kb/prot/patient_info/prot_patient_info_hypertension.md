@@ -49,7 +49,7 @@ author: Инженер знаний №3
 version: '2.2'
 date_created: '2026-04-09'
 date_updated: '2026-09-16'
-status: draft
+status: approved
 disclaimer: true
 ---
 
