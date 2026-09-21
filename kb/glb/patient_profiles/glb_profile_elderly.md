@@ -30,9 +30,9 @@ considerations:
 - возраст 65 лет и старше повышает оценку по шкалам тяжести (CURB-65)
 sources:
 - Клинические рекомендации «Старческая астения». Минздрав РФ, 2024.
-- 'Российская ассоциация геронтологов и гериатров. Фармакотерапия у лиц пожилого и старческого возраста: критерии STOPP/START, 2023.'
+- 'O''Mahony D. et al. STOPP/START criteria for potentially inappropriate prescribing in older people: version 3. Eur Geriatr Med. 2023;14:625–632.'
 clinical_guidelines:
-- КР «Старческая астения», Минздрав РФ, 2024
+- STOPP/START criteria, version 3, 2023
 last_medical_review: '2026-09-16'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженеры знаний №1 и №3
@@ -58,3 +58,7 @@ disclaimer: true
 
 ## Особенности фармакотерапии
 С возрастом снижается скорость клубочковой фильтрации, поэтому перед назначением препаратов с почечной элиминацией оценивается функция почек. Высок риск ортостатической гипотензии, падений и лекарственных взаимодействий при полипрагмазии.
+
+## Источники
+1. Клинические рекомендации «Старческая астения». Минздрав РФ, 2024.
+2. O'Mahony D. et al. STOPP/START criteria for potentially inappropriate prescribing in older people: version 3. Eur Geriatr Med. 2023;14:625–632.

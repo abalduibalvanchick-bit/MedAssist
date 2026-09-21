@@ -47,8 +47,8 @@ sources:
 - Thygesen K. et al. Fourth Universal Definition of Myocardial Infarction (2018). Circulation. 2018;138:e618–e651.
 - Клинические рекомендации «Острый инфаркт миокарда без подъёма сегмента ST электрокардиограммы». Минздрав РФ, 2024.
 clinical_guidelines:
-- 2023 ESC Guidelines for the management of ACS
-- Fourth Universal Definition of MI, 2018
+- 2023 ESC Guidelines for the management of acute coronary syndromes
+- КР «Острый инфаркт миокарда без подъёма сегмента ST», Минздрав РФ, 2024
 last_medical_review: '2026-09-16'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
@@ -95,6 +95,6 @@ disclaimer: true
 - [[DIAG-DISEASE-002]] Ишемическая болезнь сердца
 
 ## Источники
-1. 2023 ESC Guidelines for the management of acute coronary syndromes.
-2. Fourth Universal Definition of Myocardial Infarction, 2018.
-3. КР «Острый инфаркт миокарда без подъёма сегмента ST», Минздрав РФ, 2024.
+1. Byrne R.A. et al. 2023 ESC Guidelines for the management of acute coronary syndromes. Eur Heart J. 2023;44:3720–3826.
+2. Thygesen K. et al. Fourth Universal Definition of Myocardial Infarction (2018). Circulation. 2018;138:e618–e651.
+3. Клинические рекомендации «Острый инфаркт миокарда без подъёма сегмента ST электрокардиограммы». Минздрав РФ, 2024.

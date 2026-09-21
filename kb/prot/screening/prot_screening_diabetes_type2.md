@@ -60,10 +60,10 @@ positive_when:
     value: 6.5
 on_positive: PROT-PROTOCOL-002
 sources:
-- ADA Standards of Medical Care in Diabetes, 2025
-- ВОЗ / Минздрав РФ, 2023
+- American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
+- Приказ Минздрава России от 06.12.2021 № 1122н «Об утверждении национального календаря профилактических прививок, календаря профилактических прививок по эпидемическим показаниям и порядка проведения профилактических прививок».
 clinical_guidelines:
-- ADA Standards of Medical Care in Diabetes, 2025
+- ADA Standards of Care in Diabetes — 2025
 last_medical_review: '2026-05-02'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
@@ -130,5 +130,5 @@ disclaimer: true
 - Скрининг не заменяет диагностику при симптомах.
 
 ## Источники
-1. ADA Standards of Medical Care in Diabetes, 2025.
-2. ВОЗ. Диагностические критерии сахарного диабета и преддиабета, 2019.
+1. American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
+2. Приказ Минздрава России от 06.12.2021 № 1122н «Об утверждении национального календаря профилактических прививок, календаря профилактических прививок по эпидемическим показаниям и порядка проведения профилактических прививок».

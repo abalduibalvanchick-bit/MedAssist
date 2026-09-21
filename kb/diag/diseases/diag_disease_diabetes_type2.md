@@ -71,10 +71,10 @@ applies_when:
     profile: GLB-PROFILE-004
 sources:
 - Алгоритмы специализированной медицинской помощи больным сахарным диабетом / Под ред. И.И. Дедова, М.В. Шестаковой, А.Ю. Майорова. — 11-й выпуск. — М., 2023.
-- ADA Standards of Medical Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
+- American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
 clinical_guidelines:
 - Алгоритмы специализированной медицинской помощи больным сахарным диабетом, 11-й выпуск, 2023
-- ADA Standards of Care in Diabetes, 2025
+- ADA Standards of Care in Diabetes — 2025
 last_medical_review: '2025-02-10'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
@@ -226,5 +226,4 @@ disclaimer: true
 
 ## Источники
 1. Алгоритмы специализированной медицинской помощи больным сахарным диабетом / Под ред. И.И. Дедова, М.В. Шестаковой, А.Ю. Майорова. — 11-й выпуск. — М., 2023.
-2. American Diabetes Association. Standards of Medical Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
-3. ВОЗ. Диагностические критерии сахарного диабета и промежуточных состояний, 2019.
+2. American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).

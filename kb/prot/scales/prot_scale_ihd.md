@@ -134,10 +134,10 @@ interpretation:
   action: PROT-ROUTING-003
 missing_policy: skip
 sources:
-- 2023 ESC Guidelines for CCS
-- Canadian Cardiovascular Society (CCS) grading of angina pectoris
+- Vrints C. et al. 2024 ESC Guidelines for the management of chronic coronary syndromes. Eur Heart J. 2024;45:3415–3537.
+- Campeau L. Grading of angina pectoris. Circulation. 1976;54(3):522–523.
 clinical_guidelines:
-- 2023 ESC Guidelines for CCS
+- 2024 ESC Guidelines for the management of chronic coronary syndromes
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
@@ -212,5 +212,5 @@ disclaimer: true
 - [[PHARM-REGIMEN-003]] – схема лечения
 
 ## Источники
-1. Campeau L. Grading of angina pectoris. Circulation. 1976.
-2. 2023 ESC Guidelines for the management of chronic coronary syndromes.
+1. Vrints C. et al. 2024 ESC Guidelines for the management of chronic coronary syndromes. Eur Heart J. 2024;45:3415–3537.
+2. Campeau L. Grading of angina pectoris. Circulation. 1976;54(3):522–523.

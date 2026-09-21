@@ -25,9 +25,9 @@ applies_to_access_level:
 - patient
 sources:
 - Приказ Минздрава России от 20.06.2013 № 388н «Об утверждении Порядка оказания скорой медицинской помощи».
-- European Resuscitation Council Guidelines 2021.
+- 'Perkins G.D. et al. European Resuscitation Council Guidelines 2021: Executive summary. Resuscitation. 2021;161:1–60.'
 clinical_guidelines:
-- ERC Guidelines, 2021
+- ERC Guidelines 2021
 last_medical_review: '2026-09-16'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженеры знаний №1 и №3
@@ -41,3 +41,7 @@ disclaimer: true
 # Предупреждение об экстренном состоянии
 
 Выявлены признаки состояния, угрожающего жизни. Немедленно вызовите скорую медицинскую помощь (103 или 112). Не тратьте время на дальнейшие вопросы системе. Это предупреждение выводится решателем при срабатывании красного флага или распознавании неотложного состояния.
+
+## Источники
+1. Приказ Минздрава России от 20.06.2013 № 388н «Об утверждении Порядка оказания скорой медицинской помощи».
+2. Perkins G.D. et al. European Resuscitation Council Guidelines 2021: Executive summary. Resuscitation. 2021;161:1–60.

@@ -44,10 +44,10 @@ positive_when:
     - feature: headache.worse_with_activity
 on_positive: PROT-PROTOCOL-006
 sources:
-- AHS Guidelines for Migraine
+- 'Ailani J. et al. The American Headache Society Consensus Statement: Update on integrating new migraine treatments into clinical practice. Headache. 2021;61(7):1021–1039.'
 - 'Lipton R.B. et al. A self-administered screener for migraine in primary care: the ID Migraine validation study. Neurology. 2003;61:375–382.'
 clinical_guidelines:
-- AHS Migraine Guidelines
+- AHS Consensus Statement on migraine treatment, 2021
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
@@ -91,4 +91,5 @@ disclaimer: true
 - Не適用 при красных флагах.
 
 ## Источники
-1. AHS Guidelines for Migraine.
+1. Ailani J. et al. The American Headache Society Consensus Statement: Update on integrating new migraine treatments into clinical practice. Headache. 2021;61(7):1021–1039.
+2. Lipton R.B. et al. A self-administered screener for migraine in primary care: the ID Migraine validation study. Neurology. 2003;61:375–382.

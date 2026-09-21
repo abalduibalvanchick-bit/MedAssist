@@ -1,74 +1,64 @@
 ---
-id: "DOMAIN-CATEGORY-NNN"
-title: "Название единицы знаний"
-domain: "diag"
-category: "difdiag"
-icd_10: ""
-icd_11: ""
-atc_code: ""
-inn: ""
-body_system:
-  - "cardiovascular"
-tags:
-  - "tag_1"
-  - "tag_2"
-urgency: "urgent"
-access_level: "professional"
-target_specialist:
-  - "therapist"
-age_group:
-  - "adult"
-evidence_level: "IV"
-recommendation_class: "I"
-related:
-  - "DIAG-..."
+# Сгенерировано scripts/generate_templates.py из kb/_schema/schema.yaml. Не редактировать вручную.
+# Категория: difdiag — Дифференциальная диагностика. Файл: kb/diag/differential_diagnosis/diag_difdiag_<краткое_имя>.md
+id: DIAG-DIFDIAG-NNN
+schema_version: 2
+title: <Название>
+domain: diag
+category: difdiag
+body_system: [cardiovascular]  # cardiovascular | respiratory | gastrointestinal | nervous | endocrine | metabolic | urinary | musculoskeletal | immune | reproductive | hematologic | dermatologic | multisystem
+tags: [<тег>]
+urgency: routine  # routine | urgent | emergency | elective
+access_level: professional  # professional | nursing | student | patient
+target_specialist: [therapist]  # см. docs/metadata_schema.md, перечисление target_specialist
+age_group: [adult]  # neonate | infant | child | adolescent | adult | elderly | all_ages
+# evidence_level: Ia  # необязательно: Ia | Ib | IIa | IIb | III | IV
+# recommendation_class: I  # необязательно: I | IIa | IIb | III
 relations:
-  - target: "DIAG-..."
-    type: "associated_with"
-    description: "Краткое объяснение связи"
+  - target: DIAG-REDFLAG-001
+    type: has_red_flag  # типы и допустимые категории: docs/link_types.md
+    description: <смысл связи>
+# Машиночитаемый слой (docs/schema.md, раздел «difdiag»):
+leading_symptom: "DIAG-SYMPTOM-001"  # id(symptom); обязательно для approved
+branches: [{"target": "DIAG-DISEASE-001", "supporting": {"all": [{"symptom": "DIAG-SYMPTOM-002"}, {"param": "sbp", "op": ">=", "value": 180}]}, "against": {"all": [{"symptom": "DIAG-SYMPTOM-002"}, {"param": "sbp", "op": ">=", "value": 180}]}, "key_exam": "DIAG-EXAM-001", "prior": "high", "urgency": "routine"}]  # list[object]; обязательно для approved
 sources:
-  - "Источник 1: точное название, организация, год/редакция"
-clinical_guidelines:
-  - "Название клинических рекомендаций, год/редакция"
-last_medical_review: "YYYY-MM-DD"
-medical_reviewer: ""
-author: "Инженер знаний №1"
-version: "1.0"
-date_created: "YYYY-MM-DD"
-date_updated: "YYYY-MM-DD"
-status: "draft"
+  - <Автор(ы). Название. Издание/журнал. Год;том:страницы.>
+  - <Вторая конкретная библиографическая ссылка>
+clinical_guidelines: [<Краткое название КР, год>]
+last_medical_review: YYYY-MM-DD
+medical_reviewer: модельная верификация (учебный проект)
+author: <Инженер знаний №N>
+version: '2.0'
+date_created: YYYY-MM-DD
+date_updated: YYYY-MM-DD
+status: draft  # draft | medical_review | approved | deprecated; approved — только при заполненном машиночитаемом слое
 disclaimer: true
 ---
 
-# Дифференциальная диагностика: [Ведущий симптом/синдром]
+# <Название>
 
-> ⚕️ **Дисклеймер**: Информация носит справочный характер и предназначена для медицинских специалистов. Не заменяет клиническое решение врача.
+> ⚕️ **Дисклеймер**: Информация носит справочный характер и не заменяет консультацию специалиста.
 
 ## Ведущий симптом
-[[DIAG-SYMPTOM-NNN]] [Название симптома].
+<заполнить>
 
 ## Ключевые вопросы при сборе анамнеза
-1. [Вопрос 1] — [что уточняет]
-2. [Вопрос 2] — [что уточняет]
+<заполнить>
 
 ## Ключевые данные объективного осмотра
-- [Признак 1]
-- [Признак 2]
+<заполнить>
 
 ## Дифференциально-диагностическая таблица
-| Направление | Поддерживающие признаки | Документ БЗ |
-|---|---|---|
-| [Состояние] | [Признаки] | [[DIAG-DISEASE-NNN]] |
+<заполнить>
 
 ## 🚩 «Красные флаги»
-- [[DIAG-REDFLAG-NNN]] [Название]
+<заполнить>
 
 ## Приоритетные диагностические направления
-- [Обследование/оценка 1]
-- [[DIAG-EXAM-NNN]] [Метод]
+<заполнить>
 
 ## Связанные документы
-- [[DIAG-SYMPTOM-NNN]] — ведущий симптом
+<заполнить>
 
 ## Источники
-1. [Источник]
+<генерируется из поля sources: python scripts/sync_body_sources.py>

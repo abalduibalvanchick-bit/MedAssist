@@ -58,10 +58,11 @@ contraindications:
   absolute: false
   explanation: бронхиальная астма — допустимы только высокоселективные в низких дозах
 sources:
-- Клинические рекомендации по АГ, 2024
-- 2023 ESC Guidelines for the management of chronic coronary syndromes
+- Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
+- Vrints C. et al. 2024 ESC Guidelines for the management of chronic coronary syndromes. Eur Heart J. 2024;45:3415–3537.
 clinical_guidelines:
-- 2023 ESC Guidelines for CCS
+- КР «Артериальная гипертензия у взрослых», Минздрав РФ, 2024
+- 2024 ESC Guidelines for the management of chronic coronary syndromes
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
@@ -143,6 +144,5 @@ disclaimer: true
 - [[PHARM-REGIMEN-003]] – Схема лечения ИБС
 
 ## Источники
-1. Клинические рекомендации «Артериальная гипертензия у взрослых», 2024.
-2. 2023 ESC Guidelines for the management of chronic coronary syndromes.
-3. 2023 AHA/ACC Guideline for Chronic Coronary Disease.
+1. Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
+2. Vrints C. et al. 2024 ESC Guidelines for the management of chronic coronary syndromes. Eur Heart J. 2024;45:3415–3537.

@@ -40,10 +40,11 @@ relations:
 for:
 - DIAG-DISEASE-006
 sources:
-- ADA Standards of Medical Care in Diabetes, 2025
-- Клинические рекомендации «Сахарный диабет 2 типа», 2024
+- American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
+- Клинические рекомендации «Сахарный диабет 2 типа у взрослых». Минздрав РФ, 2022.
 clinical_guidelines:
-- ADA Standards of Medical Care in Diabetes, 2025
+- ADA Standards of Care in Diabetes — 2025
+- КР «Сахарный диабет 2 типа у взрослых», Минздрав РФ, 2022
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
@@ -125,7 +126,5 @@ disclaimer: true
 - [[PHARM-REGIMEN-002]] Схема лечения СД2
 
 ## Источники
-1. ADA Standards of Medical Care in Diabetes, 2025.
-2. Клинические рекомендации «Сахарный диабет 2 типа», 2024.
-3. Look AHEAD Research Group. Long-term effects of a lifestyle intervention on weight and cardiovascular risk factors in type 2 diabetes. N Engl J Med. 2024.
-4. Lean ME, et al. Primary care-led weight management for remission of type 2 diabetes (DiRECT). Lancet. 2018.
+1. American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
+2. Клинические рекомендации «Сахарный диабет 2 типа у взрослых». Минздрав РФ, 2022.

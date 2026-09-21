@@ -56,13 +56,13 @@ contraindications:
   absolute: false
   explanation: недигидропиридиновые БКК противопоказаны при сниженной фракции выброса
 sources:
-- Клинические рекомендации «Артериальная гипертензия у взрослых», 2024
-- 2023 ESH Guidelines
+- Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
 - Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.
 - Vrints C. et al. 2024 ESC Guidelines for the management of chronic coronary syndromes. Eur Heart J. 2024;45:3415–3537.
 clinical_guidelines:
-- АГ у взрослых, 2024
-- 2023 ESH Guidelines
+- КР «Артериальная гипертензия у взрослых», Минздрав РФ, 2024
+- 2023 ESH Guidelines for the management of arterial hypertension
+- 2024 ESC Guidelines for the management of chronic coronary syndromes
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
@@ -112,6 +112,6 @@ disclaimer: true
 Дигидропиридиновые БКК хорошо комбинируются с иАПФ/БРА (уменьшение отёков) и с β-адреноблокаторами при стенокардии.
 
 ## Источники
-1. 2023 ESH Guidelines for the management of arterial hypertension.
-2. 2024 ESC Guidelines for the management of chronic coronary syndromes.
-3. Кукес В.Г., Сычёв Д.А. Клиническая фармакология, 2022.
+1. Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
+2. Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.
+3. Vrints C. et al. 2024 ESC Guidelines for the management of chronic coronary syndromes. Eur Heart J. 2024;45:3415–3537.

@@ -255,8 +255,11 @@ medassist/
             prot_routing.yaml
         templates/
             template_adr.md
+            template_anatomy.md
             template_checklist.md
+            template_cross.md
             template_difdiag.md
+            template_disclaimer.md
             template_disease.md
             template_dosing.md
             template_drug.md
@@ -265,9 +268,13 @@ medassist/
             template_emergency_p.md
             template_exam.md
             template_follow_up.md
+            template_glossary.md
+            template_imaging.md
             template_interaction.md
+            template_lab.md
             template_nonpharm.md
             template_patient_info.md
+            template_profile.md
             template_protocol.md
             template_redflag.md
             template_regimen.md
@@ -275,12 +282,16 @@ medassist/
             template_scale.md
             template_screening.md
             template_symptom.md
+            template_vaccine.md
     scripts/
         .gitkeep
         apply_patch.py
         generate_docs.py
         generate_indices.py
+        generate_templates.py
         migrate_v1_to_v2.py
+        rebuild_all.py
+        sync_body_sources.py
         sync_relations.py
     src/
         __init__.py

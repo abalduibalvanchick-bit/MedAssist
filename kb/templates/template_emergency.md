@@ -1,79 +1,71 @@
 ---
-id: "DOMAIN-CATEGORY-NNN"
-title: "Название единицы знаний"
-domain: "diag"
-category: "emergency"
-icd_10: ""
-icd_11: ""
-atc_code: ""
-inn: ""
-body_system:
-  - "cardiovascular"
-tags:
-  - "tag_1"
-  - "tag_2"
-urgency: "emergency"
-access_level: "professional"
-target_specialist:
-  - "therapist"
-age_group:
-  - "adult"
-evidence_level: "IV"
-recommendation_class: "I"
-related:
-  - "DIAG-..."
+# Сгенерировано scripts/generate_templates.py из kb/_schema/schema.yaml. Не редактировать вручную.
+# Категория: emergency — Неотложное состояние (диагностика). Файл: kb/diag/emergencies/diag_emergency_<краткое_имя>.md
+id: DIAG-EMERGENCY-NNN
+schema_version: 2
+title: <Название>
+domain: diag
+category: emergency
+body_system: [cardiovascular]  # cardiovascular | respiratory | gastrointestinal | nervous | endocrine | metabolic | urinary | musculoskeletal | immune | reproductive | hematologic | dermatologic | multisystem
+tags: [<тег>]
+urgency: routine  # routine | urgent | emergency | elective
+access_level: professional  # professional | nursing | student | patient
+target_specialist: [therapist]  # см. docs/metadata_schema.md, перечисление target_specialist
+age_group: [adult]  # neonate | infant | child | adolescent | adult | elderly | all_ages
+# evidence_level: Ia  # необязательно: Ia | Ib | IIa | IIb | III | IV
+# recommendation_class: I  # необязательно: I | IIa | IIb | III
 relations:
-  - target: "DIAG-..."
-    type: "associated_with"
-    description: "Краткое объяснение связи"
+  - target: DIAG-SYMPTOM-001
+    type: has_symptom  # типы и допустимые категории: docs/link_types.md
+    description: <смысл связи>
+# Машиночитаемый слой (docs/schema.md, раздел «emergency»):
+criteria: {"all": [{"symptom": "DIAG-SYMPTOM-002"}, {"param": "sbp", "op": ">=", "value": 180}]}  # condition; обязательно для approved; Критерии распознавания
+emergency_protocol: "PROT-EMERGENCY_P-001"  # id(emergency_p); необязательно
+time_critical: true  # boolean; необязательно
 sources:
-  - "Источник 1: точное название, организация, год/редакция"
-clinical_guidelines:
-  - "Название клинических рекомендаций, год/редакция"
-last_medical_review: "YYYY-MM-DD"
-medical_reviewer: ""
-author: "Инженер знаний №1"
-version: "1.0"
-date_created: "YYYY-MM-DD"
-date_updated: "YYYY-MM-DD"
-status: "draft"
+  - <Автор(ы). Название. Издание/журнал. Год;том:страницы.>
+  - <Вторая конкретная библиографическая ссылка>
+clinical_guidelines: [<Краткое название КР, год>]
+last_medical_review: YYYY-MM-DD
+medical_reviewer: модельная верификация (учебный проект)
+author: <Инженер знаний №N>
+version: '2.0'
+date_created: YYYY-MM-DD
+date_updated: YYYY-MM-DD
+status: draft  # draft | medical_review | approved | deprecated; approved — только при заполненном машиночитаемом слое
 disclaimer: true
 ---
 
-# [Название неотложного состояния]
+# <Название>
 
-> ⚕️ **Дисклеймер**: Информация носит справочный характер и предназначена для медицинских специалистов. Состояние требует немедленного распознавания и передачи управления к алгоритмам экстренной помощи.
+> ⚕️ **Дисклеймер**: Информация носит справочный характер и не заменяет консультацию специалиста.
 
 ## Определение
-[Краткое определение экстренного состояния.]
+<заполнить>
 
 ## Клиническая картина
-### Основные проявления
-- [Признак 1]
-
-### Данные осмотра
-- [Данные 1]
+<заполнить>
 
 ## Диагностические критерии
-[Критерии подозрения/распознавания.]
+<заполнить>
 
 ## Ключевые обследования
-- [[DIAG-EXAM-NNN]] [Метод]
+<заполнить>
 
 ## 🚩 Признаки критического течения
-- [Признак]
+<заполнить>
 
 ## Дифференциальная диагностика
-[С какими состояниями дифференцировать.]
+<заполнить>
 
 ## Тактическая значимость
-[Почему важно быстро распознать.]
+<заполнить>
 
 ## Информация для пациента
-[Коротко и безопасно: когда срочно обращаться за помощью.]
+<заполнить>
 
 ## Связанные документы
-- [[DIAG-SYMPTOM-NNN]] — [тип связи]
+<заполнить>
 
 ## Источники
-1. [Источник]
+<генерируется из поля sources: python scripts/sync_body_sources.py>

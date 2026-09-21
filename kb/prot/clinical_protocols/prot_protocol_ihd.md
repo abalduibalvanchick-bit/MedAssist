@@ -114,10 +114,11 @@ targets:
   value: 130
   label: САД менее 130 мм рт. ст.
 sources:
-- Клинические рекомендации «Стабильная ишемическая болезнь сердца», 2024
-- 2023 ESC Guidelines for the management of chronic coronary syndromes
+- Клинические рекомендации «Стабильная ишемическая болезнь сердца». Минздрав РФ, 2024.
+- Vrints C. et al. 2024 ESC Guidelines for the management of chronic coronary syndromes. Eur Heart J. 2024;45:3415–3537.
 clinical_guidelines:
-- 2023 ESC Guidelines for CCS
+- КР «Стабильная ишемическая болезнь сердца», Минздрав РФ, 2024
+- 2024 ESC Guidelines for the management of chronic coronary syndromes
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
@@ -199,5 +200,5 @@ disclaimer: true
 - Не заменяет индивидуального подхода и врачебного осмотра.
 
 ## Источники
-1. Клинические рекомендации «Стабильная ишемическая болезнь сердца», 2024.
-2. 2023 ESC Guidelines for the management of chronic coronary syndromes.
+1. Клинические рекомендации «Стабильная ишемическая болезнь сердца». Минздрав РФ, 2024.
+2. Vrints C. et al. 2024 ESC Guidelines for the management of chronic coronary syndromes. Eur Heart J. 2024;45:3415–3537.

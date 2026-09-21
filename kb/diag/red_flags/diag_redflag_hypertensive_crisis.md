@@ -54,11 +54,11 @@ indicates:
 - DIAG-DISEASE-001
 action: PROT-EMERGENCY_P-001
 sources:
-- Клинические рекомендации Минздрава РФ «Артериальная гипертензия у взрослых», действующая редакция.
-- 2023 ESH Guidelines for the management of arterial hypertension.
-- Техническое задание к БЗ MedAssist, раздел 3.1.
+- Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
+- Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.
 clinical_guidelines:
-- КР Минздрава РФ по артериальной гипертензии
+- КР «Артериальная гипертензия у взрослых», Минздрав РФ, 2024
+- 2023 ESH Guidelines for the management of arterial hypertension
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
@@ -116,6 +116,5 @@ disclaimer: true
 - [[DIAG-EXAM-001]] — обязательный метод первичной оценки
 
 ## Источники
-1. Клинические рекомендации Минздрава РФ «Артериальная гипертензия у взрослых», действующая редакция.
-2. 2023 ESH Guidelines for the management of arterial hypertension.
-3. Техническое задание к БЗ MedAssist, раздел 3.1.
+1. Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
+2. Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.

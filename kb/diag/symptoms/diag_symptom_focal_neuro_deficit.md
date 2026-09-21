@@ -63,7 +63,6 @@ sources:
 - Harbison J. et al. Diagnostic accuracy of stroke referrals from primary care, emergency room physicians, and ambulance staff using the FAST test. Stroke. 2003;34:71–76.
 clinical_guidelines:
 - КР «Ишемический инсульт и ТИА у взрослых», Минздрав РФ, 2024
-- AHA/ASA Early Management of Acute Ischemic Stroke, 2019
 last_medical_review: '2026-09-16'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
@@ -110,6 +109,6 @@ disclaimer: true
 Если у вас или рядом с вами внезапно перекосило лицо, ослабла рука или нарушилась речь, немедленно вызовите скорую помощь (103 или 112) и запомните время появления симптомов.
 
 ## Источники
-1. КР «Ишемический инсульт и транзиторная ишемическая атака у взрослых», Минздрав РФ, 2024.
-2. AHA/ASA Guidelines for the Early Management of Acute Ischemic Stroke, 2019.
-3. Harbison J. et al. FAST test accuracy. Stroke, 2003.
+1. Клинические рекомендации «Ишемический инсульт и транзиторная ишемическая атака у взрослых». Минздрав РФ, 2024.
+2. Powers W.J. et al. 2019 Update to the 2018 Guidelines for the Early Management of Acute Ischemic Stroke. AHA/ASA. Stroke. 2019;50:e344–e418.
+3. Harbison J. et al. Diagnostic accuracy of stroke referrals from primary care, emergency room physicians, and ambulance staff using the FAST test. Stroke. 2003;34:71–76.

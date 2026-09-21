@@ -73,11 +73,11 @@ drugs:
     - profile: GLB-PROFILE-002
 next: PROT-ROUTING-006
 sources:
-- AHS Guidelines for Migraine
+- 'Ailani J. et al. The American Headache Society Consensus Statement: Update on integrating new migraine treatments into clinical practice. Headache. 2021;61(7):1021–1039.'
 - Eigenbrodt A.K. et al. Diagnosis and management of migraine in ten steps. Nat Rev Neurol. 2021;17:501–514.
 - 'Orr S.L. et al. Management of adults with acute migraine in the emergency department: the American Headache Society evidence assessment. Headache. 2016;56:911–940.'
 clinical_guidelines:
-- AHS Migraine Guidelines
+- AHS Consensus Statement on migraine treatment, 2021
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
@@ -113,3 +113,8 @@ disclaimer: true
 
 ## Дальнейшее наблюдение
 - После купирования – профилактическая терапия (PHARM-REGIMEN-006).
+
+## Источники
+1. Ailani J. et al. The American Headache Society Consensus Statement: Update on integrating new migraine treatments into clinical practice. Headache. 2021;61(7):1021–1039.
+2. Eigenbrodt A.K. et al. Diagnosis and management of migraine in ten steps. Nat Rev Neurol. 2021;17:501–514.
+3. Orr S.L. et al. Management of adults with acute migraine in the emergency department: the American Headache Society evidence assessment. Headache. 2016;56:911–940.

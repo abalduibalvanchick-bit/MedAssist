@@ -85,10 +85,11 @@ lines:
         profile: GLB-PROFILE-001
     note: риск гипогликемии
 sources:
-- Клинические рекомендации «Сахарный диабет 2 типа», 2024
-- ADA Standards of Medical Care in Diabetes, 2025
+- Клинические рекомендации «Сахарный диабет 2 типа у взрослых». Минздрав РФ, 2022.
+- American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
 clinical_guidelines:
-- ADA Standards of Medical Care in Diabetes, 2025
+- КР «Сахарный диабет 2 типа у взрослых», Минздрав РФ, 2022
+- ADA Standards of Care in Diabetes — 2025
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
@@ -182,6 +183,5 @@ disclaimer: true
 - [[PHARM-NONPHARM-002]] – Немедикаментозное лечение СД2
 
 ## Источники
-1. Клинические рекомендации «Сахарный диабет 2 типа», Минздрав РФ, 2024.
-2. ADA Standards of Medical Care in Diabetes, 2025.
-3. 2023 ESC Guidelines for the management of cardiovascular disease in patients with diabetes.
+1. Клинические рекомендации «Сахарный диабет 2 типа у взрослых». Минздрав РФ, 2022.
+2. American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).

@@ -49,10 +49,11 @@ indicates:
 - DIAG-EMERGENCY-001
 action: PROT-EMERGENCY_P-003
 sources:
-- Клинические рекомендации по стабильной ишемической болезни сердца, 2024
-- 2023 ESC Guidelines for the management of acute coronary syndromes
+- Клинические рекомендации «Стабильная ишемическая болезнь сердца». Минздрав РФ, 2024.
+- Byrne R.A. et al. 2023 ESC Guidelines for the management of acute coronary syndromes. Eur Heart J. 2023;44:3720–3826.
 clinical_guidelines:
-- 2023 ESC Guidelines for ACS
+- КР «Стабильная ишемическая болезнь сердца», Минздрав РФ, 2024
+- 2023 ESC Guidelines for the management of acute coronary syndromes
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
@@ -105,5 +106,5 @@ disclaimer: true
 - [[DIAG-SYMPTOM-002]] Боль в груди
 
 ## Источники
-1. Клинические рекомендации «Стабильная ишемическая болезнь сердца», 2024.
-2. 2023 ESC Guidelines for the management of acute coronary syndromes.
+1. Клинические рекомендации «Стабильная ишемическая болезнь сердца». Минздрав РФ, 2024.
+2. Byrne R.A. et al. 2023 ESC Guidelines for the management of acute coronary syndromes. Eur Heart J. 2023;44:3720–3826.

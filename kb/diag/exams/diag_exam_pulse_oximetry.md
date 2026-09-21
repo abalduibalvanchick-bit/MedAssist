@@ -49,10 +49,10 @@ turnaround: немедленно
 sources:
 - British Thoracic Society Guideline for oxygen use in healthcare and emergency settings. Thorax. 2017;72(Suppl 1).
 - Клинические рекомендации «Внебольничная пневмония у взрослых». Минздрав РФ, 2024.
-- Global Initiative for Asthma (GINA). Global Strategy for Asthma Management and Prevention, 2024.
+- Global Initiative for Asthma. Global Strategy for Asthma Management and Prevention, 2025 update.
 clinical_guidelines:
-- BTS Guideline for oxygen use, 2017
-- GINA 2024
+- КР «Внебольничная пневмония у взрослых», Минздрав РФ, 2024
+- GINA 2025
 last_medical_review: '2026-09-16'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
@@ -99,6 +99,6 @@ SpO₂ менее 90 % указывает на выраженную гипокс
 - [[DIAG-EMERGENCY-003]] Острая дыхательная недостаточность
 
 ## Источники
-1. BTS Guideline for oxygen use in healthcare and emergency settings, 2017.
-2. КР «Внебольничная пневмония у взрослых», Минздрав РФ, 2024.
-3. GINA 2024.
+1. British Thoracic Society Guideline for oxygen use in healthcare and emergency settings. Thorax. 2017;72(Suppl 1).
+2. Клинические рекомендации «Внебольничная пневмония у взрослых». Минздрав РФ, 2024.
+3. Global Initiative for Asthma. Global Strategy for Asthma Management and Prevention, 2025 update.

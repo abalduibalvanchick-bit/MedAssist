@@ -35,10 +35,11 @@ relations:
 for:
 - DIAG-DISEASE-005
 sources:
-- Клинические рекомендации «Мигрень», 2024
-- AHS Guidelines for Migraine
+- Клинические рекомендации «Мигрень». Минздрав РФ, 2024.
+- 'Ailani J. et al. The American Headache Society Consensus Statement: Update on integrating new migraine treatments into clinical practice. Headache. 2021;61(7):1021–1039.'
 clinical_guidelines:
-- AHS Migraine Guidelines
+- КР «Мигрень», Минздрав РФ, 2024
+- AHS Consensus Statement on migraine treatment, 2021
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
@@ -111,3 +112,7 @@ disclaimer: true
 - [[DIAG-DISEASE-005]] – Мигрень
 - [[PROT-PROTOCOL-006]] – Клинический протокол (будет создан)
 - [[PHARM-REGIMEN-006]] – Схема лечения
+
+## Источники
+1. Клинические рекомендации «Мигрень». Минздрав РФ, 2024.
+2. Ailani J. et al. The American Headache Society Consensus Statement: Update on integrating new migraine treatments into clinical practice. Headache. 2021;61(7):1021–1039.

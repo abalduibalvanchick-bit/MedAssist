@@ -1,108 +1,94 @@
 ---
-id: "PROT-PROTOCOL-XXX"
-title: "Клинический протокол: [Название]"
-domain: "protocols"
-category: "protocol"
-body_system:
-  - "cardiovascular | respiratory | gastrointestinal | nervous | endocrine | urinary | multisystem"
-tags:
-  - "protocol"
-  - "clinical"
-urgency: "routine | urgent | emergency"
-access_level: "professional"
-target_specialist:
-  - "therapist | cardiologist | pulmonologist | gastroenterologist | neurologist | endocrinologist | nephrologist | emergency_physician | all_specialties"
-age_group:
-  - "adult | elderly | all_ages"
-evidence_level: "Ia | Ib | IIa | IIb | III | IV"
-recommendation_class: "I | IIa | IIb | III"
-related:
-  - "DIAG-DISEASE-XXX"
-  - "PHARM-REGIMEN-XXX"
+# Сгенерировано scripts/generate_templates.py из kb/_schema/schema.yaml. Не редактировать вручную.
+# Категория: protocol — Клинический протокол. Файл: kb/prot/clinical_protocols/prot_protocol_<краткое_имя>.md
+id: PROT-PROTOCOL-NNN
+schema_version: 2
+title: <Название>
+domain: prot
+category: protocol
+body_system: [cardiovascular]  # cardiovascular | respiratory | gastrointestinal | nervous | endocrine | metabolic | urinary | musculoskeletal | immune | reproductive | hematologic | dermatologic | multisystem
+tags: [<тег>]
+urgency: routine  # routine | urgent | emergency | elective
+access_level: professional  # professional | nursing | student | patient
+target_specialist: [therapist]  # см. docs/metadata_schema.md, перечисление target_specialist
+age_group: [adult]  # neonate | infant | child | adolescent | adult | elderly | all_ages
+# evidence_level: Ia  # необязательно: Ia | Ib | IIa | IIb | III | IV
+# recommendation_class: I  # необязательно: I | IIa | IIb | III
+relations:
+  - target: DIAG-EXAM-001
+    type: uses_exam  # типы и допустимые категории: docs/link_types.md
+    description: <смысл связи>
+# Машиночитаемый слой (docs/schema.md, раздел «protocol»):
+for: ["DIAG-DISEASE-001"]  # list[id(disease,emergency)]; обязательно для approved
+entry: {"all": [{"symptom": "DIAG-SYMPTOM-002"}, {"param": "sbp", "op": ">=", "value": 180}]}  # condition; обязательно для approved; Критерии начала применения протокола
+steps: [{"id": "<текст>", "action": "<текст>", "when": {"all": [{"symptom": "DIAG-SYMPTOM-002"}, {"param": "sbp", "op": ">=", "value": 180}]}, "refs": ["DIAG-DISEASE-001"]}]  # list[object]; обязательно для approved
+branches: [{"when": {"all": [{"symptom": "DIAG-SYMPTOM-002"}, {"param": "sbp", "op": ">=", "value": 180}]}, "then": "PROT-ROUTING-001", "explanation": "<текст>"}]  # list[object]; необязательно
+targets: [{"param": "sbp", "op": "<текст>", "value": 0, "label": "<текст>"}]  # list[object]; необязательно
 sources:
-  - "Ссылка или библиографическое описание"
-clinical_guidelines:
-  - "Название клинических рекомендаций, год"
-last_medical_review: "YYYY-MM-DD"
-medical_reviewer: "ФИО рецензента, специальность"
-author: "Инженер знаний №3"
-version: "1.0"
-date_created: "YYYY-MM-DD"
-date_updated: "YYYY-MM-DD"
-status: "draft | medical_review | approved"
+  - <Автор(ы). Название. Издание/журнал. Год;том:страницы.>
+  - <Вторая конкретная библиографическая ссылка>
+clinical_guidelines: [<Краткое название КР, год>]
+last_medical_review: YYYY-MM-DD
+medical_reviewer: модельная верификация (учебный проект)
+author: <Инженер знаний №N>
+version: '2.0'
+date_created: YYYY-MM-DD
+date_updated: YYYY-MM-DD
+status: draft  # draft | medical_review | approved | deprecated; approved — только при заполненном машиночитаемом слое
 disclaimer: true
 ---
 
-# Клинический протокол: [Название]
+# <Название>
 
-> ⚕️ **Дисклеймер**: Документ предназначен для медицинских специалистов.
-> Используется как элемент клинической поддержки принятия решений и не заменяет врача.
+> ⚕️ **Дисклеймер**: Информация носит справочный характер и не заменяет консультацию специалиста.
 
 ## Назначение протокола
-[Для какой клинической ситуации предназначен данный протокол]
+<заполнить>
 
 ## Область применения
-- [Заболевание / синдром / клиническая ситуация]
-- [Целевая категория пациентов]
-- [Условия использования]
+<заполнить>
 
 ## Входные условия
-- [[DIAG-DISEASE-XXX]] [Связанное заболевание]
-- [[DIAG-SYMPTOM-XXX]] [Связанный симптом]
-- [[DIAG-EXAM-XXX]] [Ключевое обследование]
+<заполнить>
 
 ## Критерии начала применения
-- [Критерий 1]
-- [Критерий 2]
-- [Критерий 3]
+<заполнить>
 
 ## Алгоритм ведения пациента
-1. [Шаг 1]
-2. [Шаг 2]
-3. [Шаг 3]
+<заполнить>
 
 ## Ключевые решения и развилки
-- [Условие] → [Решение]
-- [Условие] → [Решение]
+<заполнить>
 
 ## Критерии срочности
-- **Routine**: [описание]
-- **Urgent**: [описание]
-- **Emergency**: [описание]
+<заполнить>
 
 ## Связанные маршруты пациента
-- [[PROT-ROUTING-XXX]] [Маршрут пациента]
+<заполнить>
 
 ## Связанные шкалы
-- [[PROT-SCALE-XXX]] [Шкала оценки]
+<заполнить>
 
 ## Неотложные состояния и действия
-- [[PROT-EMERGENCY_P-XXX]] [Алгоритм неотложной помощи]
+<заполнить>
 
 ## Рекомендации по терапии
-- [[PHARM-REGIMEN-XXX]] [Схема лечения]
-- [[PHARM-DRUG-XXX]] [Препарат]
-- [[PHARM-NONPHARM-XXX]] [Немедикаментозный метод]
+<заполнить>
 
 ## Памятка пациенту
-- [[PROT-PATIENT_INFO-XXX]] [Памятка пациенту]
+<заполнить>
 
 ## Дальнейшее наблюдение
-- [[PROT-FOLLOW_UP-XXX]] [Документ наблюдения]
+<заполнить>
 
 ## Особенности у отдельных групп
-- **Пожилые**: [особенности]
-- **Беременные**: [особенности]
-- **Пациенты с коморбидностью**: [особенности]
+<заполнить>
 
 ## Ограничения применения
-- [Ограничение 1]
-- [Ограничение 2]
+<заполнить>
 
 ## Связанные документы
-- [[ID]] — [тип связи]
+<заполнить>
 
 ## Источники
-1. [Клинические рекомендации]
-2. [Профессиональное руководство]
-3. [Международный гайдлайн]
+<генерируется из поля sources: python scripts/sync_body_sources.py>

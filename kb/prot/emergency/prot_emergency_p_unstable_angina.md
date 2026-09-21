@@ -107,10 +107,11 @@ stabilization:
     - 100
 next: PROT-ROUTING-003
 sources:
-- 2023 ESC Guidelines for the management of acute coronary syndromes
-- Клинические рекомендации по ОКС, 2024
+- Byrne R.A. et al. 2023 ESC Guidelines for the management of acute coronary syndromes. Eur Heart J. 2023;44:3720–3826.
+- Клинические рекомендации «Острый инфаркт миокарда без подъёма сегмента ST электрокардиограммы». Минздрав РФ, 2024.
 clinical_guidelines:
-- 2023 ESC Guidelines for ACS
+- 2023 ESC Guidelines for the management of acute coronary syndromes
+- КР «Острый инфаркт миокарда без подъёма сегмента ST», Минздрав РФ, 2024
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
@@ -187,5 +188,5 @@ disclaimer: true
 - Пациентам с высоким риском (кардиогенный шок, отёк лёгких) требуется более агрессивная тактика и консультация реаниматолога.
 
 ## Источники
-1. 2023 ESC Guidelines for the management of acute coronary syndromes.
-2. Клинические рекомендации по острому коронарному синдрому, 2024.
+1. Byrne R.A. et al. 2023 ESC Guidelines for the management of acute coronary syndromes. Eur Heart J. 2023;44:3720–3826.
+2. Клинические рекомендации «Острый инфаркт миокарда без подъёма сегмента ST электрокардиограммы». Минздрав РФ, 2024.

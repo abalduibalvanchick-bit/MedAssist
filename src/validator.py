@@ -25,6 +25,7 @@ import yaml
 
 from .conditions import validate_condition
 from .machine_refs import iter_machine_refs
+from .card_writer import sync_body_sources
 from .config import (
     ALLOWED_RELATION_TYPES,
     ALLOWED_STATUS,
@@ -42,6 +43,14 @@ DATE_PATTERN = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 STUB_MARKERS = ("служебная интеграционная карточка", "интеграционная карточка", "заглушка")
 STUB_MIN_CONTENT_CHARS = 600
 EMPTY_REVIEWER_VALUES = {"", "—", "-", "ФИО", "ФИО, специальность", "ФИО рецензента, специальность", "ФИО врача", "ФИО, степень"}
+
+
+# Редакторские артефакты в тексте карточек.
+EDITORIAL_QUESTION_RE = re.compile(r"\?\s*\)|\?\s+\(|[а-яё]\?\s+[а-яё]|[а-яё]\?\s+Но\b")
+EDITORIAL_MARKER_RE = re.compile(r"\b(TODO|FIXME|TBD|XXX)\b|\?\?")
+WORD_RE = re.compile(r"[A-Za-zА-Яа-яЁё]+")
+LATIN_RE = re.compile(r"[A-Za-z]")
+CYRILLIC_RE = re.compile(r"[А-Яа-яЁё]")
 
 
 @dataclass(frozen=True)
@@ -311,6 +320,31 @@ class KnowledgeBaseValidator:
                 self._add(report, card, "ERROR", "REMOVED_FIELD", f"Поле {field_name} удалено в схеме v2 и должно быть убрано из карточки.")
 
         self._validate_identity(card, report)
+
+        banned = [re.compile(p_, re.I) for p_ in (self.schema.raw["fields"].get("source_banned_patterns") or [])]
+        for src in card.metadata.get("sources") or []:
+            if any(b.search(str(src)) for b in banned):
+                self._add(report, card, "ERROR", "VAGUE_SOURCE", f"Источник не является конкретной библиографической ссылкой: {str(src)[:80]!r}.")
+
+        if card.schema_version >= 2:
+            raw_body = card.file_path.read_text(encoding="utf-8").split("\n---\n", 1)[-1] if card.file_path.exists() else ""
+            if sync_body_sources(raw_body, list(card.metadata.get("sources") or [])) != raw_body:
+                self._add(report, card, "WARNING", "BODY_SOURCES_MISMATCH",
+                          "Раздел «## Источники» в тексте не совпадает с полем sources (запустите scripts/sync_body_sources.py).")
+
+        if card.schema_version >= 2:
+            for line in card.content.splitlines():
+                problem = None
+                if EDITORIAL_QUESTION_RE.search(line):
+                    problem = "вопросительный знак внутри утверждения (неснятое сомнение автора)"
+                elif EDITORIAL_MARKER_RE.search(line):
+                    problem = "служебная пометка"
+                else:
+                    mixed = [w for w in WORD_RE.findall(line) if LATIN_RE.search(w) and CYRILLIC_RE.search(w)]
+                    if mixed:
+                        problem = f"слово со смешением кириллицы и латиницы: {mixed[0]}"
+                if problem:
+                    self._add(report, card, "WARNING", "EDITORIAL_ARTIFACT", f"{problem}: {line.strip()[:80]!r}.")
 
         known_fields = set(self.schema.common_required) | set(self.schema.common_optional) | set(self.schema.machine_fields(card.category))
         for key in card.metadata:

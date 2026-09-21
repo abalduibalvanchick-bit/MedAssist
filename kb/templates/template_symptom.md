@@ -1,88 +1,76 @@
 ---
-id: "DOMAIN-CATEGORY-NNN"
-title: "Название единицы знаний"
-domain: "diag"
-category: "symptom"
-icd_10: ""
-icd_11: ""
-atc_code: ""
-inn: ""
-body_system:
-  - "cardiovascular"
-tags:
-  - "tag_1"
-  - "tag_2"
-urgency: "routine"
-access_level: "professional"
-target_specialist:
-  - "therapist"
-age_group:
-  - "adult"
-evidence_level: "IV"
-recommendation_class: "I"
-related:
-  - "DIAG-..."
+# Сгенерировано scripts/generate_templates.py из kb/_schema/schema.yaml. Не редактировать вручную.
+# Категория: symptom — Симптом / синдром. Файл: kb/diag/symptoms/diag_symptom_<краткое_имя>.md
+id: DIAG-SYMPTOM-NNN
+schema_version: 2
+title: <Название>
+domain: diag
+category: symptom
+body_system: [cardiovascular]  # cardiovascular | respiratory | gastrointestinal | nervous | endocrine | metabolic | urinary | musculoskeletal | immune | reproductive | hematologic | dermatologic | multisystem
+tags: [<тег>]
+urgency: routine  # routine | urgent | emergency | elective
+access_level: professional  # professional | nursing | student | patient
+target_specialist: [therapist]  # см. docs/metadata_schema.md, перечисление target_specialist
+age_group: [adult]  # neonate | infant | child | adolescent | adult | elderly | all_ages
+# evidence_level: Ia  # необязательно: Ia | Ib | IIa | IIb | III | IV
+# recommendation_class: I  # необязательно: I | IIa | IIb | III
 relations:
-  - target: "DIAG-..."
-    type: "associated_with"
-    description: "Краткое объяснение связи"
+  - target: DIAG-DISEASE-001
+    type: symptom_of  # типы и допустимые категории: docs/link_types.md
+    description: <смысл связи>
+# Машиночитаемый слой (docs/schema.md, раздел «symptom»):
+synonyms: ["<текст>"]  # list[string]; обязательно для approved; Синонимы и разговорные формулировки для распознавания
+features: [{"code": "<текст>", "label": "<текст>"}]  # list[object]; обязательно для approved; Контролируемые признаки симптома; на них ссылаются атомы feature
 sources:
-  - "Источник 1: точное название, организация, год/редакция"
-clinical_guidelines:
-  - "Название клинических рекомендаций, год/редакция"
-last_medical_review: "YYYY-MM-DD"
-medical_reviewer: ""
-author: "Инженер знаний №1"
-version: "1.0"
-date_created: "YYYY-MM-DD"
-date_updated: "YYYY-MM-DD"
-status: "draft"
+  - <Автор(ы). Название. Издание/журнал. Год;том:страницы.>
+  - <Вторая конкретная библиографическая ссылка>
+clinical_guidelines: [<Краткое название КР, год>]
+last_medical_review: YYYY-MM-DD
+medical_reviewer: модельная верификация (учебный проект)
+author: <Инженер знаний №N>
+version: '2.0'
+date_created: YYYY-MM-DD
+date_updated: YYYY-MM-DD
+status: draft  # draft | medical_review | approved | deprecated; approved — только при заполненном машиночитаемом слое
 disclaimer: true
 ---
 
-# [Название симптома / синдрома]
+# <Название>
 
-> ⚕️ **Дисклеймер**: Информация носит справочный характер и предназначена для медицинских специалистов. Не является руководством по самолечению.
+> ⚕️ **Дисклеймер**: Информация носит справочный характер и не заменяет консультацию специалиста.
 
 ## Определение
-[Клиническое определение симптома / синдрома.]
+<заполнить>
 
 ## Механизм
-[Краткое описание механизма возникновения симптома.]
+<заполнить>
 
 ## Характеристики
-- **Локализация**: [описание]
-- **Интенсивность**: [описание]
-- **Динамика**: [описание]
-- **Сопутствующие проявления**: [описание]
+<заполнить>
 
 ## Клиническое значение
-[Почему симптом важен для диагностики.]
+<заполнить>
 
 ## Ассоциированные заболевания
-- [[DIAG-DISEASE-NNN]] [Название]
+<заполнить>
 
 ## 🚩 «Красные флаги»
-- [Красный флаг 1]
-- [Красный флаг 2]
+<заполнить>
 
 ## Дифференциально-диагностические критерии
-| Признак | Возможное направление поиска |
-|---|---|
-| [Признак] | [Интерпретация] |
+<заполнить>
 
 ## Диагностические направления
-- [Осмотр/обследование 1]
-- [[DIAG-EXAM-NNN]] [Метод обследования]
+<заполнить>
 
 ## Особенности у отдельных групп
-[Дети, пожилые, беременные, коморбидные пациенты — если применимо.]
+<заполнить>
 
 ## Информация для пациента
-[Короткое безопасное объяснение без самолечения.]
+<заполнить>
 
 ## Связанные документы
-- [[DIAG-DISEASE-NNN]] — [тип связи]
+<заполнить>
 
 ## Источники
-1. [Источник]
+<генерируется из поля sources: python scripts/sync_body_sources.py>

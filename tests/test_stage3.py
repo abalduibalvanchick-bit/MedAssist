@@ -195,3 +195,51 @@ def test_redflag_and_emergency_on_reference_patient():
     assert evaluate(repo.get_by_id("DIAG-REDFLAG-005").metadata["triggers"], facts, schema).is_true()
     facts.red_flags.add("DIAG-REDFLAG-005")
     assert evaluate(repo.get_by_id("DIAG-EMERGENCY-001").metadata["criteria"], facts, schema).is_true()
+
+
+# ------------------------------------------------ этап 4: чистка содержания
+def test_vague_source_is_error(kb):
+    apply_patch.apply({"DIAG-DISEASE-001": {"add_sources": ["Техническое задание к БЗ MedAssist, раздел 3.1."]}}, kb, "2026-09-21", dry_run=False)
+    assert "VAGUE_SOURCE" in codes(validate(kb), "ERROR")
+
+
+def test_body_sources_section_sync(kb):
+    import sync_body_sources
+    assert "BODY_SOURCES_MISMATCH" in codes(validate(kb), "WARNING")  # в фикстуре раздела нет
+    sync_body_sources.main(["--kb", str(kb)])
+    body = (kb / "diag/diseases/diag_disease_ihd.md").read_text(encoding="utf-8")
+    assert "## Источники\n1. A\n2. B\n" in body
+    assert "BODY_SOURCES_MISMATCH" not in codes(validate(kb))
+
+
+@pytest.mark.parametrize("line", ["Препарат снижает риск (возможно?) осложнений.", "TODO: дописать раздел", "Отсутствие spiromетрических критериев"])
+def test_editorial_artifacts_are_warned(kb, line):
+    path = kb / "diag/diseases/diag_disease_ihd.md"
+    path.write_text(path.read_text(encoding="utf-8") + "\n" + line + "\n", encoding="utf-8")
+    assert "EDITORIAL_ARTIFACT" in codes(validate(kb), "WARNING")
+
+
+def test_questions_in_questionnaires_are_not_artifacts(kb):
+    path = kb / "diag/diseases/diag_disease_ihd.md"
+    path.write_text(path.read_text(encoding="utf-8") + "\n1. Когда началась боль? — помогает отличить острое состояние.\n", encoding="utf-8")
+    assert "EDITORIAL_ARTIFACT" not in codes(validate(kb))
+
+
+def test_templates_cover_all_categories_and_parse():
+    import generate_templates
+    for category in schema.categories:
+        text = generate_templates.render_template(schema, category)
+        meta = yaml.safe_load(text.split("---\n")[1])
+        assert meta["category"] == category and meta["schema_version"] == 2
+        for field in schema.common_required:
+            assert field in meta, (category, field)
+        for field in schema.machine_required_for_approved(category):
+            assert field in meta, (category, field)
+    files = {p.stem[len("template_"):] for p in (ROOT / "kb" / "templates").glob("template_*.md")}
+    assert files == set(schema.categories)
+
+
+def test_real_kb_sources_are_specific(real_report):
+    repo, report = real_report
+    assert "VAGUE_SOURCE" not in {i.code for i in report.issues}
+    assert all(len(c.metadata.get("sources") or []) >= 2 for c in repo.cards)

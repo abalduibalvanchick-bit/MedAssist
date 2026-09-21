@@ -47,10 +47,11 @@ results:
   label: патология черепных нервов
 turnaround: немедленно
 sources:
-- Клинические рекомендации по мигрени, 2024
-- Руководства по неврологии
+- Клинические рекомендации «Мигрень». Минздрав РФ, 2024.
+- Headache Classification Committee of the International Headache Society. The International Classification of Headache Disorders, 3rd edition (ICHD-3). Cephalalgia. 2018;38:1–211.
 clinical_guidelines:
-- Клинические рекомендации по мигрени
+- КР «Мигрень», Минздрав РФ, 2024
+- ICHD-3, 2018
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
@@ -115,5 +116,5 @@ disclaimer: true
 - [[DIAG-EXAM-010]] – МРТ/КТ головного мозга (для углублённой диагностики – не создаём)
 
 ## Источники
-1. Клинические рекомендации «Мигрень», 2024.
-2. Оценка неврологического статуса при головной боли // Практическая неврология.
+1. Клинические рекомендации «Мигрень». Минздрав РФ, 2024.
+2. Headache Classification Committee of the International Headache Society. The International Classification of Headache Disorders, 3rd edition (ICHD-3). Cephalalgia. 2018;38:1–211.

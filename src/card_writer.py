@@ -8,6 +8,7 @@ Unicode без экранирования, многострочные строк
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -96,3 +97,19 @@ def write_card(doc: CardDocument, schema: Schema, path: Path | None = None) -> P
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(render_card(doc.meta, doc.body, schema), encoding="utf-8")
     return target
+
+
+# --------------------------------------------------- раздел «Источники»
+SOURCES_SECTION_RE = re.compile(r"(^## Источники[ \t]*\n)(.*?)(?=^## |\Z)", re.M | re.S)
+
+
+def render_sources(sources: list) -> str:
+    return "\n".join(f"{i}. {s}" for i, s in enumerate(sources, 1)) + "\n"
+
+
+def sync_body_sources(body: str, sources: list) -> str:
+    """Возвращает тело, в котором раздел «## Источники» совпадает с полем sources."""
+    block = render_sources(sources)
+    if SOURCES_SECTION_RE.search(body):
+        return SOURCES_SECTION_RE.sub(lambda m: m.group(1) + block + ("\n" if m.end() < len(body) else ""), body, count=1)
+    return body.rstrip() + "\n\n## Источники\n" + block

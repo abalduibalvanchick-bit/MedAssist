@@ -54,11 +54,11 @@ indicates:
 - DIAG-DISEASE-006
 action: PROT-EMERGENCY_P-002
 sources:
-- Алгоритмы специализированной медицинской помощи больным сахарным диабетом, 2023
+- Алгоритмы специализированной медицинской помощи больным сахарным диабетом / Под ред. И.И. Дедова, М.В. Шестаковой, А.Ю. Майорова. — 11-й выпуск. — М., 2023.
 - Dhatariya K.K. et al. Diabetic ketoacidosis. Nat Rev Dis Primers. 2020;6:40.
 - 'American Diabetes Association. Standards of Care in Diabetes — 2025. Section 16: Diabetes Care in the Hospital (hyperglycemic crises).'
 clinical_guidelines:
-- Алгоритмы специализированной медицинской помощи больным сахарным диабетом, 2023
+- Алгоритмы специализированной медицинской помощи больным сахарным диабетом, 11-й выпуск, 2023
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
@@ -106,4 +106,6 @@ disclaimer: true
 - [[DIAG-EMERGENCY-004]] Гиперосмолярное гипергликемическое состояние
 
 ## Источники
-1. Алгоритмы специализированной медицинской помощи больным сахарным диабетом, 2023.
+1. Алгоритмы специализированной медицинской помощи больным сахарным диабетом / Под ред. И.И. Дедова, М.В. Шестаковой, А.Ю. Майорова. — 11-й выпуск. — М., 2023.
+2. Dhatariya K.K. et al. Diabetic ketoacidosis. Nat Rev Dis Primers. 2020;6:40.
+3. American Diabetes Association. Standards of Care in Diabetes — 2025. Section 16: Diabetes Care in the Hospital (hyperglycemic crises).

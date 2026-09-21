@@ -64,12 +64,11 @@ contraindications:
   absolute: false
   explanation: риск НПВС-индуцированного бронхоспазма
 sources:
-- Клинические рекомендации по НПВС-гастропатии
-- 'Bhala N. et al. Vascular and upper gastrointestinal effects of non-steroidal anti-inflammatory drugs: meta-analyses of individual participant data from randomised trials. Lancet. 2013;382:769–779.'
 - Каратеев А.Е. и др. Рациональное использование нестероидных противовоспалительных препаратов. Клинические рекомендации. Научно-практическая ревматология. 2018;56(Прил. 1):1–29.
-- 'Кукес В.Г., Сычёв Д.А. Клиническая фармакология: учебник. 6-е изд. М.: ГЭОТАР-Медиа, 2022.'
+- 'Bhala N. et al. Vascular and upper gastrointestinal effects of non-steroidal anti-inflammatory drugs: meta-analyses of individual participant data from randomised trials. Lancet. 2013;382:769–779.'
+- 'Клиническая фармакология: национальное руководство / Под ред. Ю.Б. Белоусова, В.Г. Кукеса, В.К. Лепахина, В.И. Петрова. М.: ГЭОТАР-Медиа, 2014.'
 clinical_guidelines:
-- Клинические рекомендации по НПВС-гастропатии
+- Рациональное использование НПВП, клинические рекомендации, 2018
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
@@ -121,6 +120,6 @@ disclaimer: true
 Минимальная эффективная доза минимальным курсом. При факторах риска ЖКТ-осложнений — гастропротекция ингибиторами протонной помпы или выбор ЦОГ-2-селективного препарата.
 
 ## Источники
-1. Bhala N. et al. Lancet, 2013.
-2. Каратеев А.Е. и др. Рациональное использование НПВС, 2018.
-3. Кукес В.Г., Сычёв Д.А. Клиническая фармакология, 2022.
+1. Каратеев А.Е. и др. Рациональное использование нестероидных противовоспалительных препаратов. Клинические рекомендации. Научно-практическая ревматология. 2018;56(Прил. 1):1–29.
+2. Bhala N. et al. Vascular and upper gastrointestinal effects of non-steroidal anti-inflammatory drugs: meta-analyses of individual participant data from randomised trials. Lancet. 2013;382:769–779.
+3. Клиническая фармакология: национальное руководство / Под ред. Ю.Б. Белоусова, В.Г. Кукеса, В.К. Лепахина, В.И. Петрова. М.: ГЭОТАР-Медиа, 2014.

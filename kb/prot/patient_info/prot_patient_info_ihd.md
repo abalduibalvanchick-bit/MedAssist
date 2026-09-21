@@ -37,10 +37,11 @@ seek_help_when:
 - появились сильная одышка, холодный пот, слабость, тошнота
 - потеря сознания
 sources:
-- Клинические рекомендации по стабильной ИБС, 2024
-- 2023 ESC Guidelines for CCS (адаптировано)
+- Клинические рекомендации «Стабильная ишемическая болезнь сердца». Минздрав РФ, 2024.
+- Vrints C. et al. 2024 ESC Guidelines for the management of chronic coronary syndromes. Eur Heart J. 2024;45:3415–3537.
 clinical_guidelines:
-- 2023 ESC Guidelines for CCS
+- КР «Стабильная ишемическая болезнь сердца», Минздрав РФ, 2024
+- 2024 ESC Guidelines for the management of chronic coronary syndromes
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
@@ -95,5 +96,5 @@ disclaimer: true
 - носите с собой нитроглицерин (спрей или таблетки)
 
 ## Источники
-1. 2023 ESC Guidelines for the management of chronic coronary syndromes (пациентская версия).
-2. Клинические рекомендации по стабильной ИБС, 2024.
+1. Клинические рекомендации «Стабильная ишемическая болезнь сердца». Минздрав РФ, 2024.
+2. Vrints C. et al. 2024 ESC Guidelines for the management of chronic coronary syndromes. Eur Heart J. 2024;45:3415–3537.

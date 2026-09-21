@@ -39,10 +39,10 @@ features:
 - code: polydipsia.dry_mouth
   label: сухость во рту
 sources:
-- Алгоритмы специализированной медицинской помощи больным сахарным диабетом, 2023
+- Алгоритмы специализированной медицинской помощи больным сахарным диабетом / Под ред. И.И. Дедова, М.В. Шестаковой, А.Ю. Майорова. — 11-й выпуск. — М., 2023.
 - 'American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Section 2: Diagnosis and Classification of Diabetes. Diabetes Care. 2025;48(Suppl 1):S27–S49.'
 clinical_guidelines:
-- Алгоритмы специализированной медицинской помощи больным сахарным диабетом, 2023
+- Алгоритмы специализированной медицинской помощи больным сахарным диабетом, 11-й выпуск, 2023
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
@@ -96,4 +96,5 @@ disclaimer: true
 - [[DIAG-SYMPTOM-006]] — полиурия
 
 ## Источники
-1. Алгоритмы специализированной медицинской помощи больным сахарным диабетом, 2023.
+1. Алгоритмы специализированной медицинской помощи больным сахарным диабетом / Под ред. И.И. Дедова, М.В. Шестаковой, А.Ю. Майорова. — 11-й выпуск. — М., 2023.
+2. American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Section 2: Diagnosis and Classification of Diabetes. Diabetes Care. 2025;48(Suppl 1):S27–S49.

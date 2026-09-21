@@ -95,10 +95,11 @@ deterioration:
     value: 9
 on_deterioration: PROT-ROUTING-002
 sources:
-- ADA Standards of Medical Care in Diabetes, 2025
-- Клинические рекомендации «Сахарный диабет 2 типа», 2024
+- American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
+- Клинические рекомендации «Сахарный диабет 2 типа у взрослых». Минздрав РФ, 2022.
 clinical_guidelines:
-- ADA Standards of Medical Care in Diabetes, 2025
+- ADA Standards of Care in Diabetes — 2025
+- КР «Сахарный диабет 2 типа у взрослых», Минздрав РФ, 2022
 last_medical_review: '2026-05-02'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
@@ -185,5 +186,5 @@ disclaimer: true
 - Документ не заменяет очное врачебное наблюдение.
 
 ## Источники
-1. ADA Standards of Medical Care in Diabetes, 2025.
-2. Клинические рекомендации «Сахарный диабет 2 типа», 2024.
+1. American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
+2. Клинические рекомендации «Сахарный диабет 2 типа у взрослых». Минздрав РФ, 2022.

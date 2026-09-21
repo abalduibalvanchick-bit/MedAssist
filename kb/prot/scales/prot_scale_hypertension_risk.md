@@ -120,11 +120,12 @@ interpretation:
   action: PROT-ROUTING-001
 missing_policy: skip
 sources:
-- Клинические рекомендации по артериальной гипертензии
+- Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
 - Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.
 - SCORE2 working group and ESC Cardiovascular risk collaboration. SCORE2 risk prediction algorithms. Eur Heart J. 2021;42:2439–2454.
 clinical_guidelines:
-- ESC/ESH Guidelines
+- КР «Артериальная гипертензия у взрослых», Минздрав РФ, 2024
+- 2023 ESH Guidelines for the management of arterial hypertension
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
@@ -195,5 +196,6 @@ disclaimer: true
 - [[PHARM-REGIMEN-001]] — терапия.
 
 ## Источники
-1. ESC/ESH Guidelines.
-2. Клинические рекомендации по артериальной гипертензии.
+1. Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
+2. Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.
+3. SCORE2 working group and ESC Cardiovascular risk collaboration. SCORE2 risk prediction algorithms. Eur Heart J. 2021;42:2439–2454.

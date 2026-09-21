@@ -88,11 +88,11 @@ deterioration:
   - redflag: DIAG-REDFLAG-001
 on_deterioration: PROT-ROUTING-001
 sources:
-- Клинические рекомендации по артериальной гипертензии
-- 2023 ESH Guidelines for the management of arterial hypertension
+- Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
+- Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.
 clinical_guidelines:
-- Артериальная гипертензия у взрослых, 2024
-- 2023 ESH Guidelines
+- КР «Артериальная гипертензия у взрослых», Минздрав РФ, 2024
+- 2023 ESH Guidelines for the management of arterial hypertension
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
@@ -172,5 +172,5 @@ disclaimer: true
 - документ не заменяет очное врачебное наблюдение.
 
 ## Источники
-1. Клинические рекомендации по артериальной гипертензии.
-2. 2023 ESH Guidelines for the management of arterial hypertension.
+1. Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
+2. Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.

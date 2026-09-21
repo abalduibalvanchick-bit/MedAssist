@@ -73,11 +73,12 @@ dose_adjustments:
 indications:
 - DIAG-DISEASE-006
 sources:
-- Инструкция по медицинскому применению метформина
-- Клинические рекомендации «Сахарный диабет 2 типа», 2024
-- ADA Standards of Medical Care in Diabetes, 2025
+- 'Государственный реестр лекарственных средств РФ: инструкция по медицинскому применению лекарственного препарата «Метформин».'
+- Клинические рекомендации «Сахарный диабет 2 типа у взрослых». Минздрав РФ, 2022.
+- American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
 clinical_guidelines:
-- ADA Standards of Medical Care in Diabetes, 2025
+- КР «Сахарный диабет 2 типа у взрослых», Минздрав РФ, 2022
+- ADA Standards of Care in Diabetes — 2025
 last_medical_review: '2025-03-10'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
@@ -206,7 +207,6 @@ disclaimer: true
 - [[PHARM-INTERACTION-001]] – Метформин + контраст
 
 ## Источники
-1. Инструкция по медицинскому применению метформина (РЛС, 2025)
-2. Клинические рекомендации «Сахарный диабет 2 типа», Минздрав РФ, 2024
-3. ADA Standards of Medical Care in Diabetes, 2025
-4. KDIGO 2024 Clinical Practice Guideline for Diabetes Management in CKD
+1. Государственный реестр лекарственных средств РФ: инструкция по медицинскому применению лекарственного препарата «Метформин».
+2. Клинические рекомендации «Сахарный диабет 2 типа у взрослых». Минздрав РФ, 2022.
+3. American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).

@@ -31,7 +31,7 @@ considerations:
 - решатель MedAssist ориентирован на взрослых; для детей выдаётся ограничение применимости
 sources:
 - WHO. Pocket book of hospital care for children, 2nd ed., 2013.
-- 'Клинические рекомендации Союза педиатров России: разделы о возрастных нормах жизненно важных показателей.'
+- 'Fleming S. et al. Normal ranges of heart rate and respiratory rate in children from birth to 18 years of age: a systematic review of observational studies. Lancet. 2011;377:1011–1018.'
 clinical_guidelines:
 - WHO Pocket book of hospital care for children, 2013
 last_medical_review: '2026-09-16'
@@ -56,3 +56,7 @@ disclaimer: true
 
 ## Граница применимости
 Карточки базы знаний MedAssist подготовлены для взрослых пациентов. Для пациентов из этого профиля решатель сообщает об ограничении применимости и рекомендует консультацию педиатра, а не выдаёт заключение по взрослым порогам.
+
+## Источники
+1. WHO. Pocket book of hospital care for children, 2nd ed., 2013.
+2. Fleming S. et al. Normal ranges of heart rate and respiratory rate in children from birth to 18 years of age: a systematic review of observational studies. Lancet. 2011;377:1011–1018.

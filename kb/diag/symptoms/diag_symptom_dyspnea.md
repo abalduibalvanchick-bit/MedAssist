@@ -79,13 +79,11 @@ features:
 - code: dyspnea.episodic
   label: эпизодическая, обратимая
 sources:
-- Клинические рекомендации по внебольничной пневмонии у взрослых, действующая редакция.
-- GINA Global Strategy for Asthma Management and Prevention, действующая редакция.
-- Руководства по пульмонологии и внутренним болезням.
-- Техническое задание к БЗ MedAssist, раздел 3.1.
+- Клинические рекомендации «Внебольничная пневмония у взрослых». Минздрав РФ, 2024.
+- Global Initiative for Asthma. Global Strategy for Asthma Management and Prevention, 2025 update.
 clinical_guidelines:
-- Клинические рекомендации по внебольничной пневмонии у взрослых
-- GINA Global Strategy for Asthma Management and Prevention
+- КР «Внебольничная пневмония у взрослых», Минздрав РФ, 2024
+- GINA 2025
 last_medical_review: '2026-04-30'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
@@ -151,3 +149,7 @@ disclaimer: true
 - [[DIAG-DISEASE-004]] — бронхиальная астма как возможная причина.
 - [[DIAG-EMERGENCY-003]] — острая дыхательная недостаточность.
 - [[DIAG-DIFDIAG-003]] — дифференциальная диагностика одышки.
+
+## Источники
+1. Клинические рекомендации «Внебольничная пневмония у взрослых». Минздрав РФ, 2024.
+2. Global Initiative for Asthma. Global Strategy for Asthma Management and Prevention, 2025 update.

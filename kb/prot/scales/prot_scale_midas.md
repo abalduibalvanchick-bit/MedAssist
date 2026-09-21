@@ -76,11 +76,10 @@ interpretation:
   action: PROT-ROUTING-006
 missing_policy: fail
 sources:
-- AHS Guidelines for Migraine
-- MIDAS questionnaire validation
+- 'Ailani J. et al. The American Headache Society Consensus Statement: Update on integrating new migraine treatments into clinical practice. Headache. 2021;61(7):1021–1039.'
 - Stewart W.F. et al. Development and testing of the Migraine Disability Assessment (MIDAS) Questionnaire. Neurology. 2001;56(6 Suppl 1):S20–S28.
 clinical_guidelines:
-- AHS Migraine Guidelines
+- AHS Consensus Statement on migraine treatment, 2021
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
@@ -132,5 +131,5 @@ disclaimer: true
 - Не適用 при других типах головной боли.
 
 ## Источники
-1. Stewart WF, Lipton RB, Kolodner K et al. MIDAS questionnaire.
-2. AHS Guidelines for Migraine.
+1. Ailani J. et al. The American Headache Society Consensus Statement: Update on integrating new migraine treatments into clinical practice. Headache. 2021;61(7):1021–1039.
+2. Stewart W.F. et al. Development and testing of the Migraine Disability Assessment (MIDAS) Questionnaire. Neurology. 2001;56(6 Suppl 1):S20–S28.

@@ -49,10 +49,11 @@ criteria:
 emergency_protocol: PROT-EMERGENCY_P-002
 time_critical: true
 sources:
-- Алгоритмы специализированной медицинской помощи больным сахарным диабетом, 2023
-- ADA Standards of Medical Care in Diabetes, 2025
+- Алгоритмы специализированной медицинской помощи больным сахарным диабетом / Под ред. И.И. Дедова, М.В. Шестаковой, А.Ю. Майорова. — 11-й выпуск. — М., 2023.
+- American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
 clinical_guidelines:
-- ADA Standards of Medical Care in Diabetes, 2025
+- Алгоритмы специализированной медицинской помощи больным сахарным диабетом, 11-й выпуск, 2023
+- ADA Standards of Care in Diabetes — 2025
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
@@ -121,5 +122,5 @@ disclaimer: true
 - [[PROT-EMERGENCY_P-002]] Алгоритм неотложной помощи при ГГС/тяжёлой гипергликемии
 
 ## Источники
-1. Алгоритмы специализированной медицинской помощи больным сахарным диабетом, 2023.
-2. ADA Standards of Medical Care in Diabetes, 2025.
+1. Алгоритмы специализированной медицинской помощи больным сахарным диабетом / Под ред. И.И. Дедова, М.В. Шестаковой, А.Ю. Майорова. — 11-й выпуск. — М., 2023.
+2. American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).

@@ -47,10 +47,10 @@ results:
   - DIAG-EMERGENCY-004
 turnaround: 1 час; глюкометр — немедленно
 sources:
-- ВОЗ. Диагностические критерии сахарного диабета, 2019
-- ADA Standards of Medical Care in Diabetes, 2025
+- 'World Health Organization. Classification of diabetes mellitus. Geneva: WHO, 2019.'
+- American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
 clinical_guidelines:
-- ADA Standards of Medical Care in Diabetes, 2025
+- ADA Standards of Care in Diabetes — 2025
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
@@ -116,5 +116,5 @@ disclaimer: true
 - [[DIAG-EXAM-007]] – ПГТТ
 
 ## Источники
-1. ВОЗ. Диагностические критерии сахарного диабета и промежуточных состояний, 2019.
-2. ADA Standards of Medical Care in Diabetes, 2025.
+1. World Health Organization. Classification of diabetes mellitus. Geneva: WHO, 2019.
+2. American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).

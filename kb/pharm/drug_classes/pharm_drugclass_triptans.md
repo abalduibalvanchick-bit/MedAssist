@@ -54,16 +54,17 @@ contraindications:
   absolute: false
   explanation: беременность
 sources:
-- Клинические рекомендации «Мигрень», 2024
-- AHS Guidelines for Migraine
+- Клинические рекомендации «Мигрень». Минздрав РФ, 2024.
+- 'Ailani J. et al. The American Headache Society Consensus Statement: Update on integrating new migraine treatments into clinical practice. Headache. 2021;61(7):1021–1039.'
 clinical_guidelines:
-- AHS Migraine Guidelines
+- КР «Мигрень», Минздрав РФ, 2024
+- AHS Consensus Statement on migraine treatment, 2021
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
 version: '2.1'
 date_created: '2026-05-02'
-date_updated: '2026-09-16'
+date_updated: '2026-09-21'
 status: approved
 disclaimer: true
 ---
@@ -124,12 +125,12 @@ disclaimer: true
 - **При лёгкой или умеренной мигрени** – НПВС (ибупрофен, напроксен) или комбинированные анальгетики (парацетамол + кофеин) могут быть первой линией.
 - **При неэффективности НПВС, или средней/тяжёлой мигрени** – триптаны (выбор зависит от предпочтений, скорости наступления эффекта).
 - При тошноте – использовать назальный спрей (золмитриптан, суматриптан) или п/к суматриптан.
-- У пациентов с верифицированной ИБС – триптаны противопоказаны (альтернатива НПВС + либо гепиранты? см. другие классы).
+- У пациентов с верифицированной ИБС – триптаны противопоказаны (альтернатива — НПВС; у пациентов с сердечно-сосудистыми заболеваниями возможны гепанты, не представленные в базе знаний).
 
 ## Связанные документы
 - [[DIAG-DISEASE-005]] – Мигрень
 - [[PHARM-REGIMEN-006]] – Схема лечения мигрени
 
 ## Источники
-1. Клинические рекомендации «Мигрень», 2024.
-2. American Headache Society Guidelines for Acute Migraine.
+1. Клинические рекомендации «Мигрень». Минздрав РФ, 2024.
+2. Ailani J. et al. The American Headache Society Consensus Statement: Update on integrating new migraine treatments into clinical practice. Headache. 2021;61(7):1021–1039.

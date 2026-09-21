@@ -67,10 +67,11 @@ lines:
     note: комбинация β-адреноблокатора с дигидропиридиновым БКК
   - agent: PHARM-DRUG-002
 sources:
-- Клинические рекомендации «Стабильная ишемическая болезнь сердца», 2024
-- 2023 ESC Guidelines for the management of chronic coronary syndromes
+- Клинические рекомендации «Стабильная ишемическая болезнь сердца». Минздрав РФ, 2024.
+- Vrints C. et al. 2024 ESC Guidelines for the management of chronic coronary syndromes. Eur Heart J. 2024;45:3415–3537.
 clinical_guidelines:
-- 2023 ESC Guidelines for CCS
+- КР «Стабильная ишемическая болезнь сердца», Минздрав РФ, 2024
+- 2024 ESC Guidelines for the management of chronic coronary syndromes
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
@@ -155,6 +156,5 @@ disclaimer: true
 - [[PHARM-NONPHARM-003]] – Немедикаментозное лечение ИБС (будет создано)
 
 ## Источники
-1. Клинические рекомендации «Стабильная ишемическая болезнь сердца», 2024.
-2. 2023 ESC Guidelines for the management of chronic coronary syndromes.
-3. 2023 AHA/ACC Chronic Coronary Disease Guideline.
+1. Клинические рекомендации «Стабильная ишемическая болезнь сердца». Минздрав РФ, 2024.
+2. Vrints C. et al. 2024 ESC Guidelines for the management of chronic coronary syndromes. Eur Heart J. 2024;45:3415–3537.

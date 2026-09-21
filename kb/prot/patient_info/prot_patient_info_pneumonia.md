@@ -38,10 +38,11 @@ seek_help_when:
 - Кровь в мокроте (даже розовое окрашивание)
 - Сильная слабость, падение давления, потеря сознания
 sources:
-- Клинические рекомендации «Внебольничная пневмония у взрослых», 2024
-- IDSA/ATS Guidelines for CAP, 2023 (адаптировано)
+- Клинические рекомендации «Внебольничная пневмония у взрослых». Минздрав РФ, 2024.
+- Metlay J.P. et al. Diagnosis and Treatment of Adults with Community-acquired Pneumonia. An Official Clinical Practice Guideline of the ATS and IDSA. Am J Respir Crit Care Med. 2019;200(7):e45–e67.
 clinical_guidelines:
-- IDSA/ATS CAP Guidelines
+- КР «Внебольничная пневмония у взрослых», Минздрав РФ, 2024
+- ATS/IDSA Community-acquired Pneumonia Guideline, 2019
 last_medical_review: '2026-05-02'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
@@ -101,5 +102,5 @@ disclaimer: true
 - Для профилактики следующих пневмоний обсудите с врачом вакцинацию против пневмококка и гриппа.
 
 ## Источники
-1. Клинические рекомендации «Внебольничная пневмония у взрослых», 2024 (адаптировано для пациентов).
-2. IDSA/ATS Guidelines for CAP, 2023 (пациентская версия).
+1. Клинические рекомендации «Внебольничная пневмония у взрослых». Минздрав РФ, 2024.
+2. Metlay J.P. et al. Diagnosis and Treatment of Adults with Community-acquired Pneumonia. An Official Clinical Practice Guideline of the ATS and IDSA. Am J Respir Crit Care Med. 2019;200(7):e45–e67.

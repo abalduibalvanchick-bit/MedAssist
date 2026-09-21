@@ -36,10 +36,11 @@ risk_factors:
 - fact: gi_bleeding_history
 - fact: on_anticoagulants
 sources:
-- FDA Adverse Event Reporting System
-- Клинические рекомендации по НПВС-гастропатии
+- Lanza F.L., Chan F.K.L., Quigley E.M.M. Guidelines for prevention of NSAID-related ulcer complications. Am J Gastroenterol. 2009;104:728–738.
+- Каратеев А.Е. и др. Рациональное использование нестероидных противовоспалительных препаратов. Клинические рекомендации. Научно-практическая ревматология. 2018;56(Прил. 1):1–29.
 clinical_guidelines:
-- FDA Adverse Event Reporting System
+- ACG Guidelines for prevention of NSAID-related ulcer complications, 2009
+- Рациональное использование НПВП, клинические рекомендации, 2018
 last_medical_review: '2025-03-20'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
@@ -105,6 +106,5 @@ disclaimer: true
 - [[PHARM-DRUG-045]] – Ибупрофен
 
 ## Источники
-1. Lanas A. et al. Time trends and impact of upper and lower gastrointestinal bleeding and perforation in clinical practice. Am J Gastroenterol. 2021.
-2. Клин рекомендации «НПВС-гастропатия: диагностика и лечение», РГА, 2022.
-3. FDA Drug Safety Communication: NSAIDs and GI bleeding.
+1. Lanza F.L., Chan F.K.L., Quigley E.M.M. Guidelines for prevention of NSAID-related ulcer complications. Am J Gastroenterol. 2009;104:728–738.
+2. Каратеев А.Е. и др. Рациональное использование нестероидных противовоспалительных препаратов. Клинические рекомендации. Научно-практическая ревматология. 2018;56(Прил. 1):1–29.

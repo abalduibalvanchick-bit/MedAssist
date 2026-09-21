@@ -45,16 +45,17 @@ contraindications:
   absolute: false
   explanation: повышенный риск кровотечения при сочетании
 sources:
-- 2023 ESC Guidelines for the management of chronic coronary syndromes
-- Клинические рекомендации по стабильной ИБС, 2024
+- Vrints C. et al. 2024 ESC Guidelines for the management of chronic coronary syndromes. Eur Heart J. 2024;45:3415–3537.
+- Клинические рекомендации «Стабильная ишемическая болезнь сердца». Минздрав РФ, 2024.
 clinical_guidelines:
-- 2023 ESC Guidelines for CCS
+- 2024 ESC Guidelines for the management of chronic coronary syndromes
+- КР «Стабильная ишемическая болезнь сердца», Минздрав РФ, 2024
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
 version: '2.1'
 date_created: '2026-05-02'
-date_updated: '2026-09-16'
+date_updated: '2026-09-21'
 status: approved
 disclaimer: true
 ---
@@ -108,7 +109,7 @@ disclaimer: true
 
 ## Клинически значимые взаимодействия
 - Антикоагулянты (варфарин, апиксабан) – потенцирование риска кровотечений
-- НПВС (ибупрофен, диклофенак) – снижение антитромбоцитарного эффекта аспирина? (ибупрофен может конкурировать за ЦОГ-1)
+- НПВС (ибупрофен, диклофенак) – ибупрофен конкурирует с аспирином за связывание с ЦОГ-1 и может снижать его антитромбоцитарный эффект; повышается риск ЖКТ-кровотечения
 - Ингибиторы протонной помпы (омепразол, эзомепразол) – взаимодействие с клопидогрелом (омепразол ингибирует CYP2C19, снижая активацию клопидогрела; предпочтительнее пантопразол)
 
 ## Особенности выбора
@@ -122,6 +123,5 @@ disclaimer: true
 - [[PHARM-REGIMEN-003]] – Схема лечения ИБС
 
 ## Источники
-1. 2023 ESC Guidelines for the management of chronic coronary syndromes.
-2. 2023 AHA/ACC Chronic Coronary Disease Guideline.
-3. Клинические рекомендации «Стабильная ишемическая болезнь сердца», 2024.
+1. Vrints C. et al. 2024 ESC Guidelines for the management of chronic coronary syndromes. Eur Heart J. 2024;45:3415–3537.
+2. Клинические рекомендации «Стабильная ишемическая болезнь сердца». Минздрав РФ, 2024.

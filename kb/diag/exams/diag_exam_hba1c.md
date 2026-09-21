@@ -39,10 +39,10 @@ results:
   - DIAG-DISEASE-006
 turnaround: 1–2 дня
 sources:
-- ADA Standards of Medical Care in Diabetes, 2025
-- ВОЗ. Диагностические критерии сахарного диабета, 2019
+- American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
+- 'World Health Organization. Classification of diabetes mellitus. Geneva: WHO, 2019.'
 clinical_guidelines:
-- ADA Standards of Medical Care in Diabetes, 2025
+- ADA Standards of Care in Diabetes — 2025
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
@@ -111,5 +111,5 @@ HbA1c является «золотым стандартом» для долго
 - [[PROT-PROTOCOL-002]] – клинический протокол СД2
 
 ## Источники
-1. ADA Standards of Medical Care in Diabetes, 2025.
-2. ВОЗ. Диагностические критерии сахарного диабета, 2019.
+1. American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
+2. World Health Organization. Classification of diabetes mellitus. Geneva: WHO, 2019.

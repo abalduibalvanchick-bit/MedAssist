@@ -78,16 +78,17 @@ stabilization:
       feature: dyspnea.unable_full_sentences
 next: PROT-ROUTING-005
 sources:
-- GINA Global Strategy for Asthma Management and Prevention, 2025
-- Клинические рекомендации «Бронхиальная астма», 2024
+- Global Initiative for Asthma. Global Strategy for Asthma Management and Prevention, 2025 update.
+- Клинические рекомендации «Бронхиальная астма». Минздрав РФ, 2024.
 clinical_guidelines:
 - GINA 2025
+- КР «Бронхиальная астма», Минздрав РФ, 2024
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
 version: '2.1'
 date_created: '2026-05-02'
-date_updated: '2026-09-16'
+date_updated: '2026-09-21'
 status: approved
 disclaimer: true
 ---
@@ -104,7 +105,7 @@ disclaimer: true
   - Тахикардия (> 120/мин).
   - Парадоксальный пульс (> 10 мм рт. ст. падение систолического АД на вдохе).
   - Свистящее дыхание может отсутствовать («немое лёгкое») – крайне неблагоприятный признак.
-  - Спyтанность сознания, возбуждение или заторможенность.
+  - Спутанность сознания, возбуждение или заторможенность.
   - Цианоз, SpO₂ < 92% (на комнатном воздухе).
 - **Объективные критерии**:
   - Пиковая скорость выдоха (ПСВ) < 50% от лучшего значения (или < 200 л/мин).
@@ -170,5 +171,5 @@ disclaimer: true
 - Не заменяет клиническое решение врача-реаниматолога.
 
 ## Источники
-1. GINA Global Strategy for Asthma Management and Prevention, 2025.
-2. Клинические рекомендации «Бронхиальная астма», 2024.
+1. Global Initiative for Asthma. Global Strategy for Asthma Management and Prevention, 2025 update.
+2. Клинические рекомендации «Бронхиальная астма». Минздрав РФ, 2024.

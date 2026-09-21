@@ -38,11 +38,10 @@ seek_help_when:
 - нарушение зрения или речи
 - потеря сознания
 sources:
-- Клинические рекомендации по артериальной гипертензии
 - Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
 - 'NHS. High blood pressure (hypertension): patient information. National Health Service, 2023.'
 clinical_guidelines:
-- Клинические рекомендации по артериальной гипертензии, 2024
+- КР «Артериальная гипертензия у взрослых», Минздрав РФ, 2024
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
@@ -103,4 +102,5 @@ disclaimer: true
 - [[PROT-ROUTING-001]]
 
 ## Источники
-1. Клинические рекомендации по артериальной гипертензии
+1. Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
+2. NHS. High blood pressure (hypertension): patient information. National Health Service, 2023.

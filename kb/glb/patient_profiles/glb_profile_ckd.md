@@ -36,11 +36,10 @@ considerations:
 - контроль калия и креатинина при терапии иАПФ и БРА
 - риск контраст-индуцированной нефропатии при исследованиях с йодсодержащим контрастом
 sources:
-- KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease.
+- KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease. Kidney Int. 2024;105(4S):S117–S314.
 - Клинические рекомендации «Хроническая болезнь почек». Минздрав РФ, 2024.
 clinical_guidelines:
-- KDIGO CKD Guideline, 2024
-- КР «Хроническая болезнь почек», Минздрав РФ, 2024
+- KDIGO 2024 CKD Guideline
 last_medical_review: '2026-09-16'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженеры знаний №1 и №3
@@ -63,3 +62,7 @@ disclaimer: true
 
 ## Значение для диагностики
 Перед исследованиями с йодсодержащим контрастом у таких пациентов оценивается риск контраст-индуцированной нефропатии, а приём метформина временно приостанавливается (см. карточку взаимодействия).
+
+## Источники
+1. KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease. Kidney Int. 2024;105(4S):S117–S314.
+2. Клинические рекомендации «Хроническая болезнь почек». Минздрав РФ, 2024.

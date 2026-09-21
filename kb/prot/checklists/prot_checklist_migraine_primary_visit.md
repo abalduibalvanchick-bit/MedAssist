@@ -105,11 +105,13 @@ items:
 - text: рекомендовать ведение дневника головной боли
   required: true
 sources:
-- AHS Guidelines for Migraine
+- 'Ailani J. et al. The American Headache Society Consensus Statement: Update on integrating new migraine treatments into clinical practice. Headache. 2021;61(7):1021–1039.'
 - Headache Classification Committee of the International Headache Society. The International Classification of Headache Disorders, 3rd edition (ICHD-3). Cephalalgia. 2018;38:1–211.
 - Клинические рекомендации «Мигрень». Минздрав РФ, 2024.
 clinical_guidelines:
-- AHS Migraine Guidelines
+- AHS Consensus Statement on migraine treatment, 2021
+- ICHD-3, 2018
+- КР «Мигрень», Минздрав РФ, 2024
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
@@ -175,4 +177,6 @@ disclaimer: true
 - [Лечение назначено]
 
 ## Источники
-1. AHS Guidelines for Migraine.
+1. Ailani J. et al. The American Headache Society Consensus Statement: Update on integrating new migraine treatments into clinical practice. Headache. 2021;61(7):1021–1039.
+2. Headache Classification Committee of the International Headache Society. The International Classification of Headache Disorders, 3rd edition (ICHD-3). Cephalalgia. 2018;38:1–211.
+3. Клинические рекомендации «Мигрень». Минздрав РФ, 2024.

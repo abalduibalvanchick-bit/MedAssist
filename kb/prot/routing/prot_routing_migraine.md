@@ -82,17 +82,18 @@ default:
   - наблюдение 1 раз в 6–12 месяцев
   explanation: Редкие приступы, хорошо купирующиеся, без неврологического дефицита.
 sources:
-- AHS Guidelines for Migraine
+- 'Ailani J. et al. The American Headache Society Consensus Statement: Update on integrating new migraine treatments into clinical practice. Headache. 2021;61(7):1021–1039.'
 - Eigenbrodt A.K. et al. Diagnosis and management of migraine in ten steps. Nat Rev Neurol. 2021;17:501–514.
 - Клинические рекомендации «Мигрень». Минздрав РФ, 2024.
 clinical_guidelines:
-- AHS Migraine Guidelines
+- AHS Consensus Statement on migraine treatment, 2021
+- КР «Мигрень», Минздрав РФ, 2024
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
 version: '2.1'
 date_created: '2026-05-02'
-date_updated: '2026-09-16'
+date_updated: '2026-09-21'
 status: approved
 disclaimer: true
 ---
@@ -131,7 +132,7 @@ disclaimer: true
 
 ### 🔴 Экстренная помощь (скорая помощь, неврологическое отделение)
 **Условия:**
-- [[DIAG-REDFLAG-002]] – внезапная сильнейшая головная боль (подозрение на субарахноидальное кровоизлияние, инсульт с аурой?).
+- [[DIAG-REDFLAG-002]] – внезапная сильнейшая головная боль (подозрение на субарахноидальное кровоизлияние или инсульт).
 - Мигренозный статус (приступ >72 часов с выраженными симптомами).
 - Появление очаговой неврологической симптоматики, спутанность сознания.
 
@@ -152,4 +153,6 @@ disclaimer: true
 - Дифференциация между мигренью и другими первичными головными болями может быть сложной.
 
 ## Источники
-1. AHS Guidelines for Migraine.
+1. Ailani J. et al. The American Headache Society Consensus Statement: Update on integrating new migraine treatments into clinical practice. Headache. 2021;61(7):1021–1039.
+2. Eigenbrodt A.K. et al. Diagnosis and management of migraine in ten steps. Nat Rev Neurol. 2021;17:501–514.
+3. Клинические рекомендации «Мигрень». Минздрав РФ, 2024.

@@ -45,10 +45,11 @@ criteria:
 emergency_protocol: PROT-EMERGENCY_P-006
 time_critical: false
 sources:
-- Клинические рекомендации «Мигрень», 2024
-- AHS Guidelines for Migraine
+- Клинические рекомендации «Мигрень». Минздрав РФ, 2024.
+- 'Ailani J. et al. The American Headache Society Consensus Statement: Update on integrating new migraine treatments into clinical practice. Headache. 2021;61(7):1021–1039.'
 clinical_guidelines:
-- AHS Migraine Guidelines
+- КР «Мигрень», Минздрав РФ, 2024
+- AHS Consensus Statement on migraine treatment, 2021
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
@@ -120,5 +121,5 @@ disclaimer: true
 - [[PROT-EMERGENCY_P-006]] – Алгоритм неотложной помощи при мигренозном статусе
 
 ## Источники
-1. Клинические рекомендации «Мигрень», 2024.
-2. AHS Guidelines for Migraine.
+1. Клинические рекомендации «Мигрень». Минздрав РФ, 2024.
+2. Ailani J. et al. The American Headache Society Consensus Statement: Update on integrating new migraine treatments into clinical practice. Headache. 2021;61(7):1021–1039.

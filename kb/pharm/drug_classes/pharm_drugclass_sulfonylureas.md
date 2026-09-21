@@ -47,16 +47,17 @@ contraindications:
   absolute: false
   explanation: у пожилых повышен риск гипогликемии
 sources:
-- Клинические рекомендации «Сахарный диабет 2 типа», 2024
-- ADA Standards of Medical Care in Diabetes, 2025
+- Клинические рекомендации «Сахарный диабет 2 типа у взрослых». Минздрав РФ, 2022.
+- American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
 clinical_guidelines:
-- ADA Standards of Medical Care in Diabetes, 2025
+- КР «Сахарный диабет 2 типа у взрослых», Минздрав РФ, 2022
+- ADA Standards of Care in Diabetes — 2025
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
 version: '2.1'
 date_created: '2026-05-02'
-date_updated: '2026-09-16'
+date_updated: '2026-09-21'
 status: approved
 disclaimer: true
 ---
@@ -109,7 +110,7 @@ disclaimer: true
 - Глюкокортикоиды, диуретики → ослабление эффекта
 
 ## Особенности выбора
-- **Предпочтительный препарат**: гликлазид (особенно пролонгированная форма) – низкий риск гипогликемий и кардиопротекция?
+- **Предпочтительный препарат**: гликлазид (особенно пролонгированная форма) – низкий риск гипогликемий и нейтральное влияние на сердечно-сосудистый риск
 - У пациентов с риском гипогликемий (пожилые, ХБП) – избегать глибенкламида
 - При ХБП (СКФ 30–60) – гликлазид, глимепирид
 
@@ -119,5 +120,5 @@ disclaimer: true
 - [[PHARM-INTERACTION-003]] – Гипогликемия, вызванная сульфонилмочевиной + алкоголь
 
 ## Источники
-1. Клинические рекомендации «Сахарный диабет 2 типа», 2024.
-2. ADA Standards of Medical Care in Diabetes, 2025.
+1. Клинические рекомендации «Сахарный диабет 2 типа у взрослых». Минздрав РФ, 2022.
+2. American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).

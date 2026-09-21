@@ -41,10 +41,11 @@ seek_help_when:
 - очень высокий сахар (> 30 ммоль/л) даже при хорошем самочувствии – всё равно экстренно
 - потеря сознания
 sources:
-- Клинические рекомендации «Сахарный диабет 2 типа», 2024
-- ADA Standards of Medical Care in Diabetes, 2025 (адаптировано)
+- Клинические рекомендации «Сахарный диабет 2 типа у взрослых». Минздрав РФ, 2022.
+- American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
 clinical_guidelines:
-- ADA Standards of Medical Care in Diabetes, 2025
+- КР «Сахарный диабет 2 типа у взрослых», Минздрав РФ, 2022
+- ADA Standards of Care in Diabetes — 2025
 last_medical_review: '2026-05-02'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
@@ -104,5 +105,5 @@ disclaimer: true
 - осматривайте ноги ежедневно, при ранах – срочно к врачу
 
 ## Источники
-1. Клинические рекомендации «Сахарный диабет 2 типа», 2024.
-2. ADA Standards of Medical Care in Diabetes, 2025 (пациентская версия).
+1. Клинические рекомендации «Сахарный диабет 2 типа у взрослых». Минздрав РФ, 2022.
+2. American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).

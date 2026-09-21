@@ -40,10 +40,10 @@ trigger:
     value: 60
 management: при СКФ менее 60 приостановить метформин в день исследования и возобновить через 48 часов после контроля функции почек
 sources:
-- Инструкция к метформину
-- ESUR Guidelines on Contrast Media, 2018
+- 'Государственный реестр лекарственных средств РФ: инструкция по медицинскому применению лекарственного препарата «Метформин».'
+- ESUR Guidelines on Contrast Agents, version 10.0. European Society of Urogenital Radiology, 2018.
 clinical_guidelines:
-- Инструкция к метформину
+- ESUR Guidelines on Contrast Agents, 2018
 last_medical_review: '2025-02-10'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
@@ -106,6 +106,5 @@ disclaimer: true
 - [[PHARM-INTERACTION-002]] – Метформин + алкоголь (лактат-ацидоз)
 
 ## Источники
-1. Инструкция по медицинскому применению метформина
-2. ESUR Guidelines on Contrast Media, 2018 (Version 10.0)
-3. KDIGO 2020 Clinical Practice Guideline for Diabetes Management in CKD
+1. Государственный реестр лекарственных средств РФ: инструкция по медицинскому применению лекарственного препарата «Метформин».
+2. ESUR Guidelines on Contrast Agents, version 10.0. European Society of Urogenital Radiology, 2018.

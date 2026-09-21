@@ -1,85 +1,71 @@
 ---
-id: "PROT-SCALE-XXX"
-title: "Клиническая шкала: [Название]"
-domain: "protocols"
-category: "scale"
-body_system:
-  - "cardiovascular | respiratory | nervous | endocrine | multisystem"
-tags:
-  - "scale"
-  - "risk_assessment"
-urgency: "routine | urgent | emergency"
-access_level: "professional"
-target_specialist:
-  - "therapist | cardiologist | pulmonologist | neurologist | endocrinologist | emergency_physician | all_specialties"
-age_group:
-  - "adult | elderly | all_ages"
-related:
-  - "PROT-PROTOCOL-XXX"
-  - "PROT-ROUTING-XXX"
-  - "DIAG-DISEASE-XXX"
+# Сгенерировано scripts/generate_templates.py из kb/_schema/schema.yaml. Не редактировать вручную.
+# Категория: scale — Клиническая шкала. Файл: kb/prot/scales/prot_scale_<краткое_имя>.md
+id: PROT-SCALE-NNN
+schema_version: 2
+title: <Название>
+domain: prot
+category: scale
+body_system: [cardiovascular]  # cardiovascular | respiratory | gastrointestinal | nervous | endocrine | metabolic | urinary | musculoskeletal | immune | reproductive | hematologic | dermatologic | multisystem
+tags: [<тег>]
+urgency: routine  # routine | urgent | emergency | elective
+access_level: professional  # professional | nursing | student | patient
+target_specialist: [therapist]  # см. docs/metadata_schema.md, перечисление target_specialist
+age_group: [adult]  # neonate | infant | child | adolescent | adult | elderly | all_ages
+# evidence_level: Ia  # необязательно: Ia | Ib | IIa | IIb | III | IV
+# recommendation_class: I  # необязательно: I | IIa | IIb | III
+relations:
+  - target: DIAG-DISEASE-001
+    type: assesses  # типы и допустимые категории: docs/link_types.md
+    description: <смысл связи>
+# Машиночитаемый слой (docs/schema.md, раздел «scale»):
+parameters: [{"code": "<текст>", "label": "<текст>", "options": [{"when": {"all": [{"symptom": "DIAG-SYMPTOM-002"}, {"param": "sbp", "op": ">=", "value": 180}]}, "points": 0, "label": "<текст>"}], "points_from": "sbp"}]  # list[object]; обязательно для approved
+interpretation: [{"min": 0, "max": 0, "category": "<текст>", "label": "<текст>", "action": "PROT-ROUTING-001"}]  # list[object]; обязательно для approved; Диапазоны включительно; должны покрывать все достижимые суммы без пересечений
+missing_policy: "<текст>"  # string; рекомендуется; Что делать при отсутствии данных по параметру
 sources:
-  - "Клинические рекомендации"
-clinical_guidelines:
-  - "Название руководства, год"
-last_medical_review: "YYYY-MM-DD"
-medical_reviewer: "ФИО рецензента, специальность"
-author: "Инженер знаний №3"
-version: "1.0"
-date_created: "YYYY-MM-DD"
-date_updated: "YYYY-MM-DD"
-status: "draft | medical_review | approved"
+  - <Автор(ы). Название. Издание/журнал. Год;том:страницы.>
+  - <Вторая конкретная библиографическая ссылка>
+clinical_guidelines: [<Краткое название КР, год>]
+last_medical_review: YYYY-MM-DD
+medical_reviewer: модельная верификация (учебный проект)
+author: <Инженер знаний №N>
+version: '2.0'
+date_created: YYYY-MM-DD
+date_updated: YYYY-MM-DD
+status: draft  # draft | medical_review | approved | deprecated; approved — только при заполненном машиночитаемом слое
 disclaimer: true
 ---
 
-# Клиническая шкала: [Название]
+# <Название>
 
-> ⚕️ Документ предназначен для формализованной оценки тяжести состояния, риска или прогноза.
+> ⚕️ **Дисклеймер**: Информация носит справочный характер и не заменяет консультацию специалиста.
 
 ## Назначение шкалы
-[Для чего используется данная шкала]
+<заполнить>
 
 ## Область применения
-- [Клиническая ситуация 1]
-- [Клиническая ситуация 2]
+<заполнить>
 
 ## Параметры оценки
-| Параметр | Значения | Баллы |
-|----------|----------|-------|
-| [Параметр 1] | ... | ... |
-| [Параметр 2] | ... | ... |
-| [Параметр 3] | ... | ... |
+<заполнить>
 
 ## Правила расчёта
-1. [Как суммируются баллы]
-2. [Какие условия учитывать]
-3. [Когда шкала неприменима]
+<заполнить>
 
 ## Интерпретация результата
-| Сумма баллов | Категория риска / тяжести | Клиническое значение |
-|--------------|----------------------------|----------------------|
-| ... | ... | ... |
-| ... | ... | ... |
-| ... | ... | ... |
+<заполнить>
 
 ## Тактическая значимость
-- [Результат 1] → [[PROT-ROUTING-XXX]]
-- [Результат 2] → [[PROT-EMERGENCY_P-XXX]]
-- [Результат 3] → [[PROT-PROTOCOL-XXX]]
+<заполнить>
 
 ## Ограничения
-- [Ограничение 1]
-- [Ограничение 2]
+<заполнить>
 
 ## Особенности применения
-- **Пожилые**: [особенности]
-- **Беременные**: [особенности]
-- **Пациенты с коморбидностью**: [особенности]
+<заполнить>
 
 ## Связанные документы
-- [[ID]] — [тип связи]
+<заполнить>
 
 ## Источники
-1. [Клинические рекомендации]
-2. [Руководство / гайдлайн]
-3. [Оригинальная публикация шкалы]
+<генерируется из поля sources: python scripts/sync_body_sources.py>

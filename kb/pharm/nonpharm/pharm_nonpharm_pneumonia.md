@@ -36,10 +36,11 @@ relations:
 for:
 - DIAG-DISEASE-003
 sources:
-- Клинические рекомендации «Внебольничная пневмония у взрослых», 2024
-- IDSA/ATS Guidelines for CAP, 2023
+- Клинические рекомендации «Внебольничная пневмония у взрослых». Минздрав РФ, 2024.
+- Metlay J.P. et al. Diagnosis and Treatment of Adults with Community-acquired Pneumonia. An Official Clinical Practice Guideline of the ATS and IDSA. Am J Respir Crit Care Med. 2019;200(7):e45–e67.
 clinical_guidelines:
-- IDSA/ATS CAP Guidelines
+- КР «Внебольничная пневмония у взрослых», Минздрав РФ, 2024
+- ATS/IDSA Community-acquired Pneumonia Guideline, 2019
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
@@ -124,3 +125,7 @@ disclaimer: true
 - [[DIAG-DISEASE-003]] – Пневмония
 - [[PROT-PROTOCOL-004]] – Клинический протокол пневмонии (будет создан)
 - [[PHARM-REGIMEN-004]] – Схема лечения пневмонии
+
+## Источники
+1. Клинические рекомендации «Внебольничная пневмония у взрослых». Минздрав РФ, 2024.
+2. Metlay J.P. et al. Diagnosis and Treatment of Adults with Community-acquired Pneumonia. An Official Clinical Practice Guideline of the ATS and IDSA. Am J Respir Crit Care Med. 2019;200(7):e45–e67.

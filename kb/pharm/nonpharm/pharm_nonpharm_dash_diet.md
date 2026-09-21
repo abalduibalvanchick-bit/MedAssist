@@ -39,10 +39,10 @@ contraindications:
   op: <
   value: 30
 sources:
-- DASH Collaborative Research Group, NEJM 1997
-- 2023 ESH Guidelines
+- Appel L.J. et al. A clinical trial of the effects of dietary patterns on blood pressure. DASH Collaborative Research Group. N Engl J Med. 1997;336:1117–1124.
+- Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.
 clinical_guidelines:
-- DASH Collaborative Research Group, NEJM 1997
+- 2023 ESH Guidelines for the management of arterial hypertension
 last_medical_review: '2025-03-10'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
@@ -118,6 +118,5 @@ DASH (Dietary Approaches to Stop Hypertension) – диета, богатая о
 - [[PHARM-NONPHARM-002]] – Физическая активность при АГ
 
 ## Источники
-1. Appel LJ, Moore TJ, Obarzanek E, et al. A clinical trial of the effects of dietary patterns on blood pressure. DASH Collaborative Research Group. N Engl J Med. 1997;336(16):1117-24.
-2. 2023 ESH Guidelines for the management of arterial hypertension. Journal of Hypertension. 2023;41(12):1874–2071.
-3. Сайт Национального института сердца, лёгких и крови (NHLBI): DASH diet.
+1. Appel L.J. et al. A clinical trial of the effects of dietary patterns on blood pressure. DASH Collaborative Research Group. N Engl J Med. 1997;336:1117–1124.
+2. Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.

@@ -42,10 +42,10 @@ target:
   - fact: smoker
 interval: вакцинация против гриппа ежегодно; против пневмококковой инфекции однократно по схеме
 sources:
-- CDC Adult Immunization Schedule, 2025
-- Клинические рекомендации «Внебольничная пневмония у взрослых», 2024
+- Centers for Disease Control and Prevention. Recommended Adult Immunization Schedule, United States, 2025.
+- Клинические рекомендации «Внебольничная пневмония у взрослых». Минздрав РФ, 2024.
 clinical_guidelines:
-- IDSA/ATS CAP Guidelines
+- КР «Внебольничная пневмония у взрослых», Минздрав РФ, 2024
 last_medical_review: '2026-05-02'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
@@ -110,5 +110,5 @@ disclaimer: true
 - Вакцинация не защищает от атипичных возбудителей (микоплазма, легионелла).
 
 ## Источники
-1. CDC Adult Immunization Schedule, 2025.
-2. Клинические рекомендации «Внебольничная пневмония», 2024.
+1. Centers for Disease Control and Prevention. Recommended Adult Immunization Schedule, United States, 2025.
+2. Клинические рекомендации «Внебольничная пневмония у взрослых». Минздрав РФ, 2024.

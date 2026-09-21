@@ -55,10 +55,10 @@ rules:
     value: 30
   adjustment: тиазидные диуретики неэффективны, заменить петлевым диуретиком
 sources:
-- KDIGO 2024 CKD Guidelines
-- Инструкции к препаратам
+- KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease. Kidney Int. 2024;105(4S):S117–S314.
+- 'Государственный реестр лекарственных средств РФ (grls.rosminzdrav.ru): инструкции по медицинскому применению лекарственных препаратов.'
 clinical_guidelines:
-- KDIGO 2024 CKD Guidelines
+- KDIGO 2024 CKD Guideline
 last_medical_review: '2025-03-25'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
@@ -118,6 +118,5 @@ disclaimer: true
 - [[GLB-PROFILE-004]] – Профиль: пациент с ХБП
 
 ## Источники
-1. KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease.
-2. Инструкции по медицинскому применению препаратов (ГРЛС, 2025).
-3. Clinical Pharmacokinetics and Pharmacodynamics of Antihypertensive Drugs in CKD. Clin J Am Soc Nephrol. 2022.
+1. KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease. Kidney Int. 2024;105(4S):S117–S314.
+2. Государственный реестр лекарственных средств РФ (grls.rosminzdrav.ru): инструкции по медицинскому применению лекарственных препаратов.

@@ -88,10 +88,11 @@ lines:
         value: 80
     note: при ИБС, ХСН или ЧСС более 80
 sources:
-- Клинические рекомендации «АГ у взрослых», 2024
-- 2023 ESH Guidelines
+- Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
+- Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.
 clinical_guidelines:
-- АГ у взрослых, 2024
+- КР «Артериальная гипертензия у взрослых», Минздрав РФ, 2024
+- 2023 ESH Guidelines for the management of arterial hypertension
 last_medical_review: '2025-03-01'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
@@ -173,5 +174,5 @@ disclaimer: true
 - [[PROT-PROTOCOL-001]] – Протокол ведения АГ
 
 ## Источники
-1. Клинические рекомендации «Артериальная гипертензия у взрослых», Минздрав РФ, 2024.
-2. 2023 ESH Guidelines for the management of arterial hypertension. Journal of Hypertension. 2023;41(12):1874–2071.
+1. Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
+2. Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.

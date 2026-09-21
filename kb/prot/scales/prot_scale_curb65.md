@@ -124,16 +124,16 @@ interpretation:
   action: PROT-EMERGENCY_P-004
 missing_policy: skip
 sources:
-- IDSA/ATS Guidelines for CAP, 2023
-- Lim WS et al. Thorax. 2003
+- Metlay J.P. et al. Diagnosis and Treatment of Adults with Community-acquired Pneumonia. An Official Clinical Practice Guideline of the ATS and IDSA. Am J Respir Crit Care Med. 2019;200(7):e45–e67.
+- 'Lim W.S. et al. Defining community acquired pneumonia severity on presentation to hospital: an international derivation and validation study. Thorax. 2003;58:377–382.'
 clinical_guidelines:
-- IDSA/ATS CAP Guidelines
+- ATS/IDSA Community-acquired Pneumonia Guideline, 2019
 last_medical_review: '2026-05-02'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
 version: '2.1'
 date_created: '2026-05-02'
-date_updated: '2026-09-16'
+date_updated: '2026-09-21'
 status: approved
 disclaimer: true
 ---
@@ -178,7 +178,7 @@ disclaimer: true
 
 ## Ограничения
 - Шкала не учитывает коморбидность (истощающие заболевания, иммуносупрессию), но для принятия решений применима.
-- У молодых пациентов без коморбидности даже 2 балла могут не требовать госпитализации? Но правило – госпитализация.
+- По умолчанию при 2 баллах рекомендуется госпитализация; у молодых пациентов без сопутствующих заболеваний решение может быть индивидуализировано врачом.
 - Не適用 при подозрении на аспирацию, внутрибольничную пневмонию, легионеллёз (могут требовать госпитализации независимо от баллов).
 
 ## Особенности применения
@@ -192,5 +192,5 @@ disclaimer: true
 - [[PHARM-REGIMEN-004]] – схема лечения
 
 ## Источники
-1. IDSA/ATS Guidelines for CAP, 2023.
-2. Lim WS, et al. Defining community-acquired pneumonia severity on presentation to hospital. Thorax 2003.
+1. Metlay J.P. et al. Diagnosis and Treatment of Adults with Community-acquired Pneumonia. An Official Clinical Practice Guideline of the ATS and IDSA. Am J Respir Crit Care Med. 2019;200(7):e45–e67.
+2. Lim W.S. et al. Defining community acquired pneumonia severity on presentation to hospital: an international derivation and validation study. Thorax. 2003;58:377–382.

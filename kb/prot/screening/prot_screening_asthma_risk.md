@@ -48,8 +48,8 @@ positive_when:
   value: reversible_obstruction
 on_positive: PROT-PROTOCOL-005
 sources:
-- GINA Global Strategy for Asthma Management and Prevention, 2025
-- CDC Adult Immunization Schedule, 2025
+- Global Initiative for Asthma. Global Strategy for Asthma Management and Prevention, 2025 update.
+- Centers for Disease Control and Prevention. Recommended Adult Immunization Schedule, United States, 2025.
 clinical_guidelines:
 - GINA 2025
 last_medical_review: '2026-05-06'
@@ -57,7 +57,7 @@ medical_reviewer: модельная верификация (учебный пр
 author: Инженер знаний №3
 version: '2.1'
 date_created: '2026-05-02'
-date_updated: '2026-09-16'
+date_updated: '2026-09-21'
 status: approved
 disclaimer: true
 ---
@@ -99,7 +99,7 @@ disclaimer: true
 | ACT 20–25 (хороший контроль) | Продолжить терапию, наблюдение |
 | ACT 16–19 (частичный контроль) | Проверить приверженность, технику, триггеры, при неэффективности – шаг вверх |
 | ACT 5–15 (плохой контроль) | Направить к пульмонологу, оценить необходимость повышения ступени лечения |
-| Отсутствие spiromетрических критериев, но клинические симптомы | Провести бронхопровокационный тест (метахолин) при необходимости |
+| Отсутствие спирометрических критериев, но клинические симптомы | Провести бронхопровокационный тест (метахолин) при необходимости |
 
 ## Дальнейшие действия
 - **Новая диагностированная астма**: начать базисную терапию (ИГКС) согласно [[PHARM-REGIMEN-005]], направить в астма-школу, выдать памятку.
@@ -111,5 +111,5 @@ disclaimer: true
 - У детей <5 лет сложно подтвердить спирометрически – клиническое решение.
 
 ## Источники
-1. GINA Global Strategy for Asthma Management and Prevention, 2025.
-2. CDC Adult Immunization Schedule, 2025.
+1. Global Initiative for Asthma. Global Strategy for Asthma Management and Prevention, 2025 update.
+2. Centers for Disease Control and Prevention. Recommended Adult Immunization Schedule, United States, 2025.

@@ -216,10 +216,11 @@ interpretation:
   action: PROT-ROUTING-002
 missing_policy: skip
 sources:
-- ADA Standards of Medical Care in Diabetes, 2025
-- ESC/EASD Guidelines on diabetes, 2023
+- American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
+- Marx N. et al. 2023 ESC Guidelines for the management of cardiovascular disease in patients with diabetes. Eur Heart J. 2023;44:4043–4140.
 clinical_guidelines:
-- ADA Standards of Medical Care in Diabetes, 2025
+- ADA Standards of Care in Diabetes — 2025
+- 2023 ESC Guidelines on cardiovascular disease in diabetes
 last_medical_review: '2026-05-02'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
@@ -307,5 +308,5 @@ disclaimer: true
 - [[PHARM-REGIMEN-002]] – схема лечения
 
 ## Источники
-1. ADA Standards of Medical Care in Diabetes, 2025.
-2. 2023 ESC Guidelines for the management of cardiovascular disease in patients with diabetes.
+1. American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
+2. Marx N. et al. 2023 ESC Guidelines for the management of cardiovascular disease in patients with diabetes. Eur Heart J. 2023;44:4043–4140.

@@ -76,10 +76,11 @@ deterioration:
     value: 3
 on_deterioration: PROT-ROUTING-003
 sources:
-- 2023 ESC Guidelines for CCS
-- Клинические рекомендации по стабильной ИБС, 2024
+- Vrints C. et al. 2024 ESC Guidelines for the management of chronic coronary syndromes. Eur Heart J. 2024;45:3415–3537.
+- Клинические рекомендации «Стабильная ишемическая болезнь сердца». Минздрав РФ, 2024.
 clinical_guidelines:
-- 2023 ESC Guidelines for CCS
+- 2024 ESC Guidelines for the management of chronic coronary syndromes
+- КР «Стабильная ишемическая болезнь сердца», Минздрав РФ, 2024
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
@@ -162,5 +163,5 @@ disclaimer: true
 - Документ не заменяет очное врачебное наблюдение и клинические решения.
 
 ## Источники
-1. 2023 ESC Guidelines for the management of chronic coronary syndromes.
-2. Клинические рекомендации «Стабильная ишемическая болезнь сердца», 2024.
+1. Vrints C. et al. 2024 ESC Guidelines for the management of chronic coronary syndromes. Eur Heart J. 2024;45:3415–3537.
+2. Клинические рекомендации «Стабильная ишемическая болезнь сердца». Минздрав РФ, 2024.
