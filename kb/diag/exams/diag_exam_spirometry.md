@@ -33,6 +33,21 @@ relations:
 - target: DIAG-SYMPTOM-009
   type: diagnoses
   description: перенесено из поля related (схема v1)
+results:
+- value: normal
+  label: ОФВ1/ФЖЕЛ более 0,7, ОФВ1 не менее 80 % должного
+- value: reversible_obstruction
+  label: обструкция с приростом ОФВ1 не менее 12 % и 200 мл после бронходилататора
+  indicates:
+  - DIAG-DISEASE-004
+- value: irreversible_obstruction
+  label: обструкция без значимого прироста после бронходилататора
+- value: restriction
+  label: снижение ФЖЕЛ при нормальном ОФВ1/ФЖЕЛ
+contraindications:
+- emergency: DIAG-EMERGENCY-005
+- emergency: DIAG-EMERGENCY-001
+turnaround: 15–30 минут
 sources:
 - GINA Global Strategy for Asthma Management and Prevention, 2025
 - Клинические рекомендации «Бронхиальная астма», 2024
@@ -41,12 +56,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-01'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: results. См. docs/schema.md, раздел «exam».
 ---
 
 # Спирометрия

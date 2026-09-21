@@ -20,6 +20,12 @@ age_group:
 - elderly
 evidence_level: IV
 recommendation_class: I
+synonyms:
+- полидипсия
+- жажда
+- сильная жажда
+- постоянно хочется пить
+- сухость во рту
 relations:
 - target: DIAG-DISEASE-006
   type: symptom_of
@@ -27,6 +33,11 @@ relations:
 - target: DIAG-SYMPTOM-006
   type: associated_with
   description: обычно сочетается с полиурией
+features:
+- code: polydipsia.unquenchable
+  label: жажда не утоляется большим количеством воды
+- code: polydipsia.dry_mouth
+  label: сухость во рту
 sources:
 - Алгоритмы специализированной медицинской помощи больным сахарным диабетом, 2023
 clinical_guidelines:
@@ -34,12 +45,13 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-01'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: features, synonyms. См. docs/schema.md, раздел «symptom».
+add_sources:
+- 'American Diabetes Association. Standards of Care in Diabetes — 2025. Section 2: Diagnosis and Classification of Diabetes.'
 ---
 
 # Полидипсия (повышенная жажда)

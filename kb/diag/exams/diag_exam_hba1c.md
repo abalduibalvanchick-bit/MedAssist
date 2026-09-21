@@ -28,6 +28,16 @@ relations:
 - target: PROT-SCREENING-002
   type: exam_used_in
   description: применяется для скрининга СД2 (как альтернатива глюкозе натощак)
+results:
+- value: normal
+  label: менее 5,7 %
+- value: prediabetes
+  label: 5,7–6,4 %
+- value: diabetes_range
+  label: 6,5 % и выше
+  indicates:
+  - DIAG-DISEASE-006
+turnaround: 1–2 дня
 sources:
 - ADA Standards of Medical Care in Diabetes, 2025
 - ВОЗ. Диагностические критерии сахарного диабета, 2019
@@ -36,12 +46,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-01'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: results. См. docs/schema.md, раздел «exam».
 ---
 
 # Гликированный гемоглобин (HbA1c)

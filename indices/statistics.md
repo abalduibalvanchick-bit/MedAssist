@@ -2,7 +2,7 @@
 
 # Статистика базы знаний MedAssist
 
-Всего карточек: **125**. Всего связей: **533**, из них междоменных: **161**.
+Всего карточек: **136**. Всего связей: **569**, из них междоменных: **164**.
 
 ## По доменам и категориям
 
@@ -11,9 +11,11 @@
 | `diag` | `difdiag` | 3 |
 | `diag` | `disease` | 6 |
 | `diag` | `emergency` | 6 |
-| `diag` | `exam` | 8 |
+| `diag` | `exam` | 10 |
 | `diag` | `redflag` | 6 |
-| `diag` | `symptom` | 9 |
+| `diag` | `symptom` | 10 |
+| `glb` | `disclaimer` | 3 |
+| `glb` | `profile` | 5 |
 | `pharm` | `adr` | 1 |
 | `pharm` | `dosing` | 1 |
 | `pharm` | `drug` | 3 |
@@ -35,6 +37,7 @@
 | Статус | Карточек |
 |---|---|
 | `medical_review` | 117 |
+| `approved` | 11 |
 | `draft` | 8 |
 
 ## Типы связей
@@ -43,41 +46,43 @@
 |---|---|
 | `treats` | 37 |
 | `includes` | 36 |
+| `diagnosed_by` | 33 |
 | `included_in` | 32 |
+| `diagnoses` | 30 |
 | `recommends` | 27 |
-| `diagnosed_by` | 25 |
+| `uses_exam` | 26 |
 | `red_flag_for` | 23 |
 | `next_step` | 23 |
-| `uses_exam` | 22 |
+| `has_symptom` | 21 |
 | `has_red_flag` | 21 |
-| `diagnoses` | 21 |
 | `assessed_by` | 20 |
 | `emergency_protocol_for` | 20 |
-| `has_symptom` | 17 |
-| `has_emergency_protocol` | 16 |
+| `has_emergency_protocol` | 17 |
+| `considers` | 16 |
 | `has_routing` | 15 |
 | `patient_info_for` | 13 |
 | `routing_for` | 13 |
-| `considers` | 12 |
+| `symptom_of` | 12 |
 | `checklist_for` | 12 |
 | `follow_up_for` | 12 |
 | `assesses` | 12 |
 | `screening_for` | 12 |
-| `symptom_of` | 11 |
 | `recommended_by` | 11 |
 | `has_patient_info` | 8 |
 | `considered_in` | 7 |
 | `complicates` | 6 |
+| `associated_with` | 6 |
 | `protocol_for` | 6 |
 | `has_follow_up` | 6 |
 | `has_checklist` | 6 |
 | `has_screening` | 6 |
-| `associated_with` | 5 |
 | `exam_used_in` | 4 |
 | `differential_for` | 3 |
 | `has_differential` | 3 |
 | `dose_adjustment_for` | 3 |
+| `differentiates_from` | 2 |
 | `complicated_by` | 2 |
+| `profile_applies_to` | 2 |
 | `adr_caused_by` | 1 |
 | `causes_adr` | 1 |
 | `dose_adjusted_by` | 1 |
@@ -88,7 +93,8 @@
 
 | Из домена | В домен | Количество |
 |---|---|---|
-| `diag` | `prot` | 2 |
+| `diag` | `prot` | 3 |
+| `glb` | `pharm` | 2 |
 | `pharm` | `diag` | 37 |
 | `pharm` | `prot` | 13 |
 | `prot` | `diag` | 81 |

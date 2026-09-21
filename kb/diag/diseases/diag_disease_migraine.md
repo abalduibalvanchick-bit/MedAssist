@@ -32,6 +32,31 @@ relations:
 - target: DIAG-REDFLAG-002
   type: has_red_flag
   description: внезапная сильнейшая боль не типична и требует исключения опасных причин
+- target: DIAG-EMERGENCY-002
+  type: differentiates_from
+  description: мигрень с аурой требует исключения ОНМК
+presentation:
+- symptom: DIAG-SYMPTOM-001
+  weight: 3
+  frequency: very_common
+  features:
+  - headache.unilateral
+  - headache.pulsating
+  - headache.nausea
+  - headache.photophobia
+  - headache.worse_with_activity
+  - headache.recurrent_attacks
+red_flags:
+- DIAG-REDFLAG-002
+exams:
+- exam: DIAG-EXAM-009
+  role: excludes
+  expected: normal — исключение вторичной головной боли
+differentials:
+- DIAG-EMERGENCY-002
+applies_when:
+  not:
+    profile: GLB-PROFILE-004
 sources:
 - Клинические рекомендации по острому нарушению мозгового кровообращения, действующая редакция.
 - Клинические рекомендации по мигрени, действующая редакция.
@@ -42,12 +67,11 @@ clinical_guidelines:
 last_medical_review: '2026-04-30'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-04-30'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: presentation, exams. См. docs/schema.md, раздел «disease».
 ---
 
 # Мигрень

@@ -38,6 +38,18 @@ relations:
 - target: DIAG-DISEASE-005
   type: red_flag_for
   description: перенесено из поля related (схема v1)
+triggers:
+  all:
+  - symptom: DIAG-SYMPTOM-001
+  - any:
+    - feature: headache.sudden_onset
+    - feature: headache.worst_ever
+    - feature: headache.meningism
+    - symptom: DIAG-SYMPTOM-010
+    - fact: confusion
+indicates:
+- DIAG-EMERGENCY-002
+action: PROT-ROUTING-006
 sources:
 - Клинические рекомендации по острому нарушению мозгового кровообращения, действующая редакция.
 - Клинические рекомендации по мигрени, действующая редакция.
@@ -48,12 +60,11 @@ clinical_guidelines:
 last_medical_review: '2026-04-30'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-04-30'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: triggers, indicates. См. docs/schema.md, раздел «redflag».
 ---
 
 # Внезапная сильнейшая головная боль

@@ -41,6 +41,58 @@ relations:
 - target: DIAG-REDFLAG-001
   type: considers
   description: перенесено из поля related (схема v1)
+- target: DIAG-DISEASE-003
+  type: considers
+  description: выведено из машиночитаемого слоя (branches)
+- target: DIAG-EXAM-004
+  type: uses_exam
+  description: выведено из машиночитаемого слоя (branches)
+leading_symptom: DIAG-SYMPTOM-002
+branches:
+- target: DIAG-EMERGENCY-001
+  supporting:
+    any:
+    - feature: chest_pain.at_rest
+    - feature: chest_pain.nitrate_unresponsive
+    - feature: chest_pain.cold_sweat
+    - param: symptom_duration_min
+      op: '>'
+      value: 20
+    - exam_result: DIAG-EXAM-002
+      value: st_elevation
+  key_exam: DIAG-EXAM-002
+  prior: high
+  urgency: emergency
+- target: DIAG-REDFLAG-001
+  supporting:
+    param: sbp
+    op: '>='
+    value: 180
+  key_exam: DIAG-EXAM-001
+  prior: medium
+  urgency: emergency
+- target: DIAG-DISEASE-002
+  supporting:
+    all:
+    - feature: chest_pain.exertional
+    - feature: chest_pain.relieved_by_rest
+  against:
+    feature: chest_pain.at_rest
+  key_exam: DIAG-EXAM-002
+  prior: medium
+  urgency: urgent
+- target: DIAG-DISEASE-003
+  supporting:
+    any:
+    - feature: chest_pain.pleuritic
+    - all:
+      - symptom: DIAG-SYMPTOM-004
+      - symptom: DIAG-SYMPTOM-008
+  against:
+    feature: chest_pain.exertional
+  key_exam: DIAG-EXAM-004
+  prior: medium
+  urgency: urgent
 sources:
 - Руководства по внутренним болезням и клинической диагностике.
 - Клинические рекомендации по соответствующему профилю, действующая редакция.
@@ -51,12 +103,11 @@ clinical_guidelines:
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-04-08'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: leading_symptom, branches. См. docs/schema.md, раздел «difdiag».
 ---
 
 # Дифференциальная диагностика: боль в груди

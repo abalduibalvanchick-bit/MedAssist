@@ -27,6 +27,14 @@ age_group:
 - all_ages
 evidence_level: IV
 recommendation_class: I
+synonyms:
+- одышка
+- не хватает воздуха
+- тяжело дышать
+- задыхаюсь
+- нехватка воздуха
+- удушье
+- диспноэ
 relations:
 - target: DIAG-DISEASE-003
   type: symptom_of
@@ -49,6 +57,27 @@ relations:
 - target: DIAG-REDFLAG-003
   type: has_red_flag
   description: перенесено из поля related (схема v1)
+features:
+- code: dyspnea.sudden_onset
+  label: внезапное начало
+- code: dyspnea.exertional
+  label: при физической нагрузке
+- code: dyspnea.at_rest
+  label: в покое
+- code: dyspnea.orthopnea
+  label: усиливается в положении лёжа
+- code: dyspnea.nocturnal_attacks
+  label: ночные приступы удушья
+- code: dyspnea.unable_full_sentences
+  label: не может говорить полными фразами
+- code: dyspnea.cyanosis
+  label: цианоз
+- code: dyspnea.accessory_muscles
+  label: участие вспомогательной мускулатуры
+- code: dyspnea.progressive
+  label: нарастает в течение часов–дней
+- code: dyspnea.episodic
+  label: эпизодическая, обратимая
 sources:
 - Клинические рекомендации по внебольничной пневмонии у взрослых, действующая редакция.
 - GINA Global Strategy for Asthma Management and Prevention, действующая редакция.
@@ -60,12 +89,11 @@ clinical_guidelines:
 last_medical_review: '2026-04-30'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.2'
 date_created: '2026-04-30'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: features, synonyms. См. docs/schema.md, раздел «symptom».
 ---
 
 # Одышка

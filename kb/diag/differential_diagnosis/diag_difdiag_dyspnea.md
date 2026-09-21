@@ -48,6 +48,67 @@ relations:
 - target: DIAG-EXAM-002
   type: uses_exam
   description: перенесено из поля related (схема v1)
+- target: DIAG-EXAM-010
+  type: uses_exam
+  description: выведено из машиночитаемого слоя (branches)
+- target: DIAG-EMERGENCY-005
+  type: considers
+  description: выведено из машиночитаемого слоя (branches)
+- target: DIAG-EMERGENCY-001
+  type: considers
+  description: выведено из машиночитаемого слоя (branches)
+- target: DIAG-EXAM-008
+  type: uses_exam
+  description: выведено из машиночитаемого слоя (branches)
+leading_symptom: DIAG-SYMPTOM-003
+branches:
+- target: DIAG-EMERGENCY-003
+  supporting:
+    any:
+    - param: spo2
+      op: <
+      value: 90
+    - param: rr
+      op: '>='
+      value: 30
+    - feature: dyspnea.cyanosis
+  key_exam: DIAG-EXAM-010
+  prior: medium
+  urgency: emergency
+- target: DIAG-EMERGENCY-005
+  supporting:
+    any:
+    - feature: wheezing.silent_chest
+    - feature: wheezing.reliever_unresponsive
+  key_exam: DIAG-EXAM-010
+  prior: low
+  urgency: emergency
+- target: DIAG-EMERGENCY-001
+  supporting:
+    symptom: DIAG-SYMPTOM-002
+  key_exam: DIAG-EXAM-002
+  prior: medium
+  urgency: emergency
+- target: DIAG-DISEASE-004
+  supporting:
+    all:
+    - symptom: DIAG-SYMPTOM-009
+    - any:
+      - feature: dyspnea.episodic
+      - feature: wheezing.after_trigger
+  against:
+    symptom: DIAG-SYMPTOM-004
+  key_exam: DIAG-EXAM-008
+  prior: high
+  urgency: routine
+- target: DIAG-DISEASE-003
+  supporting:
+    all:
+    - symptom: DIAG-SYMPTOM-004
+    - symptom: DIAG-SYMPTOM-008
+  key_exam: DIAG-EXAM-004
+  prior: high
+  urgency: urgent
 sources:
 - Клинические рекомендации по внебольничной пневмонии у взрослых, действующая редакция.
 - GINA Global Strategy for Asthma Management and Prevention, действующая редакция.
@@ -59,12 +120,11 @@ clinical_guidelines:
 last_medical_review: '2026-04-30'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-04-30'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: leading_symptom, branches. См. docs/schema.md, раздел «difdiag».
 ---
 
 # Дифференциальная диагностика: одышка

@@ -32,6 +32,26 @@ relations:
 - target: DIAG-SYMPTOM-002
   type: diagnoses
   description: перенесено из поля related (схема v1)
+results:
+- value: normal
+  label: АД менее 140/90 мм рт. ст.
+- value: grade1
+  label: 140–159 / 90–99 мм рт. ст. (АГ 1 степени)
+  indicates:
+  - DIAG-DISEASE-001
+- value: grade2
+  label: 160–179 / 100–109 мм рт. ст. (АГ 2 степени)
+  indicates:
+  - DIAG-DISEASE-001
+- value: grade3
+  label: 180/110 мм рт. ст. и выше (АГ 3 степени)
+  indicates:
+  - DIAG-DISEASE-001
+- value: hypotension
+  label: САД менее 90 мм рт. ст.
+- value: arm_difference
+  label: разница САД между руками более 15 мм рт. ст.
+turnaround: немедленно
 sources:
 - Клинические рекомендации Минздрава РФ «Артериальная гипертензия у взрослых», действующая редакция.
 - 2023 ESH Guidelines for the management of arterial hypertension.
@@ -42,12 +62,11 @@ clinical_guidelines:
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-04-08'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: results. См. docs/schema.md, раздел «exam».
 ---
 
 # Измерение артериального давления

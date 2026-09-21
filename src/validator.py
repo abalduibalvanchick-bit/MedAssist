@@ -24,6 +24,7 @@ from typing import Any
 import yaml
 
 from .conditions import validate_condition
+from .machine_refs import iter_machine_refs
 from .config import (
     ALLOWED_RELATION_TYPES,
     ALLOWED_STATUS,
@@ -142,6 +143,7 @@ class KnowledgeBaseValidator:
                 self._validate_v1(card, report)
 
         self._validate_relation_symmetry(report)
+        self._validate_machine_refs_in_graph(report)
         report.total_rules = self._validate_rules(report)
         self._collect_stats(report)
         return report
@@ -496,10 +498,30 @@ class KnowledgeBaseValidator:
                         self._add(report, card, "ERROR", "CONTRADICTORY_RELATION",
                                   f"{source} и {target} оба утверждают связь {rtype} друг о друге; одна из сторон должна использовать {info.inverse_name()}.")
 
+    def _validate_machine_refs_in_graph(self, report: ValidationReport) -> None:
+        """Каждая ссылка машиночитаемого слоя с атрибутом implies должна иметь
+        отражение в графе: связь любого типа между карточками в любом направлении."""
+        linked: set[frozenset[str]] = set()
+        for card in self.repository.cards:
+            for relation in card.relations:
+                target = str(relation.get("target", "")).strip()
+                if target:
+                    linked.add(frozenset((card.id, target)))
+        for card in self.repository.cards:
+            if card.schema_version < 2:
+                continue
+            for ref in iter_machine_refs(card.metadata, self.schema, card.category):
+                if ref.implies and ref.target in self._known_ids and ref.target != card.id \
+                        and frozenset((card.id, ref.target)) not in linked:
+                    self._add(report, card, "WARNING", "MACHINE_REF_NO_RELATION",
+                              f"{ref.path} ссылается на {ref.target}, но в relations нет связи между карточками "
+                              f"(ожидается {ref.implies}; добавьте вручную или запустите scripts/sync_relations.py).")
+
     # ------------------------------------------------------------ качество
     def _validate_quality(self, card: KnowledgeCard, report: ValidationReport) -> None:
         text = card.content.lower()
-        if any(marker in text for marker in STUB_MARKERS) or len(card.content) < STUB_MIN_CONTENT_CHARS:
+        min_chars = self.schema.min_content_chars(card.category) if card.schema_version >= 2 else STUB_MIN_CONTENT_CHARS
+        if any(marker in text for marker in STUB_MARKERS) or len(card.content) < min_chars:
             self._add(report, card, "WARNING", "STUB_CARD", f"Карточка выглядит заглушкой (длина {len(card.content)} символов).")
         if card.id and not self.repository.index.inbound.get(card.id) and card.category not in {"disclaimer", "cross"}:
             self._add(report, card, "INFO", "ORPHAN", "На карточку не ссылается ни один документ.")

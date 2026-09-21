@@ -38,6 +38,30 @@ relations:
 - target: DIAG-EXAM-001
   type: diagnosed_by
   description: перенесено из поля related (схема v1)
+- target: DIAG-EXAM-007
+  type: diagnosed_by
+  description: подтверждение инфаркта миокарда
+criteria:
+  any:
+  - exam_result: DIAG-EXAM-002
+    value: st_elevation
+  - exam_result: DIAG-EXAM-007
+    value: positive_dynamic
+  - redflag: DIAG-REDFLAG-005
+  - all:
+    - symptom: DIAG-SYMPTOM-002
+    - any:
+      - feature: chest_pain.pressing
+      - feature: chest_pain.retrosternal
+    - any:
+      - feature: chest_pain.at_rest
+      - feature: chest_pain.nitrate_unresponsive
+      - feature: chest_pain.cold_sweat
+      - param: symptom_duration_min
+        op: '>'
+        value: 20
+emergency_protocol: PROT-EMERGENCY_P-003
+time_critical: true
 sources:
 - Клинические рекомендации по острому коронарному синдрому, действующая редакция.
 - 2023 ESC Guidelines for the management of acute coronary syndromes.
@@ -48,12 +72,11 @@ clinical_guidelines:
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-04-08'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: criteria. См. docs/schema.md, раздел «emergency».
 ---
 
 # Острый коронарный синдром

@@ -35,6 +35,30 @@ relations:
 - target: DIAG-SYMPTOM-009
   type: red_flag_for
   description: перенесено из поля related (схема v1)
+triggers:
+  any:
+  - feature: wheezing.silent_chest
+  - all:
+    - any:
+      - symptom: DIAG-SYMPTOM-009
+      - disease: DIAG-DISEASE-004
+      - fact: known_asthma
+    - any:
+      - feature: dyspnea.unable_full_sentences
+      - feature: wheezing.reliever_unresponsive
+      - param: spo2
+        op: <
+        value: 92
+      - param: pef_percent
+        op: <
+        value: 50
+      - param: rr
+        op: '>'
+        value: 30
+      - fact: confusion
+indicates:
+- DIAG-EMERGENCY-005
+action: PROT-EMERGENCY_P-005
 sources:
 - GINA Global Strategy for Asthma Management and Prevention, 2025
 - Клинические рекомендации «Бронхиальная астма», 2024
@@ -43,12 +67,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-01'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: triggers, indicates. См. docs/schema.md, раздел «redflag».
 ---
 
 # Астматический статус (тяжёлое обострение астмы, угроза остановки дыхания)

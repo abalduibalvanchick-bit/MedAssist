@@ -2,7 +2,7 @@
 
 # Симптом / синдром
 
-Категория `symptom` домена `diag`. Карточек: **9**. С заполненным машиночитаемым слоем: **0**.
+Категория `symptom` домена `diag`. Карточек: **10**. С заполненным машиночитаемым слоем: **10**.
 
 | ID | Название | Категория | Срочность | Статус | Связей | Файл |
 |---|---|---|---|---|---|---|
@@ -15,3 +15,4 @@
 | `DIAG-SYMPTOM-007` | Полидипсия (повышенная жажда) | `symptom` | `routine` | `medical_review` | 2 | [diag_symptom_polydipsia.md](diag_symptom_polydipsia.md) |
 | `DIAG-SYMPTOM-008` | Кашель | `symptom` | `routine` | `medical_review` | 3 | [diag_symptom_cough.md](diag_symptom_cough.md) |
 | `DIAG-SYMPTOM-009` | Свистящее дыхание (wheezing) | `symptom` | `urgent` | `medical_review` | 3 | [diag_symptom_wheezing.md](diag_symptom_wheezing.md) |
+| `DIAG-SYMPTOM-010` | Остро возникший очаговый неврологический дефицит | `symptom` | `emergency` | `approved` | 3 | [diag_symptom_focal_neuro_deficit.md](diag_symptom_focal_neuro_deficit.md) |

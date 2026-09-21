@@ -38,6 +38,12 @@ relations:
 - target: DIAG-SYMPTOM-009
   type: has_symptom
   description: перенесено из поля related (схема v1)
+criteria:
+  any:
+  - redflag: DIAG-REDFLAG-006
+  - feature: wheezing.silent_chest
+emergency_protocol: PROT-EMERGENCY_P-005
+time_critical: true
 sources:
 - GINA Global Strategy for Asthma Management and Prevention, 2025
 - Клинические рекомендации «Бронхиальная астма», 2024
@@ -46,12 +52,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-01'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: criteria. См. docs/schema.md, раздел «emergency».
 ---
 
 # Астматический статус (тяжёлое жизнеугрожающее обострение бронхиальной астмы)

@@ -29,6 +29,23 @@ relations:
 - target: PROT-SCREENING-002
   type: exam_used_in
   description: применяется в скрининге СД2
+- target: DIAG-EMERGENCY-004
+  type: diagnoses
+  description: выведено из машиночитаемого слоя (results)
+results:
+- value: normal
+  label: менее 5,6 ммоль/л
+- value: prediabetes
+  label: 5,6–6,9 ммоль/л (нарушенная гликемия натощак)
+- value: diabetes_range
+  label: 7,0 ммоль/л и выше
+  indicates:
+  - DIAG-DISEASE-006
+- value: severe_hyperglycemia
+  label: 33,3 ммоль/л и выше
+  indicates:
+  - DIAG-EMERGENCY-004
+turnaround: 1 час; глюкометр — немедленно
 sources:
 - ВОЗ. Диагностические критерии сахарного диабета, 2019
 - ADA Standards of Medical Care in Diabetes, 2025
@@ -37,12 +54,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-01'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: results. См. docs/schema.md, раздел «exam».
 ---
 
 # Глюкоза плазмы натощак

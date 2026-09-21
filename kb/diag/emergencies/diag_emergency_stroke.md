@@ -38,6 +38,17 @@ relations:
 - target: DIAG-DIFDIAG-002
   type: considered_in
   description: перенесено из поля related (схема v1)
+criteria:
+  any:
+  - feature: focal_deficit.face_droop
+  - feature: focal_deficit.arm_weakness
+  - feature: focal_deficit.speech_disturbance
+  - exam_result: DIAG-EXAM-009
+    value: focal_deficit
+  - all:
+    - symptom: DIAG-SYMPTOM-010
+    - feature: focal_deficit.sudden_onset
+time_critical: true
 sources:
 - Клинические рекомендации по острому нарушению мозгового кровообращения, действующая редакция.
 - Клинические рекомендации по мигрени, действующая редакция.
@@ -48,12 +59,11 @@ clinical_guidelines:
 last_medical_review: '2026-04-30'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-04-30'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: criteria. См. docs/schema.md, раздел «emergency».
 ---
 
 # Острое нарушение мозгового кровообращения

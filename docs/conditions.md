@@ -52,6 +52,7 @@
 | `symptom_duration_days` | number | сут | Длительность ведущего симптома |
 | `urea` | number | ммоль/л | Мочевина |
 | `troponin_positive` | boolean |  | Тропонин выше порога |
+| `ketones_positive` | boolean |  | Кетоны в крови или моче повышены |
 
 ## Факты
 | Код | Название |
@@ -63,11 +64,21 @@
 | `on_anticoagulants` | Принимает антикоагулянты |
 | `nsaid_use` | Принимает НПВС |
 | `recent_surgery` | Недавняя операция или травма |
-| `confusion` | Спутанность сознания |
-| `new_onset` | Впервые возникший симптом |
-| `exertional` | Связь с нагрузкой |
-| `at_rest` | Возникает в покое |
-| `nitrate_unresponsive` | Не купируется нитратами |
+| `confusion` | Спутанность или угнетение сознания |
+| `known_hypertension` | Ранее установленная артериальная гипертензия |
+| `known_diabetes` | Ранее установленный сахарный диабет |
+| `known_ihd` | Ранее установленная ИБС |
+| `known_asthma` | Ранее установленная бронхиальная астма |
+| `known_migraine` | Ранее установленная мигрень |
+| `hypotension` | Гипотензия (САД < 90 мм рт. ст.) |
+| `syncope` | Обморок |
+| `weight_loss` | Непреднамеренное снижение массы тела |
+| `dyslipidemia` | Дислипидемия |
+| `family_history_cvd` | Ранние сердечно-сосудистые заболевания у родственников |
+| `obesity` | Ожирение |
+| `sedentary` | Низкая физическая активность |
+| `allergen_exposure` | Контакт с аллергеном или триггером |
+| `therapy_nonadherence` | Нарушение режима приёма назначенной терапии |
 
 ## Пример
 ```yaml
@@ -78,6 +89,6 @@ triggers:
       op: ">"
       value: 20
     - any:
-        - fact: nitrate_unresponsive
-        - fact: at_rest
+        - feature: chest_pain.nitrate_unresponsive
+        - feature: chest_pain.at_rest
 ```

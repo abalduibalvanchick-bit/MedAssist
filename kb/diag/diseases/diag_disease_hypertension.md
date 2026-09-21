@@ -34,6 +34,42 @@ relations:
 - target: DIAG-SYMPTOM-002
   type: has_symptom
   description: перенесено из поля related (схема v1)
+- target: DIAG-SYMPTOM-003
+  type: has_symptom
+  description: выведено из машиночитаемого слоя (presentation)
+- target: DIAG-EXAM-002
+  type: diagnosed_by
+  description: выведено из машиночитаемого слоя (exams)
+- target: DIAG-EXAM-005
+  type: diagnosed_by
+  description: выведено из машиночитаемого слоя (exams)
+presentation:
+- symptom: DIAG-SYMPTOM-001
+  weight: 1
+  frequency: common
+  features:
+  - headache.occipital
+- symptom: DIAG-SYMPTOM-003
+  weight: 1
+  frequency: uncommon
+  features:
+  - dyspnea.exertional
+red_flags:
+- DIAG-REDFLAG-001
+exams:
+- exam: DIAG-EXAM-001
+  role: confirms
+  expected: grade1 и выше при повторных измерениях
+- exam: DIAG-EXAM-002
+  role: stratifies
+  expected: lvh
+- exam: DIAG-EXAM-005
+  role: stratifies
+  expected: оценка сопутствующих факторов риска
+differentials: []
+applies_when:
+  not:
+    profile: GLB-PROFILE-004
 sources:
 - Клинические рекомендации Минздрава РФ «Артериальная гипертензия у взрослых», действующая редакция.
 - 2023 ESH Guidelines for the management of arterial hypertension.
@@ -44,12 +80,11 @@ clinical_guidelines:
 last_medical_review: '2025-02-15'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2025-01-20'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: presentation, exams. См. docs/schema.md, раздел «disease».
 ---
 
 # Артериальная гипертензия

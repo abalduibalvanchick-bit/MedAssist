@@ -202,6 +202,12 @@ fields:
   removed_in_v2:
     - related        # вычисляется из relations
   min_sources: 2
+  # Минимальная длина Markdown-тела; короче — предупреждение «похоже на заглушку».
+  min_content_chars: 600
+  min_content_chars_by_category:
+    glossary: 250
+    disclaimer: 150
+    profile: 400
   date_pattern: '^\d{4}-\d{2}-\d{2}$'
   # Правило: status: approved допустим только при полностью заполненном
   # машиночитаемом слое (см. раздел 8) и непустом medical_reviewer.
@@ -336,6 +342,7 @@ parameters:
   symptom_duration_days: {type: number, unit: "сут",    label: "Длительность ведущего симптома"}
   urea:           {type: number,  unit: "ммоль/л",      label: "Мочевина"}
   troponin_positive: {type: boolean,                     label: "Тропонин выше порога"}
+  ketones_positive: {type: boolean,                      label: "Кетоны в крови или моче повышены"}
 
 # Булевы факты о пациенте, не являющиеся ни симптомами, ни диагнозами.
 facts:
@@ -346,11 +353,24 @@ facts:
   on_anticoagulants:    {label: "Принимает антикоагулянты"}
   nsaid_use:            {label: "Принимает НПВС"}
   recent_surgery:       {label: "Недавняя операция или травма"}
-  confusion:            {label: "Спутанность сознания"}
-  new_onset:            {label: "Впервые возникший симптом"}
-  exertional:           {label: "Связь с нагрузкой"}
-  at_rest:              {label: "Возникает в покое"}
-  nitrate_unresponsive: {label: "Не купируется нитратами"}
+  confusion:            {label: "Спутанность или угнетение сознания"}
+  known_hypertension:   {label: "Ранее установленная артериальная гипертензия"}
+  known_diabetes:       {label: "Ранее установленный сахарный диабет"}
+  known_ihd:            {label: "Ранее установленная ИБС"}
+  known_asthma:         {label: "Ранее установленная бронхиальная астма"}
+  known_migraine:       {label: "Ранее установленная мигрень"}
+  hypotension:          {label: "Гипотензия (САД < 90 мм рт. ст.)"}
+  syncope:              {label: "Обморок"}
+  weight_loss:          {label: "Непреднамеренное снижение массы тела"}
+  dyslipidemia:         {label: "Дислипидемия"}
+  family_history_cvd:   {label: "Ранние сердечно-сосудистые заболевания у родственников"}
+  obesity:              {label: "Ожирение"}
+  sedentary:            {label: "Низкая физическая активность"}
+  allergen_exposure:    {label: "Контакт с аллергеном или триггером"}
+  therapy_nonadherence: {label: "Нарушение режима приёма назначенной терапии"}
+# Характеристики конкретного симптома (связь с нагрузкой, ответ на нитраты,
+# иррадиация и т.п.) задаются признаками в поле features карточки симптома,
+# а не фактами, чтобы не было двух способов записать одно и то же.
 
 # -----------------------------------------------------------------------------
 # 8. Мини-язык условий
@@ -396,6 +416,10 @@ condition_language:
 # Каждая категория задаёт поля, которые решатель читает напрямую, минуя
 # прозу. "required_for_approved" — поля, обязательные для status: approved.
 # Типы: id(<категории>) — ссылка на карточку указанных категорий;
+# implies: <тип связи> — ссылка должна иметь отражение в графе relations
+# (связь любого типа между карточками в любом направлении); если связи нет,
+# валидатор выдаёт предупреждение, а scripts/sync_relations.py добавляет
+# связь указанного типа.
 # condition — выражение мини-языка; enum(<имя>) — значение из enums.
 machine_layer:
   symptom:
@@ -415,18 +439,18 @@ machine_layer:
         type: "list[object]"
         doc: "Клиническая картина в машиночитаемом виде"
         item:
-          symptom: {type: "id(symptom)"}
+          symptom: {type: "id(symptom)", implies: has_symptom}
           weight: {type: "enum(weight)", doc: "Диагностический вес: 3 — ключевой, 1 — второстепенный"}
           frequency: {type: "enum(frequency)"}
           features: {type: "list[feature_code]", optional: true, doc: "Характерные признаки симптома при этом заболевании"}
-      red_flags: {type: "list[id(redflag)]", optional: true}
+      red_flags: {type: "list[id(redflag)]", optional: true, implies: has_red_flag}
       exams:
         type: "list[object]"
         item:
-          exam: {type: "id(exam)"}
+          exam: {type: "id(exam)", implies: diagnosed_by}
           role: {type: "enum(exam_role)"}
           expected: {type: string, optional: true, doc: "Ожидаемый результат (контролируемое значение или текст)"}
-      differentials: {type: "list[id(disease,emergency)]", optional: true}
+      differentials: {type: "list[id(disease,emergency)]", optional: true, implies: differentiates_from}
       applies_when: {type: condition, optional: true, doc: "Ограничение применимости карточки (возраст, профиль)"}
   exam:
     required_for_approved: [results]
@@ -437,33 +461,33 @@ machine_layer:
         item:
           value: {type: string, pattern: '^[a-z0-9_]+$'}
           label: {type: string}
-          indicates: {type: "list[id(disease,emergency)]", optional: true}
+          indicates: {type: "list[id(disease,emergency)]", optional: true, implies: diagnoses}
       contraindications: {type: "list[condition]", optional: true}
       turnaround: {type: string, optional: true, doc: "Ориентировочное время получения результата"}
   difdiag:
     required_for_approved: [leading_symptom, branches]
     fields:
-      leading_symptom: {type: "id(symptom)"}
+      leading_symptom: {type: "id(symptom)", implies: differential_for}
       branches:
         type: "list[object]"
         item:
-          target: {type: "id(disease,emergency,redflag)"}
+          target: {type: "id(disease,emergency,redflag)", implies: considers}
           supporting: {type: condition, doc: "Признаки в пользу направления"}
           against: {type: condition, optional: true, doc: "Признаки против направления"}
-          key_exam: {type: "id(exam)", optional: true}
+          key_exam: {type: "id(exam)", optional: true, implies: uses_exam}
           prior: {type: "enum(prior)"}
           urgency: {type: "enum(urgency)"}
   redflag:
     required_for_approved: [triggers, indicates]
     fields:
       triggers: {type: condition, doc: "Формальное условие срабатывания"}
-      indicates: {type: "list[id(emergency,disease)]", doc: "На какие состояния указывает"}
+      indicates: {type: "list[id(emergency,disease)]", doc: "На какие состояния указывает", implies: red_flag_for}
       action: {type: "id(emergency_p,routing)", optional: true, doc: "Куда передать управление"}
   emergency:
     required_for_approved: [criteria]
     fields:
       criteria: {type: condition, doc: "Критерии распознавания"}
-      emergency_protocol: {type: "id(emergency_p)", optional: true}
+      emergency_protocol: {type: "id(emergency_p)", optional: true, implies: has_emergency_protocol}
       time_critical: {type: boolean, optional: true}
   scale:
     required_for_approved: [parameters, interpretation]
@@ -487,12 +511,12 @@ machine_layer:
           max: {type: number, doc: "null означает 'и выше'", nullable: true}
           category: {type: string, pattern: '^[a-z0-9_]+$'}
           label: {type: string}
-          action: {type: "id(routing,protocol,emergency_p,follow_up)", optional: true}
+          action: {type: "id(routing,protocol,emergency_p,follow_up)", optional: true, implies: assesses}
       missing_policy: {type: string, enum: [skip, fail], default: skip, doc: "Что делать при отсутствии данных по параметру"}
   routing:
     required_for_approved: [decisions, default]
     fields:
-      for: {type: "list[id(disease,emergency,symptom)]"}
+      for: {type: "list[id(disease,emergency,symptom)]", implies: routing_for}
       decisions:
         type: "list[object]"
         doc: "Оцениваются по порядку; срабатывает первое истинное условие"
@@ -501,7 +525,7 @@ machine_layer:
           route: {type: "enum(route)"}
           timeframe: {type: string, optional: true}
           actions: {type: "list[string]"}
-          next: {type: "list[id(protocol,emergency_p,follow_up,routing)]", optional: true}
+          next: {type: "list[id(protocol,emergency_p,follow_up,routing)]", optional: true, implies: next_step}
           explanation: {type: string}
       default:
         type: object
@@ -512,7 +536,7 @@ machine_layer:
   protocol:
     required_for_approved: [for, entry, steps]
     fields:
-      for: {type: "list[id(disease,emergency)]"}
+      for: {type: "list[id(disease,emergency)]", implies: protocol_for}
       entry: {type: condition, doc: "Критерии начала применения протокола"}
       steps:
         type: "list[object]"
@@ -542,23 +566,23 @@ machine_layer:
         type: "list[object]"
         optional: true
         item:
-          drug: {type: "id(drug,drugclass)"}
+          drug: {type: "id(drug,drugclass)", implies: recommends}
           dose: {type: string}
           route: {type: string}
           when: {type: condition, optional: true}
           contraindicated_when: {type: condition, optional: true}
       stabilization: {type: condition, optional: true}
-      next: {type: "id(routing)", optional: true}
+      next: {type: "id(routing)", optional: true, implies: next_step}
   follow_up:
     required_for_approved: [for, schedule, monitor]
     fields:
-      for: {type: "list[id(disease,protocol)]"}
+      for: {type: "list[id(disease,protocol)]", implies: follow_up_for}
       schedule: {type: "list[object]", item: {after: {type: string}, interval: {type: string}, purpose: {type: string}}}
       monitor:
         type: "list[object]"
         item:
           param: {type: parameter, optional: true}
-          exam: {type: "id(exam)", optional: true}
+          exam: {type: "id(exam)", optional: true, implies: uses_exam}
           target: {type: condition, optional: true}
           label: {type: string}
       deterioration: {type: condition, optional: true}
@@ -567,7 +591,7 @@ machine_layer:
     required_for_approved: [target, methods, interval]
     fields:
       target: {type: condition, doc: "Кому показан скрининг"}
-      methods: {type: "list[id(exam)]"}
+      methods: {type: "list[id(exam)]", implies: uses_exam}
       interval: {type: string}
       positive_when: {type: condition, optional: true}
       on_positive: {type: "id(routing,protocol)", optional: true}
@@ -578,7 +602,7 @@ machine_layer:
   patient_info:
     required_for_approved: [for]
     fields:
-      for: {type: "list[id(disease,emergency,protocol,drug)]"}
+      for: {type: "list[id(disease,emergency,protocol,drug)]", implies: patient_info_for}
       seek_help_when: {type: "list[string]", optional: true}
   vaccine:
     required_for_approved: [indications]
@@ -590,41 +614,41 @@ machine_layer:
     required_for_approved: [contraindications]
     fields:
       contraindications: {type: "list[object]", item: {when: {type: condition}, absolute: {type: boolean}, explanation: {type: string}}}
-      interactions: {type: "list[object]", optional: true, item: {with: {type: "id(drug,drugclass)"}, severity: {type: "enum(interaction_severity)"}, card: {type: "id(interaction)", optional: true}}}
+      interactions: {type: "list[object]", optional: true, item: {with: {type: "id(drug,drugclass)"}, severity: {type: "enum(interaction_severity)"}, card: {type: "id(interaction)", optional: true, implies: has_interaction}}}
       dose_adjustments: {type: "list[object]", optional: true, item: {when: {type: condition}, note: {type: string}}}
-      indications: {type: "list[id(disease,emergency,symptom)]", optional: true}
+      indications: {type: "list[id(disease,emergency,symptom)]", optional: true, implies: treats}
   drugclass:
     required_for_approved: [members]
     fields:
-      members: {type: "list[id(drug)]"}
+      members: {type: "list[id(drug)]", implies: includes}
       contraindications: {type: "list[object]", optional: true, item: {when: {type: condition}, absolute: {type: boolean}, explanation: {type: string}}}
   regimen:
     required_for_approved: [for, lines]
     fields:
-      for: {type: "list[id(disease,emergency)]"}
+      for: {type: "list[id(disease,emergency)]", implies: treats}
       lines:
         type: "list[object]"
         item:
           line: {type: number}
-          options: {type: "list[object]", item: {agent: {type: "id(drug,drugclass,nonpharm)"}, when: {type: condition, optional: true}, note: {type: string, optional: true}}}
+          options: {type: "list[object]", item: {agent: {type: "id(drug,drugclass,nonpharm)", implies: includes}, when: {type: condition, optional: true}, note: {type: string, optional: true}}}
   interaction:
     required_for_approved: [between, severity]
     fields:
-      between: {type: "list[id(drug,drugclass)]", doc: "Ровно два участника"}
+      between: {type: "list[id(drug,drugclass)]", doc: "Ровно два участника", implies: interaction_for}
       severity: {type: "enum(interaction_severity)"}
   adr:
     required_for_approved: [caused_by]
     fields:
-      caused_by: {type: "list[id(drug,drugclass)]"}
+      caused_by: {type: "list[id(drug,drugclass)]", implies: adr_caused_by}
       risk_factors: {type: "list[condition]", optional: true}
   dosing:
     required_for_approved: [rules]
     fields:
-      rules: {type: "list[object]", item: {agent: {type: "id(drug,drugclass)"}, when: {type: condition}, adjustment: {type: string}}}
+      rules: {type: "list[object]", item: {agent: {type: "id(drug,drugclass)", implies: dose_adjustment_for}, when: {type: condition}, adjustment: {type: string}}}
   nonpharm:
     required_for_approved: [for]
     fields:
-      for: {type: "list[id(disease,emergency,symptom)]"}
+      for: {type: "list[id(disease,emergency,symptom)]", implies: treats}
       contraindications: {type: "list[condition]", optional: true}
   # glb
   glossary:
@@ -633,7 +657,7 @@ machine_layer:
       term: {type: string}
       definition: {type: string}
       synonyms: {type: "list[string]", optional: true}
-      refers_to: {type: "list[id]", optional: true}
+      refers_to: {type: "list[id]", optional: true, implies: defines}
   profile:
     required_for_approved: [criteria]
     fields:

@@ -36,6 +36,29 @@ relations:
 - target: DIAG-DIFDIAG-001
   type: exam_used_in
   description: перенесено из поля related (схема v1)
+results:
+- value: normal
+  label: без патологических изменений
+- value: st_elevation
+  label: подъём сегмента ST или впервые возникшая блокада левой ножки пучка Гиса
+  indicates:
+  - DIAG-EMERGENCY-001
+- value: st_depression
+  label: депрессия сегмента ST или инверсия зубца T
+  indicates:
+  - DIAG-EMERGENCY-001
+  - DIAG-DISEASE-002
+- value: lvh
+  label: признаки гипертрофии левого желудочка
+  indicates:
+  - DIAG-DISEASE-001
+- value: arrhythmia
+  label: нарушение ритма
+- value: conduction_block
+  label: нарушение проводимости
+- value: nonspecific
+  label: неспецифические изменения
+turnaround: в течение 10 минут от первого контакта при боли в груди
 sources:
 - Руководства по клинической диагностике и внутренним болезням.
 - Клинические рекомендации по соответствующему профилю, действующая редакция.
@@ -46,12 +69,11 @@ clinical_guidelines:
 last_medical_review: '2026-04-30'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-04-30'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: results. См. docs/schema.md, раздел «exam».
 ---
 
 # Электрокардиография

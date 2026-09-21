@@ -44,6 +44,53 @@ relations:
 - target: DIAG-REDFLAG-003
   type: has_red_flag
   description: перенесено из поля related (схема v1)
+- target: DIAG-EXAM-010
+  type: diagnosed_by
+  description: оценка тяжести по сатурации
+- target: DIAG-SYMPTOM-002
+  type: has_symptom
+  description: выведено из машиночитаемого слоя (presentation)
+presentation:
+- symptom: DIAG-SYMPTOM-008
+  weight: 3
+  frequency: very_common
+  features:
+  - cough.productive
+  - cough.purulent_sputum
+  - cough.acute
+- symptom: DIAG-SYMPTOM-004
+  weight: 3
+  frequency: very_common
+  features:
+  - fever.chills
+  - fever.acute
+- symptom: DIAG-SYMPTOM-003
+  weight: 2
+  frequency: common
+  features:
+  - dyspnea.progressive
+- symptom: DIAG-SYMPTOM-002
+  weight: 1
+  frequency: uncommon
+  features:
+  - chest_pain.pleuritic
+red_flags:
+- DIAG-REDFLAG-003
+exams:
+- exam: DIAG-EXAM-004
+  role: confirms
+  expected: infiltrate
+- exam: DIAG-EXAM-003
+  role: supports
+  expected: leukocytosis
+- exam: DIAG-EXAM-010
+  role: stratifies
+  expected: SpO₂ менее 93 % — тяжёлое течение
+differentials:
+- DIAG-DISEASE-004
+applies_when:
+  not:
+    profile: GLB-PROFILE-004
 sources:
 - Клинические рекомендации по внебольничной пневмонии у взрослых, действующая редакция.
 - GINA Global Strategy for Asthma Management and Prevention, действующая редакция.
@@ -54,12 +101,11 @@ clinical_guidelines:
 last_medical_review: '2026-04-30'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-04-30'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: presentation, exams. См. docs/schema.md, раздел «disease».
 ---
 
 # Пневмония

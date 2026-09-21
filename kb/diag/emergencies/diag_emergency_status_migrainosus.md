@@ -32,6 +32,18 @@ relations:
 - target: DIAG-SYMPTOM-001
   type: has_symptom
   description: перенесено из поля related (схема v1)
+- target: PROT-EMERGENCY_P-006
+  type: has_emergency_protocol
+  description: выведено из машиночитаемого слоя (emergency_protocol)
+criteria:
+  all:
+  - any:
+    - disease: DIAG-DISEASE-005
+    - fact: known_migraine
+    - feature: headache.recurrent_attacks
+  - feature: headache.over_72h
+emergency_protocol: PROT-EMERGENCY_P-006
+time_critical: false
 sources:
 - Клинические рекомендации «Мигрень», 2024
 - AHS Guidelines for Migraine
@@ -40,12 +52,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-01'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: criteria. См. docs/schema.md, раздел «emergency».
 ---
 
 # Мигренозный статус (status migrainosus)

@@ -23,6 +23,12 @@ age_group:
 - all_ages
 evidence_level: IV
 recommendation_class: I
+synonyms:
+- свистящее дыхание
+- хрипы
+- свист в груди
+- свистит при дыхании
+- wheezing
 relations:
 - target: DIAG-DISEASE-004
   type: symptom_of
@@ -33,6 +39,19 @@ relations:
 - target: DIAG-EXAM-008
   type: diagnosed_by
   description: перенесено из поля related (схема v1)
+features:
+- code: wheezing.expiratory
+  label: на выдохе
+- code: wheezing.diffuse
+  label: диффузные, над обоими лёгкими
+- code: wheezing.silent_chest
+  label: «немое лёгкое» — исчезновение дыхательных шумов
+- code: wheezing.at_rest
+  label: в покое
+- code: wheezing.after_trigger
+  label: после контакта с триггером (аллерген, холод, нагрузка, ОРВИ)
+- code: wheezing.reliever_unresponsive
+  label: не купируется короткодействующим β2-агонистом
 sources:
 - GINA Global Strategy for Asthma Management and Prevention, 2025
 - Клинические рекомендации «Бронхиальная астма», 2024
@@ -41,12 +60,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.2'
 date_created: '2026-05-01'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: features, synonyms. См. docs/schema.md, раздел «symptom».
 ---
 
 # Свистящее дыхание (wheezing)

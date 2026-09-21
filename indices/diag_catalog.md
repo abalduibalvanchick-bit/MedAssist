@@ -2,7 +2,7 @@
 
 # Каталог: Заболевания, симптомы и диагностика
 
-Карточек: **38**.
+Карточек: **41**.
 
 | ID | Название | Категория | Срочность | Статус | Файл |
 |---|---|---|---|---|---|
@@ -27,8 +27,10 @@
 | `DIAG-EXAM-004` | Рентгенография органов грудной клетки | `exam` | `routine` | `medical_review` | [kb/diag/exams/diag_exam_chest_xray.md](kb/diag/exams/diag_exam_chest_xray.md) |
 | `DIAG-EXAM-005` | Глюкоза плазмы натощак | `exam` | `routine` | `medical_review` | [kb/diag/exams/diag_exam_fasting_glucose.md](kb/diag/exams/diag_exam_fasting_glucose.md) |
 | `DIAG-EXAM-006` | Гликированный гемоглобин (HbA1c) | `exam` | `routine` | `medical_review` | [kb/diag/exams/diag_exam_hba1c.md](kb/diag/exams/diag_exam_hba1c.md) |
+| `DIAG-EXAM-007` | Высокочувствительный сердечный тропонин | `exam` | `urgent` | `approved` | [kb/diag/exams/diag_exam_troponin.md](kb/diag/exams/diag_exam_troponin.md) |
 | `DIAG-EXAM-008` | Спирометрия | `exam` | `routine` | `medical_review` | [kb/diag/exams/diag_exam_spirometry.md](kb/diag/exams/diag_exam_spirometry.md) |
 | `DIAG-EXAM-009` | Неврологический осмотр | `exam` | `routine` | `medical_review` | [kb/diag/exams/diag_exam_neuro_exam.md](kb/diag/exams/diag_exam_neuro_exam.md) |
+| `DIAG-EXAM-010` | Пульсоксиметрия | `exam` | `urgent` | `approved` | [kb/diag/exams/diag_exam_pulse_oximetry.md](kb/diag/exams/diag_exam_pulse_oximetry.md) |
 | `DIAG-REDFLAG-001` | Гипертонический криз осложнённый | `redflag` | `emergency` | `medical_review` | [kb/diag/red_flags/diag_redflag_hypertensive_crisis.md](kb/diag/red_flags/diag_redflag_hypertensive_crisis.md) |
 | `DIAG-REDFLAG-002` | Внезапная сильнейшая головная боль | `redflag` | `emergency` | `medical_review` | [kb/diag/red_flags/diag_redflag_thunderclap_headache.md](kb/diag/red_flags/diag_redflag_thunderclap_headache.md) |
 | `DIAG-REDFLAG-003` | Выраженная одышка и цианоз | `redflag` | `emergency` | `medical_review` | [kb/diag/red_flags/diag_redflag_severe_dyspnea_cyanosis.md](kb/diag/red_flags/diag_redflag_severe_dyspnea_cyanosis.md) |
@@ -44,3 +46,4 @@
 | `DIAG-SYMPTOM-007` | Полидипсия (повышенная жажда) | `symptom` | `routine` | `medical_review` | [kb/diag/symptoms/diag_symptom_polydipsia.md](kb/diag/symptoms/diag_symptom_polydipsia.md) |
 | `DIAG-SYMPTOM-008` | Кашель | `symptom` | `routine` | `medical_review` | [kb/diag/symptoms/diag_symptom_cough.md](kb/diag/symptoms/diag_symptom_cough.md) |
 | `DIAG-SYMPTOM-009` | Свистящее дыхание (wheezing) | `symptom` | `urgent` | `medical_review` | [kb/diag/symptoms/diag_symptom_wheezing.md](kb/diag/symptoms/diag_symptom_wheezing.md) |
+| `DIAG-SYMPTOM-010` | Остро возникший очаговый неврологический дефицит | `symptom` | `emergency` | `approved` | [kb/diag/symptoms/diag_symptom_focal_neuro_deficit.md](kb/diag/symptoms/diag_symptom_focal_neuro_deficit.md) |

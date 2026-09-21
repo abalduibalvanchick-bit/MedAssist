@@ -2,16 +2,16 @@
 
 # Заболевания, симптомы и диагностика
 
-Домен `diag`, префикс идентификаторов `DIAG`. Карточек: **38**.
+Домен `diag`, префикс идентификаторов `DIAG`. Карточек: **41**.
 
 | Категория | Название | Карточек |
 |---|---|---|
 | [`difdiag`](differential_diagnosis/index.md) | Дифференциальная диагностика | 3 |
 | [`disease`](diseases/index.md) | Заболевание | 6 |
 | [`emergency`](emergencies/index.md) | Неотложное состояние (диагностика) | 6 |
-| [`exam`](exams/index.md) | Метод обследования | 8 |
+| [`exam`](exams/index.md) | Метод обследования | 10 |
 | [`redflag`](red_flags/index.md) | Красный флаг | 6 |
-| [`symptom`](symptoms/index.md) | Симптом / синдром | 9 |
+| [`symptom`](symptoms/index.md) | Симптом / синдром | 10 |
 
 ## Все карточки
 
@@ -38,8 +38,10 @@
 | `DIAG-EXAM-004` | Рентгенография органов грудной клетки | `exam` | `routine` | `medical_review` | [exams/diag_exam_chest_xray.md](exams/diag_exam_chest_xray.md) |
 | `DIAG-EXAM-005` | Глюкоза плазмы натощак | `exam` | `routine` | `medical_review` | [exams/diag_exam_fasting_glucose.md](exams/diag_exam_fasting_glucose.md) |
 | `DIAG-EXAM-006` | Гликированный гемоглобин (HbA1c) | `exam` | `routine` | `medical_review` | [exams/diag_exam_hba1c.md](exams/diag_exam_hba1c.md) |
+| `DIAG-EXAM-007` | Высокочувствительный сердечный тропонин | `exam` | `urgent` | `approved` | [exams/diag_exam_troponin.md](exams/diag_exam_troponin.md) |
 | `DIAG-EXAM-008` | Спирометрия | `exam` | `routine` | `medical_review` | [exams/diag_exam_spirometry.md](exams/diag_exam_spirometry.md) |
 | `DIAG-EXAM-009` | Неврологический осмотр | `exam` | `routine` | `medical_review` | [exams/diag_exam_neuro_exam.md](exams/diag_exam_neuro_exam.md) |
+| `DIAG-EXAM-010` | Пульсоксиметрия | `exam` | `urgent` | `approved` | [exams/diag_exam_pulse_oximetry.md](exams/diag_exam_pulse_oximetry.md) |
 | `DIAG-REDFLAG-001` | Гипертонический криз осложнённый | `redflag` | `emergency` | `medical_review` | [red_flags/diag_redflag_hypertensive_crisis.md](red_flags/diag_redflag_hypertensive_crisis.md) |
 | `DIAG-REDFLAG-002` | Внезапная сильнейшая головная боль | `redflag` | `emergency` | `medical_review` | [red_flags/diag_redflag_thunderclap_headache.md](red_flags/diag_redflag_thunderclap_headache.md) |
 | `DIAG-REDFLAG-003` | Выраженная одышка и цианоз | `redflag` | `emergency` | `medical_review` | [red_flags/diag_redflag_severe_dyspnea_cyanosis.md](red_flags/diag_redflag_severe_dyspnea_cyanosis.md) |
@@ -55,3 +57,4 @@
 | `DIAG-SYMPTOM-007` | Полидипсия (повышенная жажда) | `symptom` | `routine` | `medical_review` | [symptoms/diag_symptom_polydipsia.md](symptoms/diag_symptom_polydipsia.md) |
 | `DIAG-SYMPTOM-008` | Кашель | `symptom` | `routine` | `medical_review` | [symptoms/diag_symptom_cough.md](symptoms/diag_symptom_cough.md) |
 | `DIAG-SYMPTOM-009` | Свистящее дыхание (wheezing) | `symptom` | `urgent` | `medical_review` | [symptoms/diag_symptom_wheezing.md](symptoms/diag_symptom_wheezing.md) |
+| `DIAG-SYMPTOM-010` | Остро возникший очаговый неврологический дефицит | `symptom` | `emergency` | `approved` | [symptoms/diag_symptom_focal_neuro_deficit.md](symptoms/diag_symptom_focal_neuro_deficit.md) |

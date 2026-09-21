@@ -39,19 +39,34 @@ relations:
 - target: DIAG-EXAM-005
   type: diagnosed_by
   description: перенесено из поля related (схема v1)
+triggers:
+  all:
+  - param: glucose
+    op: '>'
+    value: 13.9
+  - any:
+    - param: ketones_positive
+    - all:
+      - symptom: DIAG-SYMPTOM-005
+      - feature: abdominal_pain.vomiting
+    - fact: confusion
+indicates:
+- DIAG-DISEASE-006
+action: PROT-EMERGENCY_P-002
 sources:
 - Алгоритмы специализированной медицинской помощи больным сахарным диабетом, 2023
+- Dhatariya K.K. et al. Diabetic ketoacidosis. Nat Rev Dis Primers. 2020;6:40.
+- 'American Diabetes Association. Standards of Care in Diabetes — 2025. Section 16: Diabetes Care in the Hospital (hyperglycemic crises).'
 clinical_guidelines:
 - Алгоритмы специализированной медицинской помощи больным сахарным диабетом, 2023
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: triggers, indicates. См. docs/schema.md, раздел «redflag».
 ---
 
 # Диабетический кетоацидоз (ДКА)

@@ -31,6 +31,21 @@ relations:
 - target: DIAG-REDFLAG-002
   type: diagnoses
   description: перенесено из поля related (схема v1)
+- target: DIAG-EMERGENCY-002
+  type: diagnoses
+  description: выведено из машиночитаемого слоя (results)
+results:
+- value: normal
+  label: очаговой и менингеальной симптоматики нет
+- value: focal_deficit
+  label: очаговая неврологическая симптоматика
+  indicates:
+  - DIAG-EMERGENCY-002
+- value: meningism
+  label: менингеальные знаки
+- value: cranial_nerve
+  label: патология черепных нервов
+turnaround: немедленно
 sources:
 - Клинические рекомендации по мигрени, 2024
 - Руководства по неврологии
@@ -39,12 +54,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: results. См. docs/schema.md, раздел «exam».
 ---
 
 # Неврологический осмотр

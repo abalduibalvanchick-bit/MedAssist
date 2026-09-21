@@ -147,8 +147,8 @@ def gen_conditions(schema) -> str:
                  "      op: \">\"\n"
                  "      value: 20\n"
                  "    - any:\n"
-                 "        - fact: nitrate_unresponsive\n"
-                 "        - fact: at_rest\n"
+                 "        - feature: chest_pain.nitrate_unresponsive\n"
+                 "        - feature: chest_pain.at_rest\n"
                  "```\n")
     return "".join(lines)
 

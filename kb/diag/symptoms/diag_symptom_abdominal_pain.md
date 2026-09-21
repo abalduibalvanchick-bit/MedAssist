@@ -25,10 +25,29 @@ age_group:
 - all_ages
 evidence_level: IV
 recommendation_class: I
+synonyms:
+- боль в животе
+- болит живот
+- абдоминальная боль
+- боль под ложечкой
+- резь в животе
 relations:
 - target: DIAG-EXAM-003
   type: diagnosed_by
   description: ОАК может использоваться для оценки воспалительной реакции
+features:
+- code: abdominal_pain.epigastric
+  label: эпигастральная локализация
+- code: abdominal_pain.diffuse
+  label: разлитая боль
+- code: abdominal_pain.sudden_severe
+  label: внезапная очень сильная (кинжальная) боль
+- code: abdominal_pain.guarding
+  label: напряжение мышц передней брюшной стенки
+- code: abdominal_pain.vomiting
+  label: повторная рвота
+- code: abdominal_pain.gi_bleeding
+  label: кровь в рвоте или стуле, мелена
 sources:
 - Руководства по клинической диагностике и внутренним болезням.
 - Клинические рекомендации по соответствующему профилю, действующая редакция.
@@ -38,12 +57,11 @@ clinical_guidelines:
 last_medical_review: '2026-04-30'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.2'
 date_created: '2026-04-30'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: features, synonyms. См. docs/schema.md, раздел «symptom».
 ---
 
 # Боль в животе

@@ -47,6 +47,70 @@ relations:
 - target: DIAG-EXAM-001
   type: uses_exam
   description: перенесено из поля related (схема v1)
+- target: DIAG-EXAM-009
+  type: uses_exam
+  description: выведено из машиночитаемого слоя (branches)
+- target: DIAG-EMERGENCY-006
+  type: considers
+  description: выведено из машиночитаемого слоя (branches)
+leading_symptom: DIAG-SYMPTOM-001
+branches:
+- target: DIAG-REDFLAG-002
+  supporting:
+    any:
+    - feature: headache.sudden_onset
+    - feature: headache.worst_ever
+    - feature: headache.meningism
+  key_exam: DIAG-EXAM-009
+  prior: low
+  urgency: emergency
+- target: DIAG-EMERGENCY-002
+  supporting:
+    any:
+    - symptom: DIAG-SYMPTOM-010
+    - exam_result: DIAG-EXAM-009
+      value: focal_deficit
+  key_exam: DIAG-EXAM-009
+  prior: low
+  urgency: emergency
+- target: DIAG-REDFLAG-001
+  supporting:
+    param: sbp
+    op: '>='
+    value: 180
+  key_exam: DIAG-EXAM-001
+  prior: medium
+  urgency: emergency
+- target: DIAG-EMERGENCY-006
+  supporting:
+    feature: headache.over_72h
+  prior: low
+  urgency: emergency
+- target: DIAG-DISEASE-005
+  supporting:
+    at_least:
+      n: 2
+      of:
+      - feature: headache.unilateral
+      - feature: headache.pulsating
+      - feature: headache.nausea
+      - feature: headache.photophobia
+      - feature: headache.worse_with_activity
+  against:
+    any:
+    - feature: headache.sudden_onset
+    - symptom: DIAG-SYMPTOM-010
+  key_exam: DIAG-EXAM-009
+  prior: high
+  urgency: routine
+- target: DIAG-DISEASE-001
+  supporting:
+    param: sbp
+    op: '>='
+    value: 140
+  key_exam: DIAG-EXAM-001
+  prior: medium
+  urgency: routine
 sources:
 - Клинические рекомендации по острому нарушению мозгового кровообращения, действующая редакция.
 - Клинические рекомендации по мигрени, действующая редакция.
@@ -58,12 +122,11 @@ clinical_guidelines:
 last_medical_review: '2026-04-30'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-04-30'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: leading_symptom, branches. См. docs/schema.md, раздел «difdiag».
 ---
 
 # Дифференциальная диагностика: головная боль

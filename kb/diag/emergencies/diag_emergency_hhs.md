@@ -36,6 +36,18 @@ relations:
 - target: DIAG-SYMPTOM-007
   type: has_symptom
   description: перенесено из поля related (схема v1)
+criteria:
+  all:
+  - param: glucose
+    op: '>='
+    value: 33.3
+  - any:
+    - fact: confusion
+    - symptom: DIAG-SYMPTOM-006
+    - symptom: DIAG-SYMPTOM-007
+    - fact: hypotension
+emergency_protocol: PROT-EMERGENCY_P-002
+time_critical: true
 sources:
 - Алгоритмы специализированной медицинской помощи больным сахарным диабетом, 2023
 - ADA Standards of Medical Care in Diabetes, 2025
@@ -44,12 +56,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-02'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: criteria. См. docs/schema.md, раздел «emergency».
 ---
 
 # Гиперосмолярное гипергликемическое состояние (ГГС)

@@ -36,6 +36,20 @@ relations:
 - target: DIAG-SYMPTOM-005
   type: diagnoses
   description: может использоваться при боли в животе для оценки воспаления
+results:
+- value: normal
+  label: показатели в пределах референсных значений
+- value: leukocytosis
+  label: лейкоцитоз
+  indicates:
+  - DIAG-DISEASE-003
+- value: leukopenia
+  label: лейкопения
+- value: anemia
+  label: анемия
+- value: thrombocytopenia
+  label: тромбоцитопения
+turnaround: 1–2 часа
 sources:
 - Руководства по клинической диагностике и внутренним болезням.
 - Клинические рекомендации по соответствующему профилю, действующая редакция.
@@ -45,12 +59,11 @@ clinical_guidelines:
 last_medical_review: '2026-04-30'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-04-30'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: results. См. docs/schema.md, раздел «exam».
 ---
 
 # Общий анализ крови

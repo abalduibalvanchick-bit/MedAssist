@@ -9,9 +9,13 @@
 | `symptom_of` | `has_symptom` | symptom | disease, emergency |  |
 | `diagnosed_by` | `diagnoses` | disease, emergency, symptom, redflag | exam |  |
 | `diagnoses` | `diagnosed_by` | exam | disease, emergency, symptom, redflag |  |
-| `has_red_flag` | `red_flag_for` | disease, symptom, emergency, difdiag | redflag |  |
-| `red_flag_for` | `has_red_flag` | redflag | disease, symptom, emergency, difdiag |  |
-| `differentiates_from` | `differentiates_from` | disease, emergency, difdiag | disease, emergency, difdiag | да |
+| `has_red_flag` | `red_flag_for` | disease, symptom, emergency, difdiag, routing | redflag |  |
+| `red_flag_for` | `has_red_flag` | redflag | disease, symptom, emergency, difdiag, routing |  |
+| `uses_exam` | `exam_used_in` | protocol, checklist, follow_up, screening, routing, emergency_p, difdiag | exam |  |
+| `exam_used_in` | `uses_exam` | exam | protocol, checklist, follow_up, screening, routing, emergency_p, difdiag |  |
+| `differentiates_from` | `differentiates_from` | disease, emergency | disease, emergency | да |
+| `considers` | `considered_in` | difdiag | disease, emergency, redflag |  |
+| `considered_in` | `considers` | disease, emergency, redflag | difdiag |  |
 | `differential_for` | `has_differential` | difdiag | symptom |  |
 | `has_differential` | `differential_for` | symptom | difdiag |  |
 | `complicates` | `complicated_by` | disease, redflag, emergency | disease |  |
@@ -19,26 +23,26 @@
 | `associated_with` | `associated_with` | любая | любая | да |
 | `protocol_for` | `has_protocol` | protocol | disease, emergency |  |
 | `has_protocol` | `protocol_for` | disease, emergency | protocol |  |
-| `emergency_protocol_for` | `has_emergency_protocol` | emergency_p | emergency, redflag, disease |  |
-| `has_emergency_protocol` | `emergency_protocol_for` | emergency, redflag, disease | emergency_p |  |
-| `routing_for` | `has_routing` | routing | disease, emergency, symptom, protocol |  |
-| `has_routing` | `routing_for` | disease, emergency, symptom, protocol | routing |  |
-| `assessed_by` | `assesses` | disease, emergency, protocol, routing, symptom | scale |  |
-| `assesses` | `assessed_by` | scale | disease, emergency, protocol, routing, symptom |  |
+| `emergency_protocol_for` | `has_emergency_protocol` | emergency_p | emergency, redflag, disease, protocol, routing, follow_up |  |
+| `has_emergency_protocol` | `emergency_protocol_for` | emergency, redflag, disease, protocol, routing, follow_up | emergency_p |  |
+| `routing_for` | `has_routing` | routing | disease, emergency, symptom, protocol, patient_info, checklist |  |
+| `has_routing` | `routing_for` | disease, emergency, symptom, protocol, patient_info, checklist | routing |  |
+| `assessed_by` | `assesses` | disease, emergency, protocol, routing, symptom, emergency_p, follow_up, checklist, screening | scale |  |
+| `assesses` | `assessed_by` | scale | disease, emergency, protocol, routing, symptom, emergency_p, follow_up, checklist, screening |  |
 | `checklist_for` | `has_checklist` | checklist | disease, protocol |  |
 | `has_checklist` | `checklist_for` | disease, protocol | checklist |  |
 | `screening_for` | `has_screening` | screening | disease, protocol |  |
 | `has_screening` | `screening_for` | disease, protocol | screening |  |
 | `follow_up_for` | `has_follow_up` | follow_up | disease, protocol |  |
 | `has_follow_up` | `follow_up_for` | disease, protocol | follow_up |  |
-| `patient_info_for` | `has_patient_info` | patient_info | disease, protocol, drug, emergency |  |
-| `has_patient_info` | `patient_info_for` | disease, protocol, drug, emergency | patient_info |  |
-| `next_step` | `previous_step` | routing, protocol, emergency_p, screening, scale | routing, protocol, emergency_p, follow_up |  |
-| `previous_step` | `next_step` | любая | любая |  |
+| `patient_info_for` | `has_patient_info` | patient_info | disease, protocol, drug, emergency, nonpharm |  |
+| `has_patient_info` | `patient_info_for` | disease, protocol, drug, emergency, nonpharm | patient_info |  |
+| `next_step` | `previous_step` | routing, protocol, emergency_p, screening, scale, follow_up | routing, protocol, emergency_p, follow_up |  |
+| `previous_step` | `next_step` | routing, protocol, emergency_p, follow_up | routing, protocol, emergency_p, screening, scale, follow_up |  |
 | `treats` | `treated_with` | regimen, drug, drugclass, nonpharm | disease, emergency, symptom |  |
 | `treated_with` | `treats` | disease, emergency, symptom | regimen, drug, drugclass, nonpharm |  |
-| `recommends` | `recommended_by` | protocol, emergency_p, follow_up, routing | regimen, drug, drugclass, nonpharm |  |
-| `recommended_by` | `recommends` | regimen, drug, drugclass, nonpharm | protocol, emergency_p, follow_up, routing |  |
+| `recommends` | `recommended_by` | protocol, emergency_p, follow_up, routing, scale | regimen, drug, drugclass, nonpharm |  |
+| `recommended_by` | `recommends` | regimen, drug, drugclass, nonpharm | protocol, emergency_p, follow_up, routing, scale |  |
 | `includes` | `included_in` | regimen, drugclass | drug, drugclass, nonpharm |  |
 | `included_in` | `includes` | drug, drugclass, nonpharm | regimen, drugclass |  |
 | `has_interaction` | `interaction_for` | drug, drugclass | interaction |  |
@@ -60,7 +64,6 @@
 | Тип v1 | Тип v2 |
 |---|---|
 | `related_to` | `associated_with` |
-| `uses_exam` | `diagnosed_by` |
 | `requires_exam` | `diagnosed_by` |
 | `confirmed_by` | `diagnosed_by` |
 | `excluded_by` | `diagnosed_by` |

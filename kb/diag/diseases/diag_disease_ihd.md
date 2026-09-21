@@ -37,6 +37,44 @@ relations:
 - target: DIAG-EXAM-001
   type: diagnosed_by
   description: перенесено из поля related (схема v1)
+- target: DIAG-EXAM-007
+  type: diagnosed_by
+  description: исключение острого повреждения миокарда
+- target: DIAG-SYMPTOM-003
+  type: has_symptom
+  description: выведено из машиночитаемого слоя (presentation)
+presentation:
+- symptom: DIAG-SYMPTOM-002
+  weight: 3
+  frequency: very_common
+  features:
+  - chest_pain.pressing
+  - chest_pain.retrosternal
+  - chest_pain.radiation
+  - chest_pain.exertional
+  - chest_pain.relieved_by_rest
+  - chest_pain.nitrate_relief
+- symptom: DIAG-SYMPTOM-003
+  weight: 1
+  frequency: common
+  features:
+  - dyspnea.exertional
+red_flags:
+- DIAG-REDFLAG-005
+exams:
+- exam: DIAG-EXAM-002
+  role: supports
+  expected: st_depression
+- exam: DIAG-EXAM-007
+  role: excludes
+  expected: negative — исключение острого повреждения миокарда
+- exam: DIAG-EXAM-001
+  role: monitors
+differentials:
+- DIAG-EMERGENCY-001
+applies_when:
+  not:
+    profile: GLB-PROFILE-004
 sources:
 - Клинические рекомендации по хроническому коронарному синдрому, действующая редакция.
 - Руководства Европейского общества кардиологов по хроническим коронарным синдромам.
@@ -46,12 +84,11 @@ clinical_guidelines:
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-04-08'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: presentation, exams. См. docs/schema.md, раздел «disease».
 ---
 
 # Ишемическая болезнь сердца

@@ -22,6 +22,12 @@ age_group:
 - elderly
 evidence_level: IV
 recommendation_class: I
+synonyms:
+- полиурия
+- частое мочеиспускание
+- много мочи
+- часто хожу в туалет
+- никтурия
 relations:
 - target: DIAG-DISEASE-006
   type: symptom_of
@@ -32,6 +38,11 @@ relations:
 - target: DIAG-REDFLAG-004
   type: has_red_flag
   description: резкое усиление полиурии может указывать на декомпенсацию диабета
+features:
+- code: polyuria.nocturia
+  label: ночное мочеиспускание
+- code: polyuria.sudden_increase
+  label: резкое нарастание за последние дни
 sources:
 - Алгоритмы специализированной медицинской помощи больным сахарным диабетом / Под ред. И.И. Дедова, М.В. Шестаковой, А.Ю. Майорова. — 11-й выпуск. — М., 2023.
 clinical_guidelines:
@@ -39,12 +50,13 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-01'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: features, synonyms. См. docs/schema.md, раздел «symptom».
+add_sources:
+- 'American Diabetes Association. Standards of Care in Diabetes — 2025. Section 2: Diagnosis and Classification of Diabetes.'
 ---
 
 # Полиурия (частое мочеиспускание)

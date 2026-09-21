@@ -55,7 +55,9 @@ medassist/
                 diag_exam_fasting_glucose.md
                 diag_exam_hba1c.md
                 diag_exam_neuro_exam.md
+                diag_exam_pulse_oximetry.md
                 diag_exam_spirometry.md
+                diag_exam_troponin.md
                 index.md
             red_flags/
                 diag_redflag_dka.md
@@ -71,6 +73,7 @@ medassist/
                 diag_symptom_cough.md
                 diag_symptom_dyspnea.md
                 diag_symptom_fever.md
+                diag_symptom_focal_neuro_deficit.md
                 diag_symptom_headache.md
                 diag_symptom_polydipsia.md
                 diag_symptom_polyuria.md
@@ -78,6 +81,18 @@ medassist/
                 index.md
             index.md
         glb/
+            disclaimers/
+                glb_disclaimer_emergency.md
+                glb_disclaimer_patient.md
+                glb_disclaimer_professional.md
+                index.md
+            patient_profiles/
+                glb_profile_ckd.md
+                glb_profile_elderly.md
+                glb_profile_immunocompromised.md
+                glb_profile_pediatric.md
+                glb_profile_pregnancy.md
+                index.md
             index.md
         pharm/
             adverse_reactions/
@@ -224,16 +239,20 @@ medassist/
             template_symptom.md
     scripts/
         .gitkeep
+        apply_patch.py
         generate_docs.py
         generate_indices.py
         migrate_v1_to_v2.py
+        sync_relations.py
     src/
         __init__.py
+        card_writer.py
         cli.py
         conditions.py
         config.py
         indexer.py
         linker.py
+        machine_refs.py
         markdown_parser.py
         models.py
         repository.py
@@ -250,6 +269,7 @@ medassist/
         test_conditions.py
         test_linker.py
         test_log.md
+        test_migration.py
         test_parser.py
         test_pharm.py
         test_protocols.py

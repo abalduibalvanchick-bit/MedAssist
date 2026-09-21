@@ -45,6 +45,30 @@ relations:
 - target: DIAG-REDFLAG-005
   type: has_red_flag
   description: перенесено из поля related (схема v1)
+presentation:
+- symptom: DIAG-SYMPTOM-006
+  weight: 2
+  frequency: common
+  features:
+  - polyuria.nocturia
+- symptom: DIAG-SYMPTOM-007
+  weight: 2
+  frequency: common
+  features:
+  - polydipsia.dry_mouth
+red_flags:
+- DIAG-REDFLAG-004
+exams:
+- exam: DIAG-EXAM-005
+  role: confirms
+  expected: diabetes_range
+- exam: DIAG-EXAM-006
+  role: confirms
+  expected: diabetes_range
+differentials: []
+applies_when:
+  not:
+    profile: GLB-PROFILE-004
 sources:
 - Алгоритмы специализированной медицинской помощи больным сахарным диабетом / Под ред. И.И. Дедова, М.В. Шестаковой, А.Ю. Майорова. — 11-й выпуск. — М., 2023.
 - ADA Standards of Medical Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
@@ -54,12 +78,11 @@ clinical_guidelines:
 last_medical_review: '2025-02-10'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-01'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: presentation, exams. См. docs/schema.md, раздел «disease».
 ---
 
 # Сахарный диабет 2 типа

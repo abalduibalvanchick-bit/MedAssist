@@ -35,6 +35,19 @@ relations:
 - target: DIAG-EXAM-002
   type: diagnosed_by
   description: перенесено из поля related (схема v1)
+triggers:
+  all:
+  - symptom: DIAG-SYMPTOM-002
+  - any:
+    - feature: chest_pain.at_rest
+    - feature: chest_pain.new_onset
+    - feature: chest_pain.nitrate_unresponsive
+    - param: symptom_duration_min
+      op: '>'
+      value: 20
+indicates:
+- DIAG-EMERGENCY-001
+action: PROT-EMERGENCY_P-003
 sources:
 - Клинические рекомендации по стабильной ишемической болезни сердца, 2024
 - 2023 ESC Guidelines for the management of acute coronary syndromes
@@ -43,12 +56,11 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-05-01'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: triggers, indicates. См. docs/schema.md, раздел «redflag».
 ---
 
 # Нестабильная стенокардия / высокий риск острого коронарного синдрома (ОКС)

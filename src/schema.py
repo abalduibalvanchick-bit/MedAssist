@@ -151,6 +151,10 @@ class Schema:
     def min_sources(self) -> int:
         return int(self.raw["fields"].get("min_sources", 1))
 
+    def min_content_chars(self, category: str) -> int:
+        fields = self.raw["fields"]
+        return int((fields.get("min_content_chars_by_category") or {}).get(category, fields.get("min_content_chars", 600)))
+
     @property
     def date_pattern(self) -> re.Pattern[str]:
         return re.compile(self.raw["fields"]["date_pattern"])

@@ -26,6 +26,14 @@ age_group:
 - all_ages
 evidence_level: IV
 recommendation_class: I
+synonyms:
+- лихорадка
+- температура
+- жар
+- высокая температура
+- знобит
+- озноб
+- фебрилитет
 relations:
 - target: DIAG-DISEASE-003
   type: symptom_of
@@ -36,6 +44,17 @@ relations:
 - target: DIAG-EXAM-004
   type: diagnosed_by
   description: при дыхательных симптомах помогает искать лёгочную причину
+features:
+- code: fever.chills
+  label: озноб
+- code: fever.acute
+  label: острое начало (менее 7 дней)
+- code: fever.prolonged
+  label: сохраняется более 3 суток на фоне лечения
+- code: fever.antipyretic_unresponsive
+  label: не снижается жаропонижающими
+- code: fever.petechial_rash
+  label: геморрагическая (петехиальная) сыпь
 sources:
 - Руководства по клинической диагностике и внутренним болезням.
 - Клинические рекомендации по соответствующему профилю, действующая редакция.
@@ -45,12 +64,11 @@ clinical_guidelines:
 last_medical_review: '2026-04-30'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.1'
 date_created: '2026-04-30'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: features, synonyms. См. docs/schema.md, раздел «symptom».
 ---
 
 # Лихорадка

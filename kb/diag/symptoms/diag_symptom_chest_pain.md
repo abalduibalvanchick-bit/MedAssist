@@ -22,6 +22,15 @@ age_group:
 - all_ages
 evidence_level: IV
 recommendation_class: I
+synonyms:
+- боль в груди
+- болит в груди
+- давит за грудиной
+- загрудинная боль
+- жжёт в груди
+- стенокардия
+- грудная жаба
+- боль в сердце
 relations:
 - target: DIAG-DISEASE-002
   type: symptom_of
@@ -41,6 +50,35 @@ relations:
 - target: DIAG-REDFLAG-001
   type: has_red_flag
   description: перенесено из поля related (схема v1)
+features:
+- code: chest_pain.pressing
+  label: давящая или сжимающая боль
+- code: chest_pain.retrosternal
+  label: загрудинная локализация
+- code: chest_pain.radiation
+  label: иррадиация в левую руку, шею, нижнюю челюсть, спину
+- code: chest_pain.exertional
+  label: возникает при физической или эмоциональной нагрузке
+- code: chest_pain.relieved_by_rest
+  label: проходит в покое в течение нескольких минут
+- code: chest_pain.at_rest
+  label: возникает в покое
+- code: chest_pain.nitrate_relief
+  label: купируется нитроглицерином
+- code: chest_pain.nitrate_unresponsive
+  label: не купируется нитроглицерином
+- code: chest_pain.new_onset
+  label: впервые возникшая или прогрессирующая (нарастающая) стенокардия
+- code: chest_pain.cold_sweat
+  label: холодный пот, выраженная слабость
+- code: chest_pain.pleuritic
+  label: усиливается при дыхании и кашле
+- code: chest_pain.reproducible_palpation
+  label: воспроизводится при пальпации грудной стенки
+- code: chest_pain.burning_postprandial
+  label: жгучая, связана с приёмом пищи или положением тела
+- code: chest_pain.sudden_severe
+  label: внезапная очень интенсивная боль
 sources:
 - Руководства по внутренним болезням и клинической диагностике.
 - Клинические рекомендации по соответствующему профилю, действующая редакция.
@@ -51,12 +89,11 @@ clinical_guidelines:
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.0'
+version: '2.2'
 date_created: '2026-04-08'
 date_updated: '2026-09-16'
 status: medical_review
 disclaimer: true
-# Машиночитаемый слой (schema v2) не заполнен. Для status: approved требуются поля: features, synonyms. См. docs/schema.md, раздел «symptom».
 ---
 
 # Боль в груди
