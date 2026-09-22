@@ -1,0 +1,18 @@
+# Мигрень без ауры, признаки вторичной головной боли отрицаются
+patient:
+  age: 30
+  features:
+  - headache.unilateral
+  - headache.pulsating
+  - headache.nausea
+  - headache.photophobia
+  - headache.recurrent_attacks
+  denied_features:
+  - headache.sudden_onset
+  - headache.worst_ever
+  - headache.meningism
+  denied_symptoms:
+  - DIAG-SYMPTOM-010
+  params:
+    sbp: 118
+    dbp: 76

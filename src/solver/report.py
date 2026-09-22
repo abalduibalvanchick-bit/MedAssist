@@ -13,6 +13,11 @@ _ROUTES = {"outpatient": "амбулаторно", "urgent_referral": "сроч�
 def format_solution(solution: dict[str, Any], *, show_trace: bool = True) -> str:
     out: list[str] = []
     add = out.append
+    lay = solution.get("role") == "patient"   # для пациента без служебных идентификаторов
+
+    def ref(item_id: str) -> str:
+        return "" if lay else f" [{item_id}]"
+
     add(f"Статус: {_STATUS.get(solution.get('status'), solution.get('status'))}")
     for issue in solution.get("input_issues") or []:
         add(f"  [{issue['severity']}] {issue['message']}")
@@ -24,7 +29,7 @@ def format_solution(solution: dict[str, Any], *, show_trace: bool = True) -> str
     if urgency:
         add(f"Срочность: {urgency.get('label', urgency.get('level'))}")
         for reason in urgency.get("reasons") or []:
-            add(f"  основание: {reason['reason']} [{reason['source']}]")
+            add(f"  основание: {reason['reason']}{ref(reason['source'])}")
 
     def section(title: str, items: list[str]) -> None:
         if items:
@@ -32,10 +37,10 @@ def format_solution(solution: dict[str, Any], *, show_trace: bool = True) -> str
             out.extend(f"  - {line}" for line in items)
 
     section("Профили пациента", [p["title"] for p in solution.get("profiles") or []])
-    section("Красные флаги", [f"{r['title']} [{r['id']}]" for r in solution.get("red_flags") or []])
-    section("Неотложные состояния", [f"{e['title']} [{e['id']}]" for e in solution.get("emergencies") or []])
+    section("Красные флаги", [f"{r['title']}{ref(r['id'])}" for r in solution.get("red_flags") or []])
+    section("Неотложные состояния", [f"{e['title']}{ref(e['id'])}" for e in solution.get("emergencies") or []])
     section("Гипотезы", [f"{h['title']} — вес {h['score']} ({', '.join(h['sources'])})" for h in solution.get("hypotheses") or []])
-    section("Рабочие диагнозы", [f"{d['title']} [{d['id']}]" for d in solution.get("working_diagnoses") or []])
+    section("Рабочие диагнозы", [f"{d['title']}{ref(d['id'])}" for d in solution.get("working_diagnoses") or []])
     section("Шкалы", [f"{s['title']}: " + (f"{s['value']:g} балл(ов), " if s.get("value") is not None else f"{s['range'][0]:g}–{s['range'][1]:g}, ")
                       + f"{s['category_label']}" for s in solution.get("scales") or []])
     section("Обследования", [f"{e['title']} ({', '.join(e['roles'])})" for e in solution.get("exams") or []])
@@ -55,7 +60,7 @@ def format_solution(solution: dict[str, Any], *, show_trace: bool = True) -> str
     for text in solution.get("disclaimer") or []:
         add(f"! {text}")
     stats = solution.get("stats") or {}
-    if stats:
+    if stats and not lay:
         add(f"Итераций: {stats.get('iterations', '-')}, сработало правил: {stats.get('rules_fired', '-')} из "
             f"{stats.get('rules_total', '-')}, время решения: {stats.get('time_ms')} мс")
     return "\n".join(out)

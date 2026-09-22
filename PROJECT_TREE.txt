@@ -14,7 +14,14 @@ medassist/
         mvp_modules.md
         naming_rules.md
         schema.md
+        solver_test_report.md
         verification_rules.md
+    examples/
+        chest_pain_acs.yaml
+        child_refusal.yaml
+        migraine.yaml
+        pneumonia.yaml
+        stroke.yaml
     indices/
         diag_catalog.md
         glb_catalog.md
@@ -291,9 +298,20 @@ medassist/
         generate_templates.py
         migrate_v1_to_v2.py
         rebuild_all.py
+        run_solver_cases.py
         sync_body_sources.py
         sync_relations.py
     src/
+        solver/
+            __init__.py
+            api.py
+            engine.py
+            explain.py
+            facts.py
+            knowledge.py
+            questions.py
+            report.py
+            scales.py
         __init__.py
         card_writer.py
         cli.py
@@ -310,11 +328,33 @@ medassist/
         search_engine.py
         validator.py
     tests/
+        cases/
+            bnd_01_curb_threshold.yaml
+            bnd_02_curb_partial.yaml
+            bnd_03_pregnancy.yaml
+            bnd_04_open_world.yaml
+            bnd_05_meningism.yaml
+            neg_01_child.yaml
+            neg_02_contradiction.yaml
+            neg_03_unknown_codes.yaml
+            neg_04_empty.yaml
+            neg_05_bad_types.yaml
+            neg_06_insufficient.yaml
+            typ_01_acs.yaml
+            typ_02_stable_angina.yaml
+            typ_03_migraine.yaml
+            typ_04_stroke.yaml
+            typ_05_pneumonia.yaml
+            typ_06_asthma.yaml
+            typ_07_diabetes.yaml
+            typ_08_hhs.yaml
         expected_results/
             .gitkeep
         scenarios/
             .gitkeep
+        __init__.py
         conftest.py
+        solver_cases.py
         test_conditions.py
         test_linker.py
         test_log.md
@@ -324,6 +364,7 @@ medassist/
         test_protocols.py
         test_repository.py
         test_search.py
+        test_solver.py
         test_stage3.py
         test_validator.py
         test_validator_v2.py

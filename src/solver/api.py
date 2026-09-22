@@ -121,7 +121,8 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
     }
 
     if role == "patient":
-        solution["advice"] = _patient_advice(kb, memory.working_diagnoses + [h.target for h in hypotheses])
+        # Памятки — только по рабочим диагнозам: слабые гипотезы пациенту не показываются.
+        solution["advice"] = _patient_advice(kb, memory.working_diagnoses)
         for key in ("hypotheses", "exams", "warnings", "scales", "fired_rules", "trace", "explanation", "protocols"):
             solution.pop(key, None)
     return solution

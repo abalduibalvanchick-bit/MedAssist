@@ -1,0 +1,8 @@
+# Асимметрия лица и слабость руки у пациента с диабетом — ОНМК
+patient:
+  age: 70
+  features:
+  - focal_deficit.face_droop
+  - focal_deficit.arm_weakness
+  facts:
+    known_diabetes: true

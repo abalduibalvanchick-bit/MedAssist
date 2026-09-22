@@ -1,0 +1,5 @@
+# Пациент 7 лет — отказ, граница применимости
+patient:
+  age: 7
+  symptoms:
+  - DIAG-SYMPTOM-004

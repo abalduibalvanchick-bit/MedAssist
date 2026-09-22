@@ -1,0 +1,14 @@
+# Внебольничная пневмония у пожилого, CURB-65 = 2
+patient:
+  age: 70
+  features:
+  - cough.productive
+  - fever.chills
+  params:
+    rr: 24
+    sbp: 110
+    dbp: 70
+    urea: 8
+    spo2: 95
+  facts:
+    confusion: false
