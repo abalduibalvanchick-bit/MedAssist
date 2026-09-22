@@ -334,23 +334,23 @@ legacy_relation_aliases:
 # Контролируемый словарь величин, на которые могут ссылаться условия.
 # Решатель принимает на вход значения этих параметров.
 parameters:
-  age:            {type: number,  unit: "лет",           label: "Возраст"}
-  sbp:            {type: number,  unit: "мм рт. ст.",    label: "Систолическое АД"}
-  dbp:            {type: number,  unit: "мм рт. ст.",    label: "Диастолическое АД"}
-  hr:             {type: number,  unit: "уд/мин",        label: "Частота сердечных сокращений"}
-  rr:             {type: number,  unit: "в мин",         label: "Частота дыхания"}
-  spo2:           {type: number,  unit: "%",             label: "Сатурация кислорода"}
-  temperature:    {type: number,  unit: "°C",            label: "Температура тела"}
-  gcs:            {type: number,  unit: "баллы",         label: "Шкала комы Глазго"}
-  egfr:           {type: number,  unit: "мл/мин/1.73м²", label: "Расчётная СКФ"}
-  creatinine:     {type: number,  unit: "мкмоль/л",      label: "Креатинин"}
-  glucose:        {type: number,  unit: "ммоль/л",       label: "Глюкоза крови"}
-  hba1c:          {type: number,  unit: "%",             label: "Гликированный гемоглобин"}
-  bmi:            {type: number,  unit: "кг/м²",         label: "Индекс массы тела"}
-  pef_percent:    {type: number,  unit: "%",             label: "ПСВ, % от лучшего"}
-  symptom_duration_min: {type: number, unit: "мин",     label: "Длительность ведущего симптома"}
-  symptom_duration_days: {type: number, unit: "сут",    label: "Длительность ведущего симптома"}
-  urea:           {type: number,  unit: "ммоль/л",      label: "Мочевина"}
+  age:            {type: number,  unit: "лет",           label: "Возраст", min: 0, max: 120}
+  sbp:            {type: number,  unit: "мм рт. ст.",    label: "Систолическое АД", min: 40, max: 300}
+  dbp:            {type: number,  unit: "мм рт. ст.",    label: "Диастолическое АД", min: 20, max: 200}
+  hr:             {type: number,  unit: "уд/мин",        label: "Частота сердечных сокращений", min: 20, max: 250}
+  rr:             {type: number,  unit: "в мин",         label: "Частота дыхания", min: 4, max: 70}
+  spo2:           {type: number,  unit: "%",             label: "Сатурация кислорода", min: 50, max: 100}
+  temperature:    {type: number,  unit: "°C",            label: "Температура тела", min: 30, max: 44}
+  gcs:            {type: number,  unit: "баллы",         label: "Шкала комы Глазго", min: 3, max: 15}
+  egfr:           {type: number,  unit: "мл/мин/1.73м²", label: "Расчётная СКФ", min: 1, max: 150}
+  creatinine:     {type: number,  unit: "мкмоль/л",      label: "Креатинин", min: 10, max: 2000}
+  glucose:        {type: number,  unit: "ммоль/л",       label: "Глюкоза крови", min: 0.5, max: 60}
+  hba1c:          {type: number,  unit: "%",             label: "Гликированный гемоглобин", min: 3, max: 20}
+  bmi:            {type: number,  unit: "кг/м²",         label: "Индекс массы тела", min: 10, max: 80}
+  pef_percent:    {type: number,  unit: "%",             label: "ПСВ, % от лучшего", min: 5, max: 150}
+  symptom_duration_min: {type: number, unit: "мин",     label: "Длительность ведущего симптома", min: 0, max: 100000}
+  symptom_duration_days: {type: number, unit: "сут",    label: "Длительность ведущего симптома", min: 0, max: 3650}
+  urea:           {type: number,  unit: "ммоль/л",      label: "Мочевина", min: 0.5, max: 80}
   troponin_positive: {type: boolean,                     label: "Тропонин выше порога"}
   ketones_positive: {type: boolean,                      label: "Кетоны в крови или моче повышены"}
   diabetes_duration_years: {type: number, unit: "лет",   label: "Длительность сахарного диабета", min: 0, max: 80}

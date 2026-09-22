@@ -112,6 +112,26 @@ def run_interactive(repository: KnowledgeRepository) -> None:
             print("Неизвестный пункт меню.")
 
 
+def run_solver(args) -> None:
+    import json
+
+    import yaml
+
+    from .solver import load_default_kb, solve
+    from .solver.report import format_solution
+
+    try:
+        request = yaml.safe_load(Path(args.solve).read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError) as exc:
+        print(f"Не удалось прочитать файл задачи: {exc}")
+        return
+    solution = solve(request, role=args.role, kb=load_default_kb(str(Path(args.kb_root))), include_trace=not args.no_trace)
+    if args.json:
+        print(json.dumps(solution, ensure_ascii=False, indent=2))
+    else:
+        print(format_solution(solution, show_trace=not args.no_trace))
+
+
 def run_cli(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="MedAssist Knowledge Base MVP")
     parser.add_argument("--kb-root", default=str(KB_ROOT), help="Путь к каталогу kb")
@@ -123,7 +143,15 @@ def run_cli(argv: list[str] | None = None) -> None:
     parser.add_argument("--related", help="Показать связанные документы по ID")
     parser.add_argument("--scenario", choices=["chest_pain", "headache", "dyspnea", "hypertension_protocol", "hypertension_therapy", "pharm_drug", "drug_interaction", "validation", "all"], help="Запустить сценарий")
 
+    parser.add_argument("--solve", metavar="FILE", help="Решить задачу для пациента из YAML/JSON-файла")
+    parser.add_argument("--role", default="professional", help="Роль пользователя: professional, nursing, student, patient")
+    parser.add_argument("--json", action="store_true", help="Вывести решение в JSON")
+    parser.add_argument("--no-trace", action="store_true", help="Не показывать ход вывода")
+
     args = parser.parse_args(argv)
+    if args.solve:
+        run_solver(args)
+        return
     repository = build_repository(Path(args.kb_root))
     search_engine = SearchEngine(repository)
     linker = Linker(repository)

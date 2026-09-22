@@ -1,0 +1,6 @@
+# Мужчина 62 лет, давящая боль за грудиной в покое 30 минут, курит.
+patient:
+  age: 62
+  features: [chest_pain.pressing, chest_pain.retrosternal, chest_pain.at_rest]
+  params: {symptom_duration_min: 30, sbp: 150, dbp: 90, hr: 96}
+  facts: {smoker: true}
