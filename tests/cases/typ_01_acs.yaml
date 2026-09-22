@@ -1,0 +1,18 @@
+id: TYP-01
+group: typical
+title: Давящая загрудинная боль в покое 30 минут — ОКС
+patient:
+  age: 62
+  features: [chest_pain.pressing, chest_pain.retrosternal, chest_pain.at_rest]
+  params: {symptom_duration_min: 30, sbp: 150, dbp: 90, hr: 96}
+  facts: {smoker: true}
+expect:
+  status: ok
+  urgency: emergency
+  red_flags: [DIAG-REDFLAG-005]
+  emergencies: [DIAG-EMERGENCY-001]
+  hypotheses_top: DIAG-EMERGENCY-001
+  rules_fired: [RULE-DIAG-002, RULE-DIAG-023, RULE-DIAG-003]
+  exams: [DIAG-EXAM-002, DIAG-EXAM-007]
+  protocols: [PROT-EMERGENCY_P-003]
+  trace_order: [DIAG-REDFLAG-005, DIAG-EMERGENCY-001, RULE-DIAG-002]

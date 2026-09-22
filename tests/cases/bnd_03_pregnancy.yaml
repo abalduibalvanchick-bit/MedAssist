@@ -1,0 +1,13 @@
+id: BND-03
+group: boundary
+title: АД 152/96 у беременной — особенности группы и предупреждение о препаратах
+patient:
+  age: 29
+  params: {sbp: 152, dbp: 96}
+  facts: {pregnant: true}
+expect:
+  status: ok
+  urgency: urgent
+  profiles: [GLB-PROFILE-002]
+  rules_fired: [RULE-GLB-002, RULE-DIAG-010]
+  warnings_from: [RULE-GLB-002]

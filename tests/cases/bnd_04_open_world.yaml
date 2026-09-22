@@ -1,0 +1,10 @@
+id: BND-04
+group: boundary
+title: Мигренозные признаки без исключения вторичной головной боли — вывод не делается
+patient:
+  age: 30
+  features: [headache.unilateral, headache.pulsating, headache.nausea, headache.recurrent_attacks]
+  params: {sbp: 118, dbp: 76}
+expect:
+  rules_not_fired: [RULE-DIAG-008]
+  questions_from: [DIAG-REDFLAG-002]

@@ -37,16 +37,26 @@ def _labels_for(refs, kb: "KnowledgeBase") -> list[str]:
     return labels
 
 
+# Клинические «якоря»: условие опасного состояния считается частично
+# выполненным, только если истинен хотя бы один такой атом. Одних общих
+# фактов и параметров (возраст, спутанность сознания) недостаточно — иначе
+# решатель задавал бы вопросы о состояниях, не связанных с жалобами.
+_ANCHOR_ATOMS = ("symptom", "feature", "disease", "exam_result", "redflag", "emergency")
+
+
 def _partially_met(condition: dict[str, Any], memory: "Conclusions", kb: "KnowledgeBase") -> bool:
     trace: list[EvalTrace] = []
     evaluate(condition, memory.facts, kb.schema, trace=trace)
-    atoms = kb.schema.condition_atoms
-    return any(e.result is Truth.TRUE and any(a in e.node for a in atoms) and "known" not in e.node for e in trace)
+    return any(e.result is Truth.TRUE and any(a in e.node for a in _ANCHOR_ATOMS) for e in trace)
 
 
 def build_questions(memory: "Conclusions", kb: "KnowledgeBase") -> list[dict[str, Any]]:
     questions: list[dict[str, Any]] = []
     seen_texts: set[str] = set()
+    facts = memory.facts
+    if not (facts.symptoms or facts.diseases or facts.exam_results):
+        questions.append({"kind": "general", "source": "", "ask": [],
+                          "text": "Опишите основные жалобы пациента: какие симптомы, когда появились, как менялись."})
 
     for item in memory.clarifications:
         if item["text"] not in seen_texts:

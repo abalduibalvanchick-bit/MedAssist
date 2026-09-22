@@ -1,0 +1,14 @@
+id: BND-02
+group: boundary
+title: Неполные данные для CURB-65 — категория не определяется, запрос мочевины
+patient:
+  age: 70
+  features: [cough.productive, fever.chills]
+  params: {rr: 24, sbp: 110, dbp: 70}
+  facts: {confusion: false}
+expect:
+  status: ok
+  no_scales: [PROT-SCALE-004]
+  working_diagnoses: [DIAG-DISEASE-003]
+  questions_from: [PROT-SCALE-004]
+  question_asks: ["Мочевина"]

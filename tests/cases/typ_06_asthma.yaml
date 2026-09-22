@@ -1,0 +1,15 @@
+id: TYP-06
+group: typical
+title: Тяжёлое обострение астмы, SpO2 90 %
+patient:
+  age: 34
+  features: [wheezing.expiratory, dyspnea.unable_full_sentences]
+  params: {spo2: 90, rr: 28}
+  facts: {known_asthma: true}
+expect:
+  status: ok
+  urgency: emergency
+  red_flags: [DIAG-REDFLAG-006]
+  emergencies: [DIAG-EMERGENCY-005]
+  rules_fired: [RULE-PROT-004, RULE-DIAG-033]
+  protocols: [PROT-EMERGENCY_P-005]

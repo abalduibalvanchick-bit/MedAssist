@@ -83,7 +83,7 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
                      or memory.routes or memory.protocols or memory.facts.diseases)
     if memory.refusal is not None:
         status = "refused"
-    elif not concluded and questions:
+    elif not concluded:
         status = "need_more_data"
     else:
         status = "ok"

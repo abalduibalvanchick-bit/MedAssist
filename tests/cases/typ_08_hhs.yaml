@@ -1,0 +1,16 @@
+id: TYP-08
+group: typical
+title: Гликемия 36 ммоль/л со спутанностью сознания — ГГС
+patient:
+  age: 68
+  symptoms: [DIAG-SYMPTOM-006]
+  params: {glucose: 36}
+  facts: {confusion: true, known_diabetes: true}
+expect:
+  status: ok
+  urgency: emergency
+  red_flags: [DIAG-REDFLAG-004]
+  emergencies: [DIAG-EMERGENCY-004]
+  profiles: [GLB-PROFILE-001]
+  protocols: [PROT-EMERGENCY_P-002]
+  rules_fired: [RULE-GLB-004]

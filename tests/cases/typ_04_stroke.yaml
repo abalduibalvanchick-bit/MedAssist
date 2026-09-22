@@ -1,0 +1,15 @@
+id: TYP-04
+group: typical
+title: Асимметрия лица и слабость руки у пациента с диабетом — ОНМК
+patient:
+  age: 70
+  features: [focal_deficit.face_droop, focal_deficit.arm_weakness]
+  facts: {known_diabetes: true}
+expect:
+  status: ok
+  urgency: emergency
+  emergencies: [DIAG-EMERGENCY-002]
+  hypotheses_top: DIAG-EMERGENCY-002
+  rules_fired: [RULE-DIAG-015, RULE-DIAG-016, RULE-DIAG-032]
+  exams: [DIAG-EXAM-005]
+  questions_from: [RULE-DIAG-032, DIAG-REDFLAG-001]

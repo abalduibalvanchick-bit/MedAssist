@@ -1,0 +1,11 @@
+id: NEG-02
+group: negative
+title: Противоречивые данные — симптом и есть, и отрицается; САД ниже ДАД
+patient:
+  age: 50
+  symptoms: [DIAG-SYMPTOM-002]
+  denied_symptoms: [DIAG-SYMPTOM-002]
+  params: {sbp: 80, dbp: 95}
+expect:
+  status: invalid
+  input_issues: [CONTRADICTION]

@@ -1,0 +1,8 @@
+id: NEG-04
+group: negative
+title: Пустое описание пациента — запрос жалоб
+patient: {}
+expect:
+  status: need_more_data
+  questions_kinds: [general]
+  input_issues: [EMPTY_INPUT]

@@ -1,0 +1,15 @@
+id: TYP-07
+group: typical
+title: Полиурия, жажда и гликемия 12,5 ммоль/л — сахарный диабет
+patient:
+  age: 50
+  symptoms: [DIAG-SYMPTOM-006, DIAG-SYMPTOM-007]
+  params: {glucose: 12.5}
+expect:
+  status: ok
+  urgency: routine
+  hypotheses_top: DIAG-DISEASE-006
+  working_diagnoses: [DIAG-DISEASE-006]
+  rules_fired: [RULE-DIAG-012, RULE-DIAG-013]
+  exams: [DIAG-EXAM-005, DIAG-EXAM-006]
+  questions_from: [PROT-SCALE-002]

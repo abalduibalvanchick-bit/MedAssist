@@ -1,0 +1,13 @@
+id: BND-05
+group: boundary
+title: Лихорадка с менингеальными знаками — состояние вне модели
+patient:
+  age: 25
+  symptoms: [DIAG-SYMPTOM-004]
+  features: [headache.meningism]
+expect:
+  status: ok
+  urgency: emergency
+  red_flags: [DIAG-REDFLAG-002]
+  rules_fired: [RULE-DIAG-018]
+  warnings_from: [RULE-DIAG-018]

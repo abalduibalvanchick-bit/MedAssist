@@ -1,0 +1,9 @@
+id: NEG-06
+group: negative
+title: Одна головная боль без подробностей — недостаточно данных
+patient:
+  age: 40
+  symptoms: [DIAG-SYMPTOM-001]
+expect:
+  status: need_more_data
+  questions_from: [RULE-DIAG-028, DIAG-REDFLAG-002]

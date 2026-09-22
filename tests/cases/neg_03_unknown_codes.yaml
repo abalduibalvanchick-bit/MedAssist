@@ -1,0 +1,13 @@
+id: NEG-03
+group: negative
+title: Неизвестные коды и значения вне диапазона
+patient:
+  age: 40
+  symptoms: [DIAG-SYMPTOM-999]
+  features: [chest_pain.stabbing_left]
+  params: {sbp: 900, mood: 5}
+  facts: {likes_coffee: true}
+  exam_results: {DIAG-EXAM-002: normal_sinus}
+expect:
+  status: invalid
+  input_issues: [UNKNOWN_SYMPTOM, UNKNOWN_FEATURE, OUT_OF_RANGE, UNKNOWN_PARAM, UNKNOWN_FACT, BAD_VALUE]

@@ -1,0 +1,10 @@
+id: NEG-01
+group: negative
+title: Пациент 7 лет — отказ, граница применимости
+patient:
+  age: 7
+  symptoms: [DIAG-SYMPTOM-004]
+expect:
+  status: refused
+  rules_fired: [RULE-GLB-001]
+  no_hypotheses: true

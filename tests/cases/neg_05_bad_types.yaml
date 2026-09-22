@@ -1,0 +1,11 @@
+id: NEG-05
+group: negative
+title: Неверные типы данных
+patient:
+  age: "шестьдесят"
+  symptoms: DIAG-SYMPTOM-001
+  facts: {smoker: "да"}
+  params: {troponin_positive: 1}
+expect:
+  status: invalid
+  input_issues: [BAD_VALUE]

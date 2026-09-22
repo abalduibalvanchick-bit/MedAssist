@@ -1,0 +1,18 @@
+id: TYP-02
+group: typical
+title: Стенокардия напряжения, признаки нестабильности отрицаются
+patient:
+  age: 58
+  features: [chest_pain.pressing, chest_pain.exertional, chest_pain.relieved_by_rest]
+  denied_features: [chest_pain.at_rest, chest_pain.new_onset, chest_pain.nitrate_unresponsive]
+  params: {symptom_duration_min: 5}
+expect:
+  status: ok
+  urgency: urgent
+  no_red_flags: true
+  no_emergencies: true
+  hypotheses_top: DIAG-DISEASE-002
+  working_diagnoses: [DIAG-DISEASE-002]
+  rules_fired: [RULE-DIAG-001]
+  rules_not_fired: [RULE-DIAG-002]
+  questions_from: [DIAG-REDFLAG-001]
