@@ -38,10 +38,15 @@ relations:
 - target: DIAG-SYMPTOM-009
   type: has_symptom
   description: перенесено из поля related (схема v1)
+- target: DIAG-EXAM-017
+  type: diagnosed_by
+  description: ПСВ менее 50 %
 criteria:
   any:
   - redflag: DIAG-REDFLAG-006
   - feature: wheezing.silent_chest
+  - exam_result: DIAG-EXAM-017
+    value: severe
 emergency_protocol: PROT-EMERGENCY_P-005
 time_critical: true
 sources:
@@ -53,9 +58,9 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.1'
+version: '2.2'
 date_created: '2026-05-01'
-date_updated: '2026-09-21'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

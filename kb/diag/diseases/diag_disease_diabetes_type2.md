@@ -45,6 +45,21 @@ relations:
 - target: DIAG-REDFLAG-005
   type: has_red_flag
   description: перенесено из поля related (схема v1)
+- target: DIAG-EXAM-011
+  type: diagnosed_by
+  description: выведено из машиночитаемого слоя (exams)
+- target: DIAG-EXAM-015
+  type: diagnosed_by
+  description: выведено из машиночитаемого слоя (exams)
+- target: DIAG-EXAM-016
+  type: diagnosed_by
+  description: выведено из машиночитаемого слоя (exams)
+- target: DIAG-EXAM-014
+  type: diagnosed_by
+  description: выведено из машиночитаемого слоя (exams)
+- target: DIAG-DIFDIAG-005
+  type: considered_in
+  description: основная причина полиурии и жажды
 presentation:
 - symptom: DIAG-SYMPTOM-006
   weight: 2
@@ -56,6 +71,16 @@ presentation:
   frequency: common
   features:
   - polydipsia.dry_mouth
+- symptom: DIAG-SYMPTOM-011
+  weight: 1
+  frequency: common
+  features:
+  - fatigue.progressive
+- symptom: DIAG-SYMPTOM-015
+  weight: 1
+  frequency: uncommon
+  features:
+  - visual_disturbance.blurred
 red_flags:
 - DIAG-REDFLAG-004
 exams:
@@ -65,6 +90,18 @@ exams:
 - exam: DIAG-EXAM-006
   role: confirms
   expected: diabetes_range
+- exam: DIAG-EXAM-011
+  role: stratifies
+  expected: СКФ — выбор препаратов и дозы
+- exam: DIAG-EXAM-015
+  role: stratifies
+  expected: a2 и выше — диабетическая нефропатия
+- exam: DIAG-EXAM-016
+  role: stratifies
+  expected: оценка сердечно-сосудистого риска
+- exam: DIAG-EXAM-014
+  role: excludes
+  expected: negative — исключение кетоацидоза при декомпенсации
 differentials: []
 applies_when:
   not:
@@ -78,9 +115,9 @@ clinical_guidelines:
 last_medical_review: '2025-02-10'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.1'
+version: '2.3'
 date_created: '2026-05-01'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

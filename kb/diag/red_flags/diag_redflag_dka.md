@@ -39,6 +39,9 @@ relations:
 - target: DIAG-EXAM-005
   type: diagnosed_by
   description: перенесено из поля related (схема v1)
+- target: DIAG-EXAM-014
+  type: diagnosed_by
+  description: подтверждение кетоацидоза
 triggers:
   all:
   - param: glucose
@@ -50,6 +53,9 @@ triggers:
       - symptom: DIAG-SYMPTOM-005
       - feature: abdominal_pain.vomiting
     - fact: confusion
+    - exam_result: DIAG-EXAM-014
+      value: high
+    - feature: nausea_vomiting.repeated
 indicates:
 - DIAG-DISEASE-006
 action: PROT-EMERGENCY_P-002
@@ -62,9 +68,9 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.1'
+version: '2.2'
 date_created: '2026-05-02'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

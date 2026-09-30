@@ -39,6 +39,9 @@ relations:
 - target: DIAG-EXAM-004
   type: diagnosed_by
   description: перенесено из поля related (схема v1)
+- target: DIAG-DIFDIAG-004
+  type: has_differential
+  description: дифференциальная диагностика кашля с лихорадкой
 features:
 - code: cough.productive
   label: влажный, с мокротой
@@ -65,9 +68,9 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.2'
+version: '2.3'
 date_created: '2026-05-01'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

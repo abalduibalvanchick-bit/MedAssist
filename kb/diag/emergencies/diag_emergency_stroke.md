@@ -41,6 +41,15 @@ relations:
 - target: DIAG-SYMPTOM-010
   type: has_symptom
   description: ведущее проявление — остро возникший очаговый неврологический дефицит
+- target: DIAG-EXAM-018
+  type: diagnosed_by
+  description: нейровизуализация
+- target: DIAG-SYMPTOM-013
+  type: has_symptom
+  description: внезапное головокружение с атаксией — инсульт задней циркуляции
+- target: DIAG-SYMPTOM-015
+  type: has_symptom
+  description: внезапная потеря зрения, двоение
 criteria:
   any:
   - feature: focal_deficit.face_droop
@@ -51,6 +60,14 @@ criteria:
   - all:
     - symptom: DIAG-SYMPTOM-010
     - feature: focal_deficit.sudden_onset
+  - feature: visual_disturbance.sudden_loss
+  - all:
+    - feature: dizziness.sudden_onset
+    - feature: dizziness.unable_to_walk
+  - exam_result: DIAG-EXAM-018
+    value: ischemic_signs
+  - exam_result: DIAG-EXAM-018
+    value: hemorrhage
 time_critical: true
 sources:
 - Клинические рекомендации «Ишемический инсульт и транзиторная ишемическая атака у взрослых». Минздрав РФ, 2024.
@@ -61,9 +78,9 @@ clinical_guidelines:
 last_medical_review: '2026-04-30'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.2'
+version: '2.3'
 date_created: '2026-04-30'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

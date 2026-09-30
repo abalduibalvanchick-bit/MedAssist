@@ -75,6 +75,9 @@ exams:
 - exam: DIAG-EXAM-010
   role: stratifies
   expected: SpO₂ менее 92 % — тяжёлое обострение
+- exam: DIAG-EXAM-017
+  role: stratifies
+  expected: ПСВ менее 50 % — тяжёлое обострение
 differentials:
 - DIAG-DISEASE-003
 applies_when:
@@ -89,9 +92,9 @@ clinical_guidelines:
 last_medical_review: '2026-04-30'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.1'
+version: '2.2'
 date_created: '2026-04-30'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

@@ -67,6 +67,7 @@ steps:
   action: оценка контроля по ACT
   refs:
   - PROT-SCALE-005
+  - DIAG-EXAM-017
 - id: therapy
   action: 'ступенчатая терапия: низкие дозы ИГКС-формотерола по потребности или базисно'
   refs:
@@ -106,9 +107,9 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.1'
+version: '2.2'
 date_created: '2026-05-02'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

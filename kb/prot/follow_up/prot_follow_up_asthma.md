@@ -60,6 +60,8 @@ monitor:
   label: пиковая скорость выдоха
 - exam: DIAG-EXAM-008
   label: спирометрия ежегодно
+- exam: DIAG-EXAM-017
+  label: ежедневный самоконтроль ПСВ по плану действий
 deterioration:
   any:
   - param: pef_percent
@@ -78,9 +80,9 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.1'
+version: '2.2'
 date_created: '2026-05-02'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

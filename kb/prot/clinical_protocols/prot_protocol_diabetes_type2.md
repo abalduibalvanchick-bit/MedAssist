@@ -96,6 +96,10 @@ steps:
   - PHARM-DRUGCLASS-009
 - id: complications
   action: 'ежегодный скрининг осложнений: глазное дно, альбуминурия, СКФ, осмотр стоп'
+  refs:
+  - DIAG-EXAM-011
+  - DIAG-EXAM-015
+  - DIAG-EXAM-016
 - id: follow_up
   action: контроль HbA1c каждые 3 месяца до достижения цели
   refs:
@@ -136,9 +140,9 @@ clinical_guidelines:
 last_medical_review: '2026-05-02'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.1'
+version: '2.2'
 date_created: '2026-05-02'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

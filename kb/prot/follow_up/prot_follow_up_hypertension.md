@@ -80,6 +80,10 @@ monitor:
   label: функция почек на фоне иАПФ/БРА
 - exam: DIAG-EXAM-002
   label: ЭКГ ежегодно
+- exam: DIAG-EXAM-013
+  label: калий через 1–2 недели после начала иАПФ/БРА, далее ежегодно
+- exam: DIAG-EXAM-011
+  label: креатинин и СКФ ежегодно
 deterioration:
   any:
   - param: sbp
@@ -96,9 +100,9 @@ clinical_guidelines:
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.1'
+version: '2.2'
 date_created: '2026-04-09'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

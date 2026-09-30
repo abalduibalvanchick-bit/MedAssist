@@ -34,6 +34,9 @@ relations:
 - target: PHARM-REGIMEN-001
   type: included_in
   description: Группа входит в схему лечения АГ.
+- target: DIAG-SYMPTOM-016
+  type: associated_with
+  description: периферические отёки на фоне дигидропиридиновых БКК
 representatives:
 - амлодипин
 - нифедипин ретард
@@ -66,9 +69,9 @@ clinical_guidelines:
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.1'
+version: '2.2'
 date_created: '2026-04-09'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

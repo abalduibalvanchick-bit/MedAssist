@@ -37,6 +37,9 @@ relations:
 - target: PHARM-REGIMEN-003
   type: recommends
   description: Контроль эффективности и безопасности терапии.
+- target: DIAG-EXAM-016
+  type: uses_exam
+  description: выведено из машиночитаемого слоя (monitor)
 for:
 - DIAG-DISEASE-002
 - PROT-PROTOCOL-003
@@ -68,6 +71,8 @@ monitor:
   label: функциональный класс стенокардии
 - exam: DIAG-EXAM-002
   label: ЭКГ ежегодно
+- exam: DIAG-EXAM-016
+  label: ХС ЛПНП через 6–8 недель после начала статина, далее ежегодно
 deterioration:
   any:
   - redflag: DIAG-REDFLAG-005
@@ -84,9 +89,9 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.1'
+version: '2.2'
 date_created: '2026-05-02'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

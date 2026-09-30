@@ -78,6 +78,7 @@ steps:
   - PHARM-REGIMEN-003
   - PHARM-DRUGCLASS-011
   - PHARM-DRUGCLASS-012
+  - DIAG-EXAM-016
 - id: antianginal
   action: антиангинальная терапия, препараты первой линии — β-адреноблокаторы или БКК
   refs:
@@ -122,9 +123,9 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.1'
+version: '2.2'
 date_created: '2026-05-02'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

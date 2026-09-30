@@ -46,6 +46,9 @@ relations:
 - target: PHARM-DRUG-020
   type: recommends
   description: перенесено из поля related (схема v1)
+- target: DIAG-EXAM-016
+  type: uses_exam
+  description: выведено из машиночитаемого слоя (monitor)
 for:
 - DIAG-DISEASE-006
 - PROT-PROTOCOL-002
@@ -86,6 +89,12 @@ monitor:
   label: альбуминурия
 - exam: DIAG-EXAM-006
   label: HbA1c каждые 3–6 месяцев
+- exam: DIAG-EXAM-015
+  label: альбуминурия ежегодно
+- exam: DIAG-EXAM-011
+  label: креатинин и СКФ ежегодно
+- exam: DIAG-EXAM-016
+  label: липидный профиль ежегодно
 deterioration:
   any:
   - redflag: DIAG-REDFLAG-004
@@ -103,9 +112,9 @@ clinical_guidelines:
 last_medical_review: '2026-05-02'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.1'
+version: '2.2'
 date_created: '2026-05-02'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

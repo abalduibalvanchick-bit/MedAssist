@@ -35,6 +35,9 @@ relations:
 - target: DIAG-EMERGENCY-002
   type: differentiates_from
   description: мигрень с аурой требует исключения ОНМК
+- target: DIAG-EXAM-018
+  type: diagnosed_by
+  description: выведено из машиночитаемого слоя (exams)
 presentation:
 - symptom: DIAG-SYMPTOM-001
   weight: 3
@@ -46,12 +49,25 @@ presentation:
   - headache.photophobia
   - headache.worse_with_activity
   - headache.recurrent_attacks
+- symptom: DIAG-SYMPTOM-014
+  weight: 2
+  frequency: very_common
+  features:
+  - nausea_vomiting.with_headache
+- symptom: DIAG-SYMPTOM-015
+  weight: 2
+  frequency: common
+  features:
+  - visual_disturbance.aura
 red_flags:
 - DIAG-REDFLAG-002
 exams:
 - exam: DIAG-EXAM-009
   role: excludes
   expected: normal — исключение вторичной головной боли
+- exam: DIAG-EXAM-018
+  role: excludes
+  expected: normal — при наличии красных флагов
 differentials:
 - DIAG-EMERGENCY-002
 applies_when:
@@ -66,9 +82,9 @@ clinical_guidelines:
 last_medical_review: '2026-04-30'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.1'
+version: '2.2'
 date_created: '2026-04-30'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

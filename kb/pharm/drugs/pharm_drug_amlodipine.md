@@ -36,6 +36,9 @@ relations:
 - target: PHARM-REGIMEN-001
   type: included_in
   description: Может входить в антигипертензивную схему.
+- target: DIAG-SYMPTOM-016
+  type: associated_with
+  description: отёки лодыжек — частый дозозависимый побочный эффект
 contraindications:
 - when:
     fact: hypotension
@@ -60,9 +63,9 @@ clinical_guidelines:
 last_medical_review: '2025-03-15'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.1'
+version: '2.2'
 date_created: '2025-03-10'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

@@ -43,6 +43,12 @@ relations:
 - target: DIAG-SYMPTOM-003
   type: has_symptom
   description: выведено из машиночитаемого слоя (presentation)
+- target: DIAG-SYMPTOM-011
+  type: has_symptom
+  description: выведено из машиночитаемого слоя (presentation)
+- target: DIAG-EXAM-016
+  type: diagnosed_by
+  description: выведено из машиночитаемого слоя (exams)
 presentation:
 - symptom: DIAG-SYMPTOM-002
   weight: 3
@@ -59,6 +65,14 @@ presentation:
   frequency: common
   features:
   - dyspnea.exertional
+- symptom: DIAG-SYMPTOM-012
+  weight: 1
+  frequency: uncommon
+- symptom: DIAG-SYMPTOM-011
+  weight: 1
+  frequency: uncommon
+  features:
+  - fatigue.exertional
 red_flags:
 - DIAG-REDFLAG-005
 exams:
@@ -70,6 +84,9 @@ exams:
   expected: negative — исключение острого повреждения миокарда
 - exam: DIAG-EXAM-001
   role: monitors
+- exam: DIAG-EXAM-016
+  role: monitors
+  expected: ХС ЛПНП менее 1,4 ммоль/л
 differentials:
 - DIAG-EMERGENCY-001
 applies_when:
@@ -84,9 +101,9 @@ clinical_guidelines:
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.1'
+version: '2.2'
 date_created: '2026-04-08'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

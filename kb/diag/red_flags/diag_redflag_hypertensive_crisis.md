@@ -50,6 +50,8 @@ triggers:
     - symptom: DIAG-SYMPTOM-010
     - feature: focal_deficit.visual_loss
     - fact: confusion
+    - feature: visual_disturbance.sudden_loss
+    - feature: visual_disturbance.blurred
 indicates:
 - DIAG-DISEASE-001
 action: PROT-EMERGENCY_P-001
@@ -62,9 +64,9 @@ clinical_guidelines:
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.1'
+version: '2.2'
 date_created: '2026-04-08'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

@@ -38,6 +38,9 @@ relations:
 - target: DIAG-REDFLAG-004
   type: has_red_flag
   description: резкое усиление полиурии может указывать на декомпенсацию диабета
+- target: DIAG-DIFDIAG-005
+  type: has_differential
+  description: дифференциальная диагностика полиурии и жажды
 features:
 - code: polyuria.nocturia
   label: ночное мочеиспускание
@@ -51,9 +54,9 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.2'
+version: '2.3'
 date_created: '2026-05-01'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

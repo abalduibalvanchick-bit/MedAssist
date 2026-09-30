@@ -50,6 +50,12 @@ relations:
 - target: DIAG-SYMPTOM-002
   type: has_symptom
   description: выведено из машиночитаемого слоя (presentation)
+- target: DIAG-EXAM-012
+  type: diagnosed_by
+  description: выведено из машиночитаемого слоя (exams)
+- target: DIAG-DIFDIAG-004
+  type: considered_in
+  description: основная причина кашля с лихорадкой
 presentation:
 - symptom: DIAG-SYMPTOM-008
   weight: 3
@@ -74,6 +80,11 @@ presentation:
   frequency: uncommon
   features:
   - chest_pain.pleuritic
+- symptom: DIAG-SYMPTOM-011
+  weight: 1
+  frequency: common
+  features:
+  - fatigue.sudden_severe
 red_flags:
 - DIAG-REDFLAG-003
 exams:
@@ -86,6 +97,9 @@ exams:
 - exam: DIAG-EXAM-010
   role: stratifies
   expected: SpO₂ менее 93 % — тяжёлое течение
+- exam: DIAG-EXAM-012
+  role: stratifies
+  expected: мочевина для CURB-65
 differentials:
 - DIAG-DISEASE-004
 applies_when:
@@ -100,9 +114,9 @@ clinical_guidelines:
 last_medical_review: '2026-04-30'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.1'
+version: '2.3'
 date_created: '2026-04-30'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

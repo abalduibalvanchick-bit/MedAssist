@@ -43,6 +43,18 @@ relations:
 - target: DIAG-EXAM-005
   type: diagnosed_by
   description: выведено из машиночитаемого слоя (exams)
+- target: DIAG-EXAM-011
+  type: diagnosed_by
+  description: выведено из машиночитаемого слоя (exams)
+- target: DIAG-EXAM-015
+  type: diagnosed_by
+  description: выведено из машиночитаемого слоя (exams)
+- target: DIAG-EXAM-016
+  type: diagnosed_by
+  description: выведено из машиночитаемого слоя (exams)
+- target: DIAG-EXAM-013
+  type: diagnosed_by
+  description: выведено из машиночитаемого слоя (exams)
 presentation:
 - symptom: DIAG-SYMPTOM-001
   weight: 1
@@ -54,6 +66,19 @@ presentation:
   frequency: uncommon
   features:
   - dyspnea.exertional
+- symptom: DIAG-SYMPTOM-013
+  weight: 1
+  frequency: uncommon
+  features:
+  - dizziness.orthostatic
+- symptom: DIAG-SYMPTOM-015
+  weight: 1
+  frequency: uncommon
+  features:
+  - visual_disturbance.blurred
+- symptom: DIAG-SYMPTOM-012
+  weight: 1
+  frequency: uncommon
 red_flags:
 - DIAG-REDFLAG-001
 exams:
@@ -66,6 +91,18 @@ exams:
 - exam: DIAG-EXAM-005
   role: stratifies
   expected: оценка сопутствующих факторов риска
+- exam: DIAG-EXAM-011
+  role: stratifies
+  expected: СКФ — поражение почек как органа-мишени
+- exam: DIAG-EXAM-015
+  role: stratifies
+  expected: a2 и выше — поражение почек
+- exam: DIAG-EXAM-016
+  role: stratifies
+  expected: оценка сердечно-сосудистого риска
+- exam: DIAG-EXAM-013
+  role: monitors
+  expected: калий на фоне иАПФ, БРА, диуретиков
 differentials: []
 applies_when:
   not:
@@ -79,9 +116,9 @@ clinical_guidelines:
 last_medical_review: '2025-02-15'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №1
-version: '2.1'
+version: '2.2'
 date_created: '2025-01-20'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

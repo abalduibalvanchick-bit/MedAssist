@@ -72,6 +72,10 @@ steps:
   refs:
   - DIAG-EXAM-002
   - DIAG-EXAM-005
+  - DIAG-EXAM-011
+  - DIAG-EXAM-015
+  - DIAG-EXAM-016
+  - DIAG-EXAM-013
 - id: lifestyle
   action: 'модификация образа жизни: соль менее 5 г/сут, диета DASH, физическая активность, отказ от курения'
   refs:
@@ -124,9 +128,9 @@ clinical_guidelines:
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №3
-version: '2.1'
+version: '2.2'
 date_created: '2026-04-09'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---
