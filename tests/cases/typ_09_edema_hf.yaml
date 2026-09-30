@@ -1,0 +1,14 @@
+id: TYP-09
+group: typical
+title: Отёки голеней с ортопноэ — сердечная недостаточность вне модели
+patient:
+  age: 74
+  features: [edema.bilateral_legs, dyspnea.orthopnea]
+  params: {sbp: 145, dbp: 85, spo2: 94}
+  facts: {known_hypertension: true}
+expect:
+  status: ok
+  urgency: urgent
+  rules_fired: [RULE-DIAG-034]
+  warnings_from: [RULE-DIAG-034]
+  exams: [DIAG-EXAM-002, DIAG-EXAM-011]

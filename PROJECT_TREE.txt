@@ -35,8 +35,10 @@ medassist/
         diag/
             differential_diagnosis/
                 diag_difdiag_chest_pain.md
+                diag_difdiag_cough_fever.md
                 diag_difdiag_dyspnea.md
                 diag_difdiag_headache.md
+                diag_difdiag_polyuria.md
                 index.md
             diseases/
                 diag_disease_asthma.md
@@ -55,16 +57,24 @@ medassist/
                 diag_emergency_stroke.md
                 index.md
             exams/
+                diag_exam_albuminuria.md
                 diag_exam_bp_measurement.md
                 diag_exam_cbc.md
                 diag_exam_chest_xray.md
+                diag_exam_creatinine_egfr.md
+                diag_exam_ct_head.md
                 diag_exam_ecg.md
                 diag_exam_fasting_glucose.md
                 diag_exam_hba1c.md
+                diag_exam_ketones.md
+                diag_exam_lipid_profile.md
                 diag_exam_neuro_exam.md
+                diag_exam_peak_flow.md
+                diag_exam_potassium.md
                 diag_exam_pulse_oximetry.md
                 diag_exam_spirometry.md
                 diag_exam_troponin.md
+                diag_exam_urea.md
                 index.md
             red_flags/
                 diag_redflag_dka.md
@@ -78,12 +88,18 @@ medassist/
                 diag_symptom_abdominal_pain.md
                 diag_symptom_chest_pain.md
                 diag_symptom_cough.md
+                diag_symptom_dizziness.md
                 diag_symptom_dyspnea.md
+                diag_symptom_edema.md
+                diag_symptom_fatigue.md
                 diag_symptom_fever.md
                 diag_symptom_focal_neuro_deficit.md
                 diag_symptom_headache.md
+                diag_symptom_nausea_vomiting.md
+                diag_symptom_palpitations.md
                 diag_symptom_polydipsia.md
                 diag_symptom_polyuria.md
+                diag_symptom_visual_disturbance.md
                 diag_symptom_wheezing.md
                 index.md
             index.md
@@ -166,8 +182,17 @@ medassist/
             drugs/
                 index.md
                 pharm_drug_amlodipine.md
+                pharm_drug_amoxicillin.md
+                pharm_drug_aspirin.md
+                pharm_drug_atorvastatin.md
+                pharm_drug_azithromycin.md
+                pharm_drug_bisoprolol.md
+                pharm_drug_budesonide_formoterol.md
                 pharm_drug_enalapril.md
+                pharm_drug_ibuprofen.md
                 pharm_drug_metformin.md
+                pharm_drug_salbutamol.md
+                pharm_drug_sumatriptan.md
             interactions/
                 index.md
                 pharm_interaction_metformin_contrast.md
@@ -256,6 +281,7 @@ medassist/
             index.md
         rules/
             diag_hypotheses.yaml
+            diag_symptoms_ext.yaml
             diag_workup.yaml
             glb_boundaries.yaml
             pharm_safety.yaml
@@ -334,6 +360,8 @@ medassist/
             bnd_03_pregnancy.yaml
             bnd_04_open_world.yaml
             bnd_05_meningism.yaml
+            bnd_06_pef_severe.yaml
+            bnd_07_pneumonia_no_urea.yaml
             neg_01_child.yaml
             neg_02_contradiction.yaml
             neg_03_unknown_codes.yaml
@@ -348,6 +376,11 @@ medassist/
             typ_06_asthma.yaml
             typ_07_diabetes.yaml
             typ_08_hhs.yaml
+            typ_09_edema_hf.yaml
+            typ_10_palpitations_syncope.yaml
+            typ_11_vertigo_stroke.yaml
+            typ_12_migraine_aura.yaml
+            typ_13_diabetes_vomiting.yaml
         expected_results/
             .gitkeep
         scenarios/

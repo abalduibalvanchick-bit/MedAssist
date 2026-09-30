@@ -35,11 +35,16 @@ relations:
 - target: PHARM-REGIMEN-003
   type: included_in
   description: Первая линия антиангинальной терапии при ИБС.
+- target: PHARM-DRUG-010
+  type: includes
+  description: представитель группы
 representatives:
 - бисопролол
 - метопролола сукцинат
 - небиволол
 - карведилол
+members:
+- PHARM-DRUG-010
 contraindications:
 - when:
     param: hr
@@ -66,9 +71,9 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.1'
+version: '2.3'
 date_created: '2026-05-02'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

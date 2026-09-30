@@ -31,9 +31,14 @@ relations:
 - target: PHARM-REGIMEN-005
   type: included_in
   description: Входят в схемы лечения астмы для всех ступеней.
+- target: PHARM-DRUG-006
+  type: includes
+  description: представитель группы
 representatives:
 - сальбутамол
 - фенотерол
+members:
+- PHARM-DRUG-006
 contraindications:
 - when:
     param: hr
@@ -50,9 +55,9 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.1'
+version: '2.3'
 date_created: '2026-05-02'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

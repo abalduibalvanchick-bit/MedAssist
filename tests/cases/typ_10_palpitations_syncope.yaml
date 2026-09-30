@@ -1,0 +1,12 @@
+id: TYP-10
+group: typical
+title: Сердцебиение с обмороком — экстренно
+patient:
+  age: 58
+  features: [palpitations.irregular, palpitations.with_syncope]
+expect:
+  status: ok
+  urgency: emergency
+  rules_fired: [RULE-DIAG-036]
+  exams: [DIAG-EXAM-002]
+  warnings_from: [RULE-DIAG-036]

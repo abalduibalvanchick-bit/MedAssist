@@ -2,24 +2,24 @@
 
 # Статистика базы знаний MedAssist
 
-Всего карточек: **166**. Всего связей: **630**, из них междоменных: **221**.
+Всего карточек: **191**. Всего связей: **756**, из них междоменных: **255**.
 
 ## По доменам и категориям
 
 | Домен | Категория | Карточек |
 |---|---|---|
-| `diag` | `difdiag` | 3 |
+| `diag` | `difdiag` | 5 |
 | `diag` | `disease` | 6 |
 | `diag` | `emergency` | 6 |
-| `diag` | `exam` | 10 |
+| `diag` | `exam` | 18 |
 | `diag` | `redflag` | 6 |
-| `diag` | `symptom` | 10 |
+| `diag` | `symptom` | 16 |
 | `glb` | `disclaimer` | 3 |
 | `glb` | `glossary` | 30 |
 | `glb` | `profile` | 5 |
 | `pharm` | `adr` | 1 |
 | `pharm` | `dosing` | 1 |
-| `pharm` | `drug` | 3 |
+| `pharm` | `drug` | 12 |
 | `pharm` | `drugclass` | 21 |
 | `pharm` | `interaction` | 1 |
 | `pharm` | `nonpharm` | 6 |
@@ -37,48 +37,48 @@
 
 | Статус | Карточек |
 |---|---|
-| `approved` | 166 |
+| `approved` | 191 |
 
 ## Типы связей
 
 | Тип | Количество |
 |---|---|
+| `diagnosed_by` | 58 |
+| `included_in` | 50 |
+| `treats` | 49 |
+| `includes` | 45 |
 | `defines` | 43 |
-| `treats` | 37 |
-| `includes` | 36 |
+| `uses_exam` | 38 |
 | `recommends` | 36 |
-| `diagnosed_by` | 33 |
-| `included_in` | 32 |
-| `uses_exam` | 31 |
-| `diagnoses` | 30 |
+| `diagnoses` | 35 |
+| `has_symptom` | 25 |
+| `symptom_of` | 25 |
+| `considers` | 23 |
 | `red_flag_for` | 23 |
 | `next_step` | 23 |
-| `has_symptom` | 22 |
 | `has_red_flag` | 21 |
+| `exam_used_in` | 21 |
 | `assessed_by` | 20 |
 | `emergency_protocol_for` | 20 |
 | `has_emergency_protocol` | 17 |
-| `considers` | 16 |
 | `has_routing` | 15 |
 | `assesses` | 14 |
 | `patient_info_for` | 13 |
 | `routing_for` | 13 |
-| `symptom_of` | 12 |
 | `checklist_for` | 12 |
 | `follow_up_for` | 12 |
 | `screening_for` | 12 |
 | `recommended_by` | 11 |
+| `associated_with` | 10 |
+| `considered_in` | 9 |
 | `has_patient_info` | 8 |
-| `considered_in` | 7 |
 | `complicates` | 6 |
-| `associated_with` | 6 |
 | `protocol_for` | 6 |
 | `has_follow_up` | 6 |
 | `has_checklist` | 6 |
 | `has_screening` | 6 |
-| `exam_used_in` | 4 |
-| `differential_for` | 3 |
-| `has_differential` | 3 |
+| `differential_for` | 5 |
+| `has_differential` | 5 |
 | `dose_adjustment_for` | 3 |
 | `differentiates_from` | 2 |
 | `complicated_by` | 2 |
@@ -94,12 +94,13 @@
 
 | Из домена | В домен | Количество |
 |---|---|---|
-| `diag` | `prot` | 3 |
+| `diag` | `pharm` | 1 |
+| `diag` | `prot` | 20 |
 | `glb` | `diag` | 28 |
 | `glb` | `pharm` | 7 |
 | `glb` | `prot` | 9 |
-| `pharm` | `diag` | 37 |
+| `pharm` | `diag` | 51 |
 | `pharm` | `glb` | 1 |
 | `pharm` | `prot` | 13 |
-| `prot` | `diag` | 86 |
+| `prot` | `diag` | 88 |
 | `prot` | `pharm` | 37 |

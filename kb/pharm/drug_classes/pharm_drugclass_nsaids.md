@@ -27,6 +27,9 @@ relations:
 - target: PHARM-ADR-001
   type: causes_adr
   description: НПВС могут повышать риск желудочно-кишечного кровотечения.
+- target: PHARM-DRUG-007
+  type: includes
+  description: представитель группы
 representatives:
 - ибупрофен
 - диклофенак
@@ -34,6 +37,8 @@ representatives:
 - кеторолак
 - мелоксикам
 - целекоксиб
+members:
+- PHARM-DRUG-007
 contraindications:
 - when:
     fact: gi_bleeding_history
@@ -72,9 +77,9 @@ clinical_guidelines:
 last_medical_review: '2026-04-09'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.1'
+version: '2.3'
 date_created: '2026-04-09'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

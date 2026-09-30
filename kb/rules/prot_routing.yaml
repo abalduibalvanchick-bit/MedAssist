@@ -104,3 +104,28 @@
     - apply_protocol: PROT-EMERGENCY_P-004
   source_cards: [PROT-SCALE-004, DIAG-DISEASE-003, PROT-EMERGENCY_P-004]
   explanation: CURB-65 3 балла и более или выраженная гипоксемия соответствуют тяжёлой пневмонии.
+
+- id: RULE-PROT-008
+  domain: prot
+  title: Артериальная гипертензия — обследование органов-мишеней
+  priority: 40
+  if: {disease: DIAG-DISEASE-001}
+  then:
+    - recommend_exam: {target: DIAG-EXAM-011, role: stratifies}
+    - recommend_exam: {target: DIAG-EXAM-015, role: stratifies}
+    - recommend_exam: {target: DIAG-EXAM-016, role: stratifies}
+    - recommend_exam: {target: DIAG-EXAM-013, role: monitors}
+  source_cards: [PROT-PROTOCOL-001, DIAG-EXAM-011, DIAG-EXAM-015, DIAG-EXAM-016, DIAG-EXAM-013]
+  explanation: Оценка поражения почек и сердечно-сосудистого риска входит в обязательное обследование при АГ (ESH 2023).
+
+- id: RULE-PROT-009
+  domain: prot
+  title: Сахарный диабет 2 типа — скрининг осложнений
+  priority: 40
+  if: {disease: DIAG-DISEASE-006}
+  then:
+    - recommend_exam: {target: DIAG-EXAM-011, role: stratifies}
+    - recommend_exam: {target: DIAG-EXAM-015, role: stratifies}
+    - recommend_exam: {target: DIAG-EXAM-016, role: stratifies}
+  source_cards: [PROT-PROTOCOL-002, DIAG-EXAM-011, DIAG-EXAM-015, DIAG-EXAM-016]
+  explanation: СКФ, альбуминурия и липидный профиль определяются при установлении диагноза и ежегодно (ADA 2025).

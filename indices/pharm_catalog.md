@@ -2,7 +2,7 @@
 
 # Каталог: Фармакология и терапия
 
-Карточек: **39**.
+Карточек: **48**.
 
 | ID | Название | Категория | Срочность | Статус | Файл |
 |---|---|---|---|---|---|
@@ -10,6 +10,15 @@
 | `PHARM-DOSING-001` | Коррекция доз антигипертензивных препаратов при хронической болезни почек | `dosing` | `routine` | `approved` | [kb/pharm/dosing/pharm_dosing_ckd.md](kb/pharm/dosing/pharm_dosing_ckd.md) |
 | `PHARM-DRUG-001` | Эналаприл – Энап, Ренитек, Берлиприл | `drug` | `routine` | `approved` | [kb/pharm/drugs/pharm_drug_enalapril.md](kb/pharm/drugs/pharm_drug_enalapril.md) |
 | `PHARM-DRUG-002` | Амлодипин – Норваск, Амлотоп, Тенокс | `drug` | `routine` | `approved` | [kb/pharm/drugs/pharm_drug_amlodipine.md](kb/pharm/drugs/pharm_drug_amlodipine.md) |
+| `PHARM-DRUG-003` | Амоксициллин – Флемоксин Солютаб, Амосин | `drug` | `routine` | `approved` | [kb/pharm/drugs/pharm_drug_amoxicillin.md](kb/pharm/drugs/pharm_drug_amoxicillin.md) |
+| `PHARM-DRUG-004` | Азитромицин – Сумамед, Азитрокс | `drug` | `routine` | `approved` | [kb/pharm/drugs/pharm_drug_azithromycin.md](kb/pharm/drugs/pharm_drug_azithromycin.md) |
+| `PHARM-DRUG-005` | Будесонид/формотерол – Симбикорт Турбухалер | `drug` | `routine` | `approved` | [kb/pharm/drugs/pharm_drug_budesonide_formoterol.md](kb/pharm/drugs/pharm_drug_budesonide_formoterol.md) |
+| `PHARM-DRUG-006` | Сальбутамол – Вентолин, Саламол | `drug` | `urgent` | `approved` | [kb/pharm/drugs/pharm_drug_salbutamol.md](kb/pharm/drugs/pharm_drug_salbutamol.md) |
+| `PHARM-DRUG-007` | Ибупрофен – Нурофен, МИГ | `drug` | `routine` | `approved` | [kb/pharm/drugs/pharm_drug_ibuprofen.md](kb/pharm/drugs/pharm_drug_ibuprofen.md) |
+| `PHARM-DRUG-008` | Суматриптан – Имигран, Амигренин | `drug` | `routine` | `approved` | [kb/pharm/drugs/pharm_drug_sumatriptan.md](kb/pharm/drugs/pharm_drug_sumatriptan.md) |
+| `PHARM-DRUG-009` | Аторвастатин – Липримар, Аторис | `drug` | `routine` | `approved` | [kb/pharm/drugs/pharm_drug_atorvastatin.md](kb/pharm/drugs/pharm_drug_atorvastatin.md) |
+| `PHARM-DRUG-010` | Бисопролол – Конкор | `drug` | `routine` | `approved` | [kb/pharm/drugs/pharm_drug_bisoprolol.md](kb/pharm/drugs/pharm_drug_bisoprolol.md) |
+| `PHARM-DRUG-011` | Ацетилсалициловая кислота – Аспирин Кардио, ТромбоАСС | `drug` | `routine` | `approved` | [kb/pharm/drugs/pharm_drug_aspirin.md](kb/pharm/drugs/pharm_drug_aspirin.md) |
 | `PHARM-DRUG-020` | Метформин – Глюкофаж, Сиофор, Метфогамма | `drug` | `routine` | `approved` | [kb/pharm/drugs/pharm_drug_metformin.md](kb/pharm/drugs/pharm_drug_metformin.md) |
 | `PHARM-DRUGCLASS-001` | Ингибиторы ангиотензинпревращающего фермента (иАПФ) | `drugclass` | `routine` | `approved` | [kb/pharm/drug_classes/pharm_drugclass_ace_inhibitors.md](kb/pharm/drug_classes/pharm_drugclass_ace_inhibitors.md) |
 | `PHARM-DRUGCLASS-002` | Блокаторы рецепторов ангиотензина II (БРА) | `drugclass` | `routine` | `approved` | [kb/pharm/drug_classes/pharm_drugclass_arb.md](kb/pharm/drug_classes/pharm_drugclass_arb.md) |

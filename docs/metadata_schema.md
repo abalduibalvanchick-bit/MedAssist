@@ -8,7 +8,7 @@
 | `id` | Уникальный идентификатор `DOMAIN-CATEGORY-NNN` |
 | `schema_version` | Версия схемы карточки (2) |
 | `title` | Название карточки |
-| `domain` | Код домена: `prot`, `diag`, `pharm`, `glb` |
+| `domain` | Код домена: `glb`, `prot`, `diag`, `pharm` |
 | `category` | Код категории (см. ниже) |
 | `body_system` | Системы организма (список, enum body_system) |
 | `tags` | Теги для поиска |
@@ -79,7 +79,7 @@
 - **recommendation_class**: `I`, `IIa`, `IIb`, `III`
 - **route**: `outpatient`, `urgent_referral`, `emergency`, `hospitalization`
 - **status**: `draft`, `medical_review`, `approved`, `deprecated`
-- **target_specialist**: `therapist`, `general_practitioner`, `cardiologist`, `pulmonologist`, `gastroenterologist`, `neurologist`, `endocrinologist`, `nephrologist`, `hematologist`, `rheumatologist`, `psychiatrist`, `surgeon`, `oncologist`, `pediatrician`, `obstetrician`, `allergist`, `infectious_disease`, `radiologist`, `dietitian`, `rehabilitation_specialist`, `icu`, `intensivist`, `emergency_physician`, `nursing`, `all_specialties`
+- **target_specialist**: `therapist`, `general_practitioner`, `cardiologist`, `pulmonologist`, `gastroenterologist`, `neurologist`, `ophthalmologist`, `endocrinologist`, `nephrologist`, `hematologist`, `rheumatologist`, `psychiatrist`, `surgeon`, `oncologist`, `pediatrician`, `obstetrician`, `allergist`, `infectious_disease`, `radiologist`, `dietitian`, `rehabilitation_specialist`, `icu`, `intensivist`, `emergency_physician`, `nursing`, `all_specialties`
 - **urgency**: `routine`, `urgent`, `emergency`, `elective`
 - **weight**: `1`, `2`, `3`
 

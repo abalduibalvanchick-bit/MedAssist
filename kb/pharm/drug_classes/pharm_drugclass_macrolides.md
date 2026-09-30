@@ -30,9 +30,14 @@ relations:
 - target: PHARM-REGIMEN-004
   type: included_in
   description: Входят в схемы лечения пневмонии.
+- target: PHARM-DRUG-004
+  type: includes
+  description: представитель группы
 representatives:
 - азитромицин
 - кларитромицин
+members:
+- PHARM-DRUG-004
 contraindications:
 - when:
     fact: hepatic_failure
@@ -47,9 +52,9 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.1'
+version: '2.3'
 date_created: '2026-05-01'
-date_updated: '2026-09-21'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

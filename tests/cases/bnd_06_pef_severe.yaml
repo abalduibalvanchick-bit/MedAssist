@@ -1,0 +1,13 @@
+id: BND-06
+group: boundary
+title: ПСВ менее 50 % по пикфлоуметрии — тяжёлое обострение астмы
+patient:
+  age: 30
+  symptoms: [DIAG-SYMPTOM-009]
+  facts: {known_asthma: true}
+  exam_results: {DIAG-EXAM-017: severe}
+expect:
+  status: ok
+  urgency: emergency
+  emergencies: [DIAG-EMERGENCY-005]
+  rules_fired: [RULE-DIAG-044]

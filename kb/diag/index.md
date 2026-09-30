@@ -2,16 +2,16 @@
 
 # Заболевания, симптомы и диагностика
 
-Домен `diag`, префикс идентификаторов `DIAG`. Карточек: **41**.
+Домен `diag`, префикс идентификаторов `DIAG`. Карточек: **57**.
 
 | Категория | Название | Карточек |
 |---|---|---|
-| [`difdiag`](differential_diagnosis/index.md) | Дифференциальная диагностика | 3 |
+| [`difdiag`](differential_diagnosis/index.md) | Дифференциальная диагностика | 5 |
 | [`disease`](diseases/index.md) | Заболевание | 6 |
 | [`emergency`](emergencies/index.md) | Неотложное состояние (диагностика) | 6 |
-| [`exam`](exams/index.md) | Метод обследования | 10 |
+| [`exam`](exams/index.md) | Метод обследования | 18 |
 | [`redflag`](red_flags/index.md) | Красный флаг | 6 |
-| [`symptom`](symptoms/index.md) | Симптом / синдром | 10 |
+| [`symptom`](symptoms/index.md) | Симптом / синдром | 16 |
 
 ## Все карточки
 
@@ -20,6 +20,8 @@
 | `DIAG-DIFDIAG-001` | Дифференциальная диагностика боли в груди | `difdiag` | `urgent` | `approved` | [differential_diagnosis/diag_difdiag_chest_pain.md](differential_diagnosis/diag_difdiag_chest_pain.md) |
 | `DIAG-DIFDIAG-002` | Дифференциальная диагностика головной боли | `difdiag` | `urgent` | `approved` | [differential_diagnosis/diag_difdiag_headache.md](differential_diagnosis/diag_difdiag_headache.md) |
 | `DIAG-DIFDIAG-003` | Дифференциальная диагностика одышки | `difdiag` | `urgent` | `approved` | [differential_diagnosis/diag_difdiag_dyspnea.md](differential_diagnosis/diag_difdiag_dyspnea.md) |
+| `DIAG-DIFDIAG-004` | Дифференциальная диагностика кашля с лихорадкой | `difdiag` | `urgent` | `approved` | [differential_diagnosis/diag_difdiag_cough_fever.md](differential_diagnosis/diag_difdiag_cough_fever.md) |
+| `DIAG-DIFDIAG-005` | Дифференциальная диагностика полиурии и жажды | `difdiag` | `urgent` | `approved` | [differential_diagnosis/diag_difdiag_polyuria.md](differential_diagnosis/diag_difdiag_polyuria.md) |
 | `DIAG-DISEASE-001` | Артериальная гипертензия | `disease` | `routine` | `approved` | [diseases/diag_disease_hypertension.md](diseases/diag_disease_hypertension.md) |
 | `DIAG-DISEASE-002` | Ишемическая болезнь сердца | `disease` | `urgent` | `approved` | [diseases/diag_disease_ihd.md](diseases/diag_disease_ihd.md) |
 | `DIAG-DISEASE-003` | Пневмония | `disease` | `urgent` | `approved` | [diseases/diag_disease_pneumonia.md](diseases/diag_disease_pneumonia.md) |
@@ -42,6 +44,14 @@
 | `DIAG-EXAM-008` | Спирометрия | `exam` | `routine` | `approved` | [exams/diag_exam_spirometry.md](exams/diag_exam_spirometry.md) |
 | `DIAG-EXAM-009` | Неврологический осмотр | `exam` | `routine` | `approved` | [exams/diag_exam_neuro_exam.md](exams/diag_exam_neuro_exam.md) |
 | `DIAG-EXAM-010` | Пульсоксиметрия | `exam` | `urgent` | `approved` | [exams/diag_exam_pulse_oximetry.md](exams/diag_exam_pulse_oximetry.md) |
+| `DIAG-EXAM-011` | Креатинин сыворотки и расчётная СКФ | `exam` | `routine` | `approved` | [exams/diag_exam_creatinine_egfr.md](exams/diag_exam_creatinine_egfr.md) |
+| `DIAG-EXAM-012` | Мочевина крови | `exam` | `urgent` | `approved` | [exams/diag_exam_urea.md](exams/diag_exam_urea.md) |
+| `DIAG-EXAM-013` | Калий сыворотки | `exam` | `routine` | `approved` | [exams/diag_exam_potassium.md](exams/diag_exam_potassium.md) |
+| `DIAG-EXAM-014` | Кетоны крови и мочи | `exam` | `urgent` | `approved` | [exams/diag_exam_ketones.md](exams/diag_exam_ketones.md) |
+| `DIAG-EXAM-015` | Альбуминурия (отношение альбумин/креатинин в моче) | `exam` | `routine` | `approved` | [exams/diag_exam_albuminuria.md](exams/diag_exam_albuminuria.md) |
+| `DIAG-EXAM-016` | Липидный профиль | `exam` | `routine` | `approved` | [exams/diag_exam_lipid_profile.md](exams/diag_exam_lipid_profile.md) |
+| `DIAG-EXAM-017` | Пикфлоуметрия (пиковая скорость выдоха) | `exam` | `urgent` | `approved` | [exams/diag_exam_peak_flow.md](exams/diag_exam_peak_flow.md) |
+| `DIAG-EXAM-018` | Компьютерная томография головного мозга | `exam` | `emergency` | `approved` | [exams/diag_exam_ct_head.md](exams/diag_exam_ct_head.md) |
 | `DIAG-REDFLAG-001` | Гипертонический криз осложнённый | `redflag` | `emergency` | `approved` | [red_flags/diag_redflag_hypertensive_crisis.md](red_flags/diag_redflag_hypertensive_crisis.md) |
 | `DIAG-REDFLAG-002` | Внезапная сильнейшая головная боль | `redflag` | `emergency` | `approved` | [red_flags/diag_redflag_thunderclap_headache.md](red_flags/diag_redflag_thunderclap_headache.md) |
 | `DIAG-REDFLAG-003` | Выраженная одышка и цианоз | `redflag` | `emergency` | `approved` | [red_flags/diag_redflag_severe_dyspnea_cyanosis.md](red_flags/diag_redflag_severe_dyspnea_cyanosis.md) |
@@ -58,3 +68,9 @@
 | `DIAG-SYMPTOM-008` | Кашель | `symptom` | `routine` | `approved` | [symptoms/diag_symptom_cough.md](symptoms/diag_symptom_cough.md) |
 | `DIAG-SYMPTOM-009` | Свистящее дыхание (wheezing) | `symptom` | `urgent` | `approved` | [symptoms/diag_symptom_wheezing.md](symptoms/diag_symptom_wheezing.md) |
 | `DIAG-SYMPTOM-010` | Остро возникший очаговый неврологический дефицит | `symptom` | `emergency` | `approved` | [symptoms/diag_symptom_focal_neuro_deficit.md](symptoms/diag_symptom_focal_neuro_deficit.md) |
+| `DIAG-SYMPTOM-011` | Слабость и повышенная утомляемость | `symptom` | `routine` | `approved` | [symptoms/diag_symptom_fatigue.md](symptoms/diag_symptom_fatigue.md) |
+| `DIAG-SYMPTOM-012` | Сердцебиение | `symptom` | `urgent` | `approved` | [symptoms/diag_symptom_palpitations.md](symptoms/diag_symptom_palpitations.md) |
+| `DIAG-SYMPTOM-013` | Головокружение | `symptom` | `urgent` | `approved` | [symptoms/diag_symptom_dizziness.md](symptoms/diag_symptom_dizziness.md) |
+| `DIAG-SYMPTOM-014` | Тошнота и рвота | `symptom` | `routine` | `approved` | [symptoms/diag_symptom_nausea_vomiting.md](symptoms/diag_symptom_nausea_vomiting.md) |
+| `DIAG-SYMPTOM-015` | Нарушение зрения | `symptom` | `urgent` | `approved` | [symptoms/diag_symptom_visual_disturbance.md](symptoms/diag_symptom_visual_disturbance.md) |
+| `DIAG-SYMPTOM-016` | Отёки нижних конечностей | `symptom` | `routine` | `approved` | [symptoms/diag_symptom_edema.md](symptoms/diag_symptom_edema.md) |

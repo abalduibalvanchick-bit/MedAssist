@@ -1,0 +1,149 @@
+# Правила для симптомов, добавленных при расширении базы знаний:
+# слабость, сердцебиение, головокружение, тошнота и рвота, нарушение зрения, отёки.
+# Часть правил фиксирует границы применимости: состояния вне модели
+# (сердечная недостаточность, тромбоз, аритмии) не диагностируются,
+# но получают срочность и предупреждение.
+
+- id: RULE-DIAG-034
+  domain: diag
+  title: Отёки с одышкой — подозрение на сердечную недостаточность (вне модели)
+  priority: 80
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-016}
+      - any:
+          - {feature: dyspnea.orthopnea}
+          - {feature: dyspnea.at_rest}
+          - {feature: dyspnea.nocturnal_attacks}
+  then:
+    - set_urgency: urgent
+    - recommend_exam: {target: DIAG-EXAM-002, role: supports}
+    - recommend_exam: {target: DIAG-EXAM-011, role: supports}
+    - warn: "Отёки в сочетании с одышкой в покое или ортопноэ указывают на возможную сердечную недостаточность, которая не представлена отдельной карточкой базы знаний; требуется очная оценка врача."
+  source_cards: [DIAG-SYMPTOM-016, DIAG-SYMPTOM-003]
+  explanation: Сочетание периферических отёков и ортопноэ — классический признак застойной сердечной недостаточности (ESC 2021).
+
+- id: RULE-DIAG-035
+  domain: diag
+  title: Односторонний отёк ноги — подозрение на тромбоз (вне модели)
+  priority: 85
+  if: {feature: edema.unilateral_leg}
+  then:
+    - set_urgency: urgent
+    - warn: "Односторонний отёк ноги требует исключения тромбоза глубоких вен, который не представлен в базе знаний; при одышке или боли в груди — экстренно."
+  source_cards: [DIAG-SYMPTOM-016]
+  explanation: Асимметричный отёк конечности — ведущий признак тромбоза глубоких вен.
+
+- id: RULE-DIAG-036
+  domain: diag
+  title: Сердцебиение с обмороком
+  priority: 95
+  if:
+    any:
+      - {feature: palpitations.with_syncope}
+      - all:
+          - {symptom: DIAG-SYMPTOM-012}
+          - {fact: syncope}
+  then:
+    - set_urgency: emergency
+    - route: {value: emergency, timeframe: немедленно}
+    - recommend_exam: {target: DIAG-EXAM-002, role: confirms}
+    - warn: "Сердцебиение с обмороком — признак гемодинамически значимой аритмии; нарушения ритма не представлены отдельными карточками базы знаний."
+  source_cards: [DIAG-SYMPTOM-012, DIAG-EXAM-002]
+  explanation: Синкопе на фоне сердцебиения ассоциировано с жизнеугрожающими аритмиями (EHRA).
+
+- id: RULE-DIAG-037
+  domain: diag
+  title: Внезапное головокружение с невозможностью стоять — подозрение на инсульт
+  priority: 95
+  if:
+    all:
+      - {feature: dizziness.sudden_onset}
+      - {feature: dizziness.unable_to_walk}
+  then:
+    - assert_hypothesis: {target: DIAG-EMERGENCY-002, weight: 2}
+    - set_urgency: emergency
+    - route: {value: emergency, timeframe: немедленно}
+    - recommend_exam: {target: DIAG-EXAM-009, role: confirms}
+  source_cards: [DIAG-SYMPTOM-013, DIAG-EMERGENCY-002]
+  explanation: Остро возникшее головокружение с выраженной атаксией характерно для инсульта в вертебробазилярном бассейне (TiTrATE).
+
+- id: RULE-DIAG-038
+  domain: diag
+  title: Внезапная потеря зрения или двоение
+  priority: 95
+  if:
+    any:
+      - {feature: visual_disturbance.sudden_loss}
+      - all:
+          - {feature: visual_disturbance.diplopia}
+          - {feature: dizziness.sudden_onset}
+  then:
+    - assert_hypothesis: {target: DIAG-EMERGENCY-002, weight: 2}
+    - set_urgency: emergency
+    - route: {value: emergency, timeframe: немедленно}
+  source_cards: [DIAG-SYMPTOM-015, DIAG-EMERGENCY-002]
+  explanation: Внезапное выпадение зрения — проявление транзиторной ишемической атаки или инсульта и требует экстренной оценки.
+
+- id: RULE-DIAG-039
+  domain: diag
+  title: Зрительная аура перед головной болью
+  priority: 60
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-001}
+      - {feature: visual_disturbance.aura}
+      - not: {feature: visual_disturbance.sudden_loss}
+  then:
+    - assert_hypothesis: {target: DIAG-DISEASE-005, weight: 2}
+    - recommend_exam: {target: DIAG-EXAM-009, role: excludes}
+  source_cards: [DIAG-SYMPTOM-015, DIAG-DISEASE-005]
+  explanation: Постепенно развивающиеся и обратимые зрительные феномены перед головной болью — типичная мигренозная аура (ICHD-3).
+
+- id: RULE-DIAG-040
+  domain: diag
+  title: Тошнота и рвота у пациента с диабетом
+  priority: 85
+  if:
+    all:
+      - any:
+          - {fact: known_diabetes}
+          - {disease: DIAG-DISEASE-006}
+      - {symptom: DIAG-SYMPTOM-014}
+  then:
+    - set_urgency: urgent
+    - recommend_exam: {target: DIAG-EXAM-005, role: confirms}
+    - recommend_exam: {target: DIAG-EXAM-014, role: confirms}
+  source_cards: [DIAG-SYMPTOM-014, DIAG-EXAM-014, DIAG-REDFLAG-004]
+  explanation: Тошнота и рвота у пациента с диабетом — возможное проявление кетоацидоза; требуются глюкоза и кетоны.
+
+- id: RULE-DIAG-041
+  domain: diag
+  title: Слабость в сочетании с жаждой или полиурией
+  priority: 40
+  if:
+    all:
+      - {symptom: DIAG-SYMPTOM-011}
+      - any:
+          - {symptom: DIAG-SYMPTOM-006}
+          - {symptom: DIAG-SYMPTOM-007}
+  then:
+    - assert_hypothesis: {target: DIAG-DISEASE-006, weight: 1}
+  source_cards: [DIAG-SYMPTOM-011, DIAG-DISEASE-006]
+  explanation: Слабость при полиурии и жажде усиливает подозрение на гипергликемию.
+
+- id: RULE-DIAG-042
+  domain: diag
+  title: Ортостатическое головокружение у пожилого или при АГ
+  priority: 50
+  if:
+    all:
+      - {feature: dizziness.orthostatic}
+      - any:
+          - {profile: GLB-PROFILE-001}
+          - {fact: known_hypertension}
+  then:
+    - recommend_exam: {target: DIAG-EXAM-001, role: monitors}
+    - warn: "Оценить ортостатическую гипотензию: измерить АД лёжа и через 3 минуты стоя; при необходимости пересмотреть антигипертензивную терапию. Повышен риск падений."
+  source_cards: [DIAG-SYMPTOM-013, GLB-PROFILE-001, DIAG-EXAM-001]
+  explanation: Ортостатическая гипотензия — частая причина головокружения у пожилых на антигипертензивной терапии.

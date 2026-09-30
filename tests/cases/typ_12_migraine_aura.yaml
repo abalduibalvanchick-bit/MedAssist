@@ -1,0 +1,14 @@
+id: TYP-12
+group: typical
+title: Головная боль после мерцающих зигзагов — мигрень с аурой
+patient:
+  age: 27
+  features: [visual_disturbance.aura, headache.pulsating, headache.unilateral, headache.photophobia, nausea_vomiting.with_headache]
+  denied_features: [visual_disturbance.sudden_loss, headache.sudden_onset]
+  params: {sbp: 115, dbp: 72}
+expect:
+  status: ok
+  no_red_flags: true
+  hypotheses_top: DIAG-DISEASE-005
+  rules_fired: [RULE-DIAG-039]
+  rules_not_fired: [RULE-DIAG-038]

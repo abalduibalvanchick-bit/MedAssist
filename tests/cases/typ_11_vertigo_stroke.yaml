@@ -1,0 +1,13 @@
+id: TYP-11
+group: typical
+title: Внезапное головокружение с невозможностью стоять — инсульт задней циркуляции
+patient:
+  age: 67
+  features: [dizziness.sudden_onset, dizziness.unable_to_walk, dizziness.vertigo]
+  params: {symptom_duration_min: 50}
+expect:
+  status: ok
+  urgency: emergency
+  emergencies: [DIAG-EMERGENCY-002]
+  rules_fired: [RULE-DIAG-037, RULE-DIAG-045]
+  exams: [DIAG-EXAM-018, DIAG-EXAM-009]

@@ -31,10 +31,15 @@ relations:
 - target: PHARM-REGIMEN-003
   type: included_in
   description: Используются в схеме лечения ИБС для предотвращения тромботических осложнений.
+- target: PHARM-DRUG-011
+  type: includes
+  description: представитель группы
 representatives:
 - ацетилсалициловая кислота
 - клопидогрел
 - тикагрелор
+members:
+- PHARM-DRUG-011
 contraindications:
 - when:
     fact: gi_bleeding_history
@@ -53,9 +58,9 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.1'
+version: '2.3'
 date_created: '2026-05-02'
-date_updated: '2026-09-21'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

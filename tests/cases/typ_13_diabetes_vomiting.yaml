@@ -1,0 +1,15 @@
+id: TYP-13
+group: typical
+title: Рвота у пациента с диабетом, кетоны высокие — кетоацидоз
+patient:
+  age: 41
+  features: [nausea_vomiting.repeated]
+  params: {glucose: 22}
+  facts: {known_diabetes: true}
+  exam_results: {DIAG-EXAM-014: high}
+expect:
+  status: ok
+  urgency: emergency
+  red_flags: [DIAG-REDFLAG-004]
+  rules_fired: [RULE-DIAG-040]
+  protocols: [PROT-EMERGENCY_P-002]

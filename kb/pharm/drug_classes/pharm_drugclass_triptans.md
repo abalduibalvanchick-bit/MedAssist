@@ -28,10 +28,15 @@ relations:
 - target: PHARM-REGIMEN-006
   type: included_in
   description: Применяются в схеме лечения мигрени.
+- target: PHARM-DRUG-008
+  type: includes
+  description: представитель группы
 representatives:
 - суматриптан
 - золмитриптан
 - элетриптан
+members:
+- PHARM-DRUG-008
 contraindications:
 - when:
     any:
@@ -62,9 +67,9 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.1'
+version: '2.3'
 date_created: '2026-05-02'
-date_updated: '2026-09-21'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

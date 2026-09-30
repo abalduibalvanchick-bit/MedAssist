@@ -30,10 +30,15 @@ relations:
 - target: PHARM-REGIMEN-003
   type: included_in
   description: Обязательная часть вторичной профилактики при ИБС.
+- target: PHARM-DRUG-009
+  type: includes
+  description: представитель группы
 representatives:
 - аторвастатин
 - розувастатин
 - симвастатин
+members:
+- PHARM-DRUG-009
 contraindications:
 - when:
     profile: GLB-PROFILE-002
@@ -52,9 +57,9 @@ clinical_guidelines:
 last_medical_review: '2026-05-06'
 medical_reviewer: модельная верификация (учебный проект)
 author: Инженер знаний №2
-version: '2.1'
+version: '2.3'
 date_created: '2026-05-02'
-date_updated: '2026-09-16'
+date_updated: '2026-09-30'
 status: approved
 disclaimer: true
 ---

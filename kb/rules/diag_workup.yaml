@@ -151,3 +151,48 @@
     - request_clarification: "Сообщите пиковую скорость выдоха в процентах от лучшего значения и сколько ингаляций сальбутамола потребовалось за последние сутки."
   source_cards: [DIAG-DISEASE-004, DIAG-REDFLAG-006, PROT-ROUTING-005]
   explanation: ПСВ менее 50 % от лучшего значения — критерий тяжёлого обострения.
+
+- id: RULE-DIAG-043
+  domain: diag
+  title: Пневмония — мочевина для CURB-65
+  priority: 60
+  if:
+    all:
+      - {disease: DIAG-DISEASE-003}
+      - not: {known: urea}
+  then:
+    - recommend_exam: {target: DIAG-EXAM-012, role: stratifies}
+  source_cards: [DIAG-EXAM-012, PROT-SCALE-004]
+  explanation: Мочевина — один из пяти критериев CURB-65, определяющих место лечения.
+
+- id: RULE-DIAG-044
+  domain: diag
+  title: Обострение астмы — пикфлоуметрия
+  priority: 70
+  if:
+    all:
+      - any:
+          - {fact: known_asthma}
+          - {disease: DIAG-DISEASE-004}
+      - any:
+          - {symptom: DIAG-SYMPTOM-003}
+          - {symptom: DIAG-SYMPTOM-009}
+  then:
+    - recommend_exam: {target: DIAG-EXAM-017, role: stratifies}
+    - recommend_exam: {target: DIAG-EXAM-010, role: stratifies}
+  source_cards: [DIAG-EXAM-017, DIAG-EXAM-010, DIAG-REDFLAG-006]
+  explanation: ПСВ и SpO₂ — объективные критерии тяжести обострения астмы (GINA).
+
+- id: RULE-DIAG-045
+  domain: diag
+  title: Подозрение на ОНМК — экстренная нейровизуализация
+  priority: 90
+  if:
+    any:
+      - {emergency: DIAG-EMERGENCY-002}
+      - {symptom: DIAG-SYMPTOM-010}
+      - {redflag: DIAG-REDFLAG-002}
+  then:
+    - recommend_exam: {target: DIAG-EXAM-018, role: confirms}
+  source_cards: [DIAG-EXAM-018, DIAG-EMERGENCY-002, DIAG-REDFLAG-002]
+  explanation: КТ головного мозга исключает кровоизлияние перед реперфузионной терапией и выявляет субарахноидальное кровоизлияние.

@@ -1,0 +1,13 @@
+id: BND-07
+group: boundary
+title: Пневмония без мочевины — рекомендовано определить мочевину
+patient:
+  age: 55
+  features: [cough.productive, fever.chills]
+  params: {rr: 22, sbp: 125, dbp: 80, spo2: 96}
+  facts: {confusion: false}
+expect:
+  status: ok
+  working_diagnoses: [DIAG-DISEASE-003]
+  rules_fired: [RULE-DIAG-043]
+  exams: [DIAG-EXAM-012]
