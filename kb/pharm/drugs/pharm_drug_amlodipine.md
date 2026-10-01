@@ -39,15 +39,6 @@ relations:
 - target: DIAG-SYMPTOM-016
   type: associated_with
   description: отёки лодыжек — частый дозозависимый побочный эффект
-contraindications:
-- when:
-    fact: hypotension
-  absolute: true
-  explanation: выраженная гипотензия, кардиогенный шок
-- when:
-    fact: aortic_stenosis
-  absolute: false
-  explanation: выраженный аортальный стеноз
 dose_adjustments:
 - when:
     fact: hepatic_failure
@@ -65,7 +56,7 @@ medical_reviewer: модельная верификация (учебный пр
 author: Инженер знаний №2
 version: '2.2'
 date_created: '2025-03-10'
-date_updated: '2026-09-30'
+date_updated: '2026-10-01'
 status: approved
 disclaimer: true
 ---

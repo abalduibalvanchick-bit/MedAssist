@@ -34,21 +34,6 @@ relations:
 - target: PHARM-REGIMEN-001
   type: included_in
   description: Может входить в антигипертензивную схему.
-contraindications:
-- when:
-    profile: GLB-PROFILE-002
-  absolute: true
-  explanation: противопоказан при беременности и лактации
-- when:
-    fact: angioedema_history
-  absolute: true
-  explanation: ангионевротический отёк в анамнезе
-- when:
-    param: potassium
-    op: '>'
-    value: 5.5
-  absolute: false
-  explanation: гиперкалиемия
 interactions:
 - with: PHARM-DRUGCLASS-010
   severity: moderate
@@ -70,7 +55,7 @@ medical_reviewer: модельная верификация (учебный пр
 author: Инженер знаний №2
 version: '2.1'
 date_created: '2025-03-10'
-date_updated: '2026-09-16'
+date_updated: '2026-10-01'
 status: approved
 disclaimer: true
 ---

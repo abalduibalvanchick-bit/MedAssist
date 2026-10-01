@@ -38,14 +38,6 @@ relations:
   description: входит в терапевтическую схему
 contraindications:
 - when:
-    fact: gi_bleeding_history
-  absolute: false
-  explanation: ЖКТ-кровотечение в анамнезе — гастропротекция и оценка риска
-- when:
-    fact: on_anticoagulants
-  absolute: false
-  explanation: повышенный риск кровотечения
-- when:
     any:
     - fact: known_asthma
     - disease: DIAG-DISEASE-004
@@ -68,7 +60,7 @@ medical_reviewer: модельная верификация (учебный пр
 author: Инженер знаний №3
 version: '2.0'
 date_created: '2026-09-30'
-date_updated: '2026-09-30'
+date_updated: '2026-10-01'
 status: approved
 disclaimer: true
 ---

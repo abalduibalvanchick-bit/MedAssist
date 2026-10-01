@@ -112,14 +112,14 @@
 | `time_critical` | `boolean` | нет |  |
 
 ### drug — Лекарственное средство
-Обязательны для approved: `contraindications`
+Обязательны для approved: `indications`
 
 | Поле | Тип | Обяз. | Описание |
 |---|---|---|---|
-| `contraindications` | `list[object]` | да |  |
+| `contraindications` | `list[object]` | нет | Собственные противопоказания препарата; противопоказания группы наследуются |
 | `interactions` | `list[object]` | нет |  |
 | `dose_adjustments` | `list[object]` | нет |  |
-| `indications` | `list[id(disease,emergency,symptom)]` | нет |  |
+| `indications` | `list[id(disease,emergency,symptom)]` | да |  |
 
 Структура элемента `contraindications`:
 
@@ -151,7 +151,7 @@
 |---|---|---|---|
 | `representatives` | `list[string]` | да | МНН основных представителей группы |
 | `members` | `list[id(drug)]` | нет | Представители, для которых есть карточки |
-| `contraindications` | `list[object]` | нет |  |
+| `contraindications` | `list[object]` | нет | Наследуются препаратами группы |
 
 Структура элемента `contraindications`:
 
@@ -160,6 +160,7 @@
 | `when` | `condition` | да |  |
 | `absolute` | `boolean` | да |  |
 | `explanation` | `string` | да |  |
+| `not_for` | `list[id(drug)]` | нет | Препараты группы, на которые противопоказание не распространяется |
 
 ### interaction — Лекарственное взаимодействие
 Обязательны для approved: `between`, `severity`

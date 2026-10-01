@@ -348,6 +348,7 @@ medassist/
         machine_refs.py
         markdown_parser.py
         models.py
+        pharmacology.py
         repository.py
         scenarios.py
         schema.py
@@ -394,6 +395,7 @@ medassist/
         test_migration.py
         test_parser.py
         test_pharm.py
+        test_pharmacology.py
         test_protocols.py
         test_repository.py
         test_search.py

@@ -19,10 +19,10 @@ relations:
     type: has_patient_info  # типы и допустимые категории: docs/link_types.md
     description: <смысл связи>
 # Машиночитаемый слой (docs/schema.md, раздел «drug»):
-contraindications: [{"when": {"all": [{"symptom": "DIAG-SYMPTOM-002"}, {"param": "sbp", "op": ">=", "value": 180}]}, "absolute": true, "explanation": "<текст>"}]  # list[object]; обязательно для approved
+contraindications: [{"when": {"all": [{"symptom": "DIAG-SYMPTOM-002"}, {"param": "sbp", "op": ">=", "value": 180}]}, "absolute": true, "explanation": "<текст>"}]  # list[object]; необязательно; Собственные противопоказания препарата; противопоказания группы наследуются
 interactions: [{"with": "PHARM-DRUG-001", "severity": "critical", "card": "PHARM-INTERACTION-001"}]  # list[object]; необязательно
 dose_adjustments: [{"when": {"all": [{"symptom": "DIAG-SYMPTOM-002"}, {"param": "sbp", "op": ">=", "value": 180}]}, "note": "<текст>"}]  # list[object]; необязательно
-indications: ["DIAG-DISEASE-001"]  # list[id(disease,emergency,symptom)]; необязательно
+indications: ["DIAG-DISEASE-001"]  # list[id(disease,emergency,symptom)]; обязательно для approved
 sources:
   - <Автор(ы). Название. Издание/журнал. Год;том:страницы.>
   - <Вторая конкретная библиографическая ссылка>

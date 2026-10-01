@@ -32,11 +32,6 @@ relations:
 - target: PHARM-REGIMEN-004
   type: included_in
   description: входит в терапевтическую схему
-contraindications:
-- when:
-    fact: penicillin_allergy
-  absolute: true
-  explanation: аллергия на пенициллины
 dose_adjustments:
 - when:
     param: egfr
@@ -55,7 +50,7 @@ medical_reviewer: модельная верификация (учебный пр
 author: Инженер знаний №3
 version: '2.0'
 date_created: '2026-09-30'
-date_updated: '2026-09-30'
+date_updated: '2026-10-01'
 status: approved
 disclaimer: true
 ---

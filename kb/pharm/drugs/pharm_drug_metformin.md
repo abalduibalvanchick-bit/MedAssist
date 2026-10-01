@@ -40,20 +40,6 @@ relations:
   description: Взаимодействие с йодсодержащими контрастными веществами.
 contraindications:
 - when:
-    param: egfr
-    op: <
-    value: 30
-  absolute: true
-  explanation: СКФ менее 30 — риск лактатацидоза
-- when:
-    param: ketones_positive
-  absolute: true
-  explanation: кетоацидоз
-- when:
-    fact: hepatic_failure
-  absolute: true
-  explanation: тяжёлая печёночная недостаточность
-- when:
     fact: alcohol_abuse
   absolute: false
   explanation: злоупотребление алкоголем
@@ -84,7 +70,7 @@ medical_reviewer: модельная верификация (учебный пр
 author: Инженер знаний №2
 version: '3.1'
 date_created: '2025-04-08'
-date_updated: '2026-09-16'
+date_updated: '2026-10-01'
 status: approved
 disclaimer: true
 ---

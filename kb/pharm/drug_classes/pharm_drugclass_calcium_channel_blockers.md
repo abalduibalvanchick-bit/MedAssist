@@ -58,6 +58,8 @@ contraindications:
     fact: heart_failure
   absolute: false
   explanation: недигидропиридиновые БКК противопоказаны при сниженной фракции выброса
+  not_for:
+  - PHARM-DRUG-002
 sources:
 - Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
 - Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.

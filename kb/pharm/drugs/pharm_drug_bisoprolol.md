@@ -33,23 +33,6 @@ relations:
 - target: PHARM-REGIMEN-003
   type: included_in
   description: входит в терапевтическую схему
-contraindications:
-- when:
-    param: hr
-    op: <
-    value: 50
-  absolute: true
-  explanation: брадикардия
-- when:
-    fact: hypotension
-  absolute: true
-  explanation: гипотензия
-- when:
-    any:
-    - fact: known_asthma
-    - disease: DIAG-DISEASE-004
-  absolute: false
-  explanation: бронхиальная астма — только в низких дозах под контролем
 interactions:
 - with: PHARM-DRUGCLASS-017
   severity: moderate
@@ -66,7 +49,7 @@ medical_reviewer: модельная верификация (учебный пр
 author: Инженер знаний №3
 version: '2.0'
 date_created: '2026-09-30'
-date_updated: '2026-09-30'
+date_updated: '2026-10-01'
 status: approved
 disclaimer: true
 ---

@@ -654,19 +654,23 @@ machine_layer:
       indications: {type: condition}
       contraindications: {type: "list[condition]", optional: true}
       schedule: {type: string, optional: true}
+  # Наследование: препарат получает противопоказания своей фармакологической группы
+  # (связь included_in → drugclass). В карточке препарата указываются только
+  # собственные противопоказания, отсутствующие у группы. Действующий набор
+  # вычисляет src/pharmacology.py (effective_contraindications).
   drug:
-    required_for_approved: [contraindications]
+    required_for_approved: [indications]
     fields:
-      contraindications: {type: "list[object]", item: {when: {type: condition}, absolute: {type: boolean}, explanation: {type: string}}}
+      contraindications: {type: "list[object]", optional: true, doc: "Собственные противопоказания препарата; противопоказания группы наследуются", item: {when: {type: condition}, absolute: {type: boolean}, explanation: {type: string}}}
       interactions: {type: "list[object]", optional: true, item: {with: {type: "id(drug,drugclass)", optional: true}, severity: {type: "enum(interaction_severity)"}, card: {type: "id(interaction)", optional: true, implies: has_interaction}}}
       dose_adjustments: {type: "list[object]", optional: true, item: {when: {type: condition}, note: {type: string}}}
-      indications: {type: "list[id(disease,emergency,symptom)]", optional: true, implies: treats}
+      indications: {type: "list[id(disease,emergency,symptom)]", implies: treats}
   drugclass:
     required_for_approved: [representatives]
     fields:
       representatives: {type: "list[string]", doc: "МНН основных представителей группы"}
       members: {type: "list[id(drug)]", optional: true, implies: includes, doc: "Представители, для которых есть карточки"}
-      contraindications: {type: "list[object]", optional: true, item: {when: {type: condition}, absolute: {type: boolean}, explanation: {type: string}}}
+      contraindications: {type: "list[object]", optional: true, doc: "Наследуются препаратами группы", item: {when: {type: condition}, absolute: {type: boolean}, explanation: {type: string}, not_for: {type: "list[id(drug)]", optional: true, doc: "Препараты группы, на которые противопоказание не распространяется"}}}
   regimen:
     required_for_approved: [for, lines]
     fields:

@@ -31,15 +31,6 @@ relations:
 - target: PHARM-REGIMEN-003
   type: included_in
   description: входит в терапевтическую схему
-contraindications:
-- when:
-    profile: GLB-PROFILE-002
-  absolute: true
-  explanation: противопоказан при беременности и лактации
-- when:
-    fact: hepatic_failure
-  absolute: true
-  explanation: активное заболевание печени
 interactions:
 - with: PHARM-DRUGCLASS-013
   severity: major
@@ -55,7 +46,7 @@ medical_reviewer: модельная верификация (учебный пр
 author: Инженер знаний №3
 version: '2.0'
 date_created: '2026-09-30'
-date_updated: '2026-09-30'
+date_updated: '2026-10-01'
 status: approved
 disclaimer: true
 ---

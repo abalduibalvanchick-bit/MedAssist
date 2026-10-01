@@ -26,6 +26,7 @@ import yaml
 from .conditions import validate_condition
 from .machine_refs import iter_machine_refs
 from .card_writer import sync_body_sources
+from .pharmacology import duplicated_class_contraindications
 from .config import (
     ALLOWED_RELATION_TYPES,
     ALLOWED_STATUS,
@@ -345,6 +346,11 @@ class KnowledgeBaseValidator:
                         problem = f"слово со смешением кириллицы и латиницы: {mixed[0]}"
                 if problem:
                     self._add(report, card, "WARNING", "EDITORIAL_ARTIFACT", f"{problem}: {line.strip()[:80]!r}.")
+
+        if card.category == "drug" and card.schema_version >= 2:
+            for explanation, cls_id in duplicated_class_contraindications(card, self._cards_by_id):
+                self._add(report, card, "WARNING", "DUPLICATED_CONTRAINDICATION",
+                          f"Противопоказание «{explanation}» уже задано у группы {cls_id} и наследуется; удалите его из карточки препарата.")
 
         known_fields = set(self.schema.common_required) | set(self.schema.common_optional) | set(self.schema.machine_fields(card.category))
         for key in card.metadata:

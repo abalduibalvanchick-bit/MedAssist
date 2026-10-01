@@ -31,35 +31,6 @@ relations:
 - target: PHARM-REGIMEN-006
   type: included_in
   description: входит в терапевтическую схему
-contraindications:
-- when:
-    fact: gi_bleeding_history
-  absolute: true
-  explanation: язвенная болезнь или ЖКТ-кровотечение
-- when:
-    param: egfr
-    op: <
-    value: 30
-  absolute: true
-  explanation: тяжёлая почечная недостаточность
-- when:
-    fact: heart_failure
-  absolute: false
-  explanation: сердечная недостаточность
-- when:
-    fact: on_anticoagulants
-  absolute: false
-  explanation: риск кровотечения
-- when:
-    profile: GLB-PROFILE-002
-  absolute: false
-  explanation: противопоказан в III триместре
-- when:
-    any:
-    - fact: known_asthma
-    - disease: DIAG-DISEASE-004
-  absolute: false
-  explanation: риск НПВС-индуцированного бронхоспазма
 interactions:
 - with: PHARM-DRUGCLASS-011
   severity: moderate
@@ -77,7 +48,7 @@ medical_reviewer: модельная верификация (учебный пр
 author: Инженер знаний №3
 version: '2.0'
 date_created: '2026-09-30'
-date_updated: '2026-09-30'
+date_updated: '2026-10-01'
 status: approved
 disclaimer: true
 ---

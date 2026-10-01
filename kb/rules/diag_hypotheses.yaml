@@ -22,23 +22,16 @@
 
 - id: RULE-DIAG-002
   domain: diag
-  title: Боль в груди с признаками нестабильности — подозрение на ОКС
+  title: Красный флаг нестабильной стенокардии — подозрение на ОКС
   priority: 90
-  if:
-    all:
-      - {symptom: DIAG-SYMPTOM-002}
-      - any:
-          - {feature: chest_pain.at_rest}
-          - {feature: chest_pain.new_onset}
-          - {feature: chest_pain.nitrate_unresponsive}
-          - {param: symptom_duration_min, op: ">", value: 20}
+  if: {redflag: DIAG-REDFLAG-005}
   then:
     - assert_hypothesis: {target: DIAG-EMERGENCY-001, weight: 3}
     - set_urgency: emergency
     - recommend_exam: {target: DIAG-EXAM-002, role: confirms}
     - recommend_exam: {target: DIAG-EXAM-007, role: confirms}
   source_cards: [DIAG-SYMPTOM-002, DIAG-REDFLAG-005, DIAG-EMERGENCY-001, DIAG-EXAM-002, DIAG-EXAM-007]
-  explanation: Боль в покое, впервые возникшая, не купирующаяся нитроглицерином или длящаяся более 20 минут — признаки нестабильности, требующие исключения ОКС.
+  explanation: Сработал красный флаг нестабильной стенокардии (боль в покое, впервые возникшая, не купирующаяся нитроглицерином или длящаяся более 20 минут); условие флага задано в карточке DIAG-REDFLAG-005 и здесь не повторяется.
 
 - id: RULE-DIAG-003
   domain: diag

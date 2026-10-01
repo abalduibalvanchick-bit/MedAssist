@@ -21,7 +21,7 @@ relations:
 # Машиночитаемый слой (docs/schema.md, раздел «drugclass»):
 representatives: ["<текст>"]  # list[string]; обязательно для approved; МНН основных представителей группы
 members: ["PHARM-DRUG-001"]  # list[id(drug)]; необязательно; Представители, для которых есть карточки
-contraindications: [{"when": {"all": [{"symptom": "DIAG-SYMPTOM-002"}, {"param": "sbp", "op": ">=", "value": 180}]}, "absolute": true, "explanation": "<текст>"}]  # list[object]; необязательно
+contraindications: [{"when": {"all": [{"symptom": "DIAG-SYMPTOM-002"}, {"param": "sbp", "op": ">=", "value": 180}]}, "absolute": true, "explanation": "<текст>", "not_for": ["PHARM-DRUG-001"]}]  # list[object]; необязательно; Наследуются препаратами группы
 sources:
   - <Автор(ы). Название. Издание/журнал. Год;том:страницы.>
   - <Вторая конкретная библиографическая ссылка>

@@ -31,29 +31,9 @@ relations:
   description: входит в терапевтическую схему
 contraindications:
 - when:
-    any:
-    - fact: known_ihd
-    - disease: DIAG-DISEASE-002
-  absolute: true
-  explanation: ишемическая болезнь сердца
-- when:
-    fact: prior_cv_event
-  absolute: true
-  explanation: инсульт или инфаркт в анамнезе
-- when:
-    param: sbp
-    op: '>='
-    value: 160
-  absolute: true
-  explanation: неконтролируемая артериальная гипертензия
-- when:
     fact: hepatic_failure
   absolute: true
   explanation: тяжёлая печёночная недостаточность
-- when:
-    profile: GLB-PROFILE-002
-  absolute: false
-  explanation: беременность
 indications:
 - DIAG-DISEASE-005
 sources:
@@ -66,7 +46,7 @@ medical_reviewer: модельная верификация (учебный пр
 author: Инженер знаний №3
 version: '2.0'
 date_created: '2026-09-30'
-date_updated: '2026-09-30'
+date_updated: '2026-10-01'
 status: approved
 disclaimer: true
 ---

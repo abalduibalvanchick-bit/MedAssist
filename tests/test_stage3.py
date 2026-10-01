@@ -177,8 +177,11 @@ def test_real_rules_count_and_coverage(real_report):
 
 
 @pytest.mark.parametrize("facts, expected", [
+    # RULE-DIAG-002 ссылается на красный флаг: флаг выводится машиной вывода,
+    # поэтому здесь он задан как уже выведенный факт (полная цепочка — сценарий TYP-01).
     (PatientFacts(symptoms={"DIAG-SYMPTOM-002"}, features={"chest_pain.pressing", "chest_pain.at_rest"},
-                  params={"age": 62, "symptom_duration_min": 30}), {"RULE-DIAG-002", "RULE-DIAG-023"}),
+                  params={"age": 62, "symptom_duration_min": 30}, red_flags={"DIAG-REDFLAG-005"}),
+     {"RULE-DIAG-002", "RULE-DIAG-023"}),
     (PatientFacts(params={"age": 7}, profiles={"GLB-PROFILE-004"}), {"RULE-GLB-001"}),
     (PatientFacts(symptoms={"DIAG-SYMPTOM-010"}, features={"focal_deficit.face_droop"}), {"RULE-DIAG-015", "RULE-DIAG-032"}),
 ])
