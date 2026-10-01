@@ -1,0 +1,7 @@
+# Женщина 71 года: третий день лихорадка, кашель с гнойной мокротой.
+# Сахарный диабет, аллергия на пенициллины. Мочевина неизвестна.
+patient:
+  age: 71
+  features: [cough.productive, cough.purulent_sputum, fever.chills]
+  params: {temperature: 38.7, rr: 24, sbp: 115, dbp: 70, spo2: 93}
+  facts: {known_diabetes: true, penicillin_allergy: true, confusion: false}

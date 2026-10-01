@@ -6,6 +6,8 @@ from typing import Any
 
 _STATUS = {"ok": "решение получено", "need_more_data": "нужны дополнительные данные",
            "refused": "отказ: вне области применимости", "invalid": "некорректные входные данные"}
+_ROLES = {"confirms": "подтверждение", "supports": "поддержка гипотезы", "excludes": "исключение",
+          "stratifies": "оценка тяжести", "monitors": "контроль"}
 _ROUTES = {"outpatient": "амбулаторно", "urgent_referral": "срочное направление к специалисту",
            "hospitalization": "госпитализация", "emergency": "экстренная помощь"}
 
@@ -43,7 +45,7 @@ def format_solution(solution: dict[str, Any], *, show_trace: bool = True) -> str
     section("Рабочие диагнозы", [f"{d['title']}{ref(d['id'])}" for d in solution.get("working_diagnoses") or []])
     section("Шкалы", [f"{s['title']}: " + (f"{s['value']:g} балл(ов), " if s.get("value") is not None else f"{s['range'][0]:g}–{s['range'][1]:g}, ")
                       + f"{s['category_label']}" for s in solution.get("scales") or []])
-    section("Обследования", [f"{e['title']} ({', '.join(e['roles'])})" for e in solution.get("exams") or []])
+    section("Обследования", [f"{e['title']} — {', '.join(_ROLES.get(r, r) for r in e['roles'])}" for e in solution.get("exams") or []])
     section("Маршрут", [f"{_ROUTES.get(r['route'], r['route'])}" + (f", {r['timeframe']}" if r.get("timeframe") else "") + f" [{r['source']}]"
                         for r in solution.get("routes") or []])
     section("Дальнейшие действия", [f"{p['title']} [{p['id']}]" for p in solution.get("protocols") or []])

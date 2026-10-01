@@ -38,6 +38,16 @@ def _card_ref(kb: KnowledgeBase, card_id: str, **extra: Any) -> dict[str, Any]:
     return {"id": card_id, "title": kb.title(card_id), **extra}
 
 
+def _scale_relevant(kb: KnowledgeBase, scale_id: str, memory) -> bool:
+    """Шкала показывается, если оценивает рабочий диагноз, гипотезу или неотложное состояние."""
+    card = kb.get(scale_id)
+    if card is None:
+        return False
+    targets = {str(r.get("target")) for r in card.relations}
+    relevant = set(memory.working_diagnoses) | set(memory.hypotheses) | memory.facts.emergencies
+    return bool(targets & relevant)
+
+
 def _disclaimers(kb: KnowledgeBase, role: str, urgency: str) -> list[str]:
     texts = []
     for card in kb.category("disclaimer"):
@@ -102,7 +112,8 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
             {"id": sid, "title": r.title, "value": r.value, "range": [r.low, r.high], "category": r.category,
              "category_label": r.category_label, "action": r.action,
              "items": [{"code": i.code, "label": i.label, "points": i.points, "detail": i.detail} for i in r.items]}
-            for sid, r in sorted(memory.scales.items()) if r.category is not None
+            for sid, r in sorted(memory.scales.items())
+            if r.category is not None and _scale_relevant(kb, sid, memory)
         ],
         "exams": [_card_ref(kb, eid, roles=v["roles"], sources=v["sources"]) for eid, v in sorted(memory.exams.items())],
         "routes": memory.routes,
