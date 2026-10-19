@@ -12,3 +12,5 @@ expect:
   scales: {PROT-SCALE-004: {value: 3, category: severe}}
   rules_fired: [RULE-PROT-007]
   protocols: [PROT-EMERGENCY_P-004]
+  route: emergency
+  routing_rows: {PROT-ROUTING-004: 1}

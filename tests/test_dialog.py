@@ -194,7 +194,7 @@ def test_working_diagnosis_threshold_from_schema(kb):
 def test_routing_reference_is_not_reported_as_protocol(kb):
     solution = solve({"patient": {"age": 25, "symptoms": ["DIAG-SYMPTOM-004"], "features": ["headache.meningism"]}}, kb=kb)
     assert all(kb.get(p["id"]).category in ("protocol", "emergency_p") for p in solution["protocols"])
-    assert any(r["id"] == "PROT-ROUTING-006" for r in solution["routing_cards"])
+    assert any(d["id"] == "PROT-ROUTING-006" for d in solution["routing"]["decisions"])
 
 
 def test_validator_checks_forbid_conditions(kb):

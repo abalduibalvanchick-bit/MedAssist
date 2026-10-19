@@ -1,0 +1,17 @@
+id: TYP-41
+group: typical
+title: Криз с болью в груди у пациента с известной гипертензией — экстренный маршрут по таблице АГ
+# Таблица PROT-ROUTING-001, строка 1: красный флаг осложнённого криза (САД 200 ≥ 180 и боль в груди)
+# → экстренная помощь немедленно, переход к алгоритму неотложной помощи при кризе.
+patient:
+  age: 64
+  symptoms: [DIAG-SYMPTOM-002]
+  params: {sbp: 200, dbp: 115}
+  facts: {known_hypertension: true}
+expect:
+  status: ok
+  urgency: emergency
+  red_flags: [DIAG-REDFLAG-001]
+  route: emergency
+  routing_rows: {PROT-ROUTING-001: 1}
+  protocols: [PROT-EMERGENCY_P-001]

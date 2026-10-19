@@ -55,11 +55,9 @@ decisions:
   - PROT-EMERGENCY_P-005
   explanation: Тяжёлое жизнеугрожающее обострение бронхиальной астмы.
 - when:
-    all:
-    - param: pef_percent
-      op: <
-      value: 75
-    - feature: wheezing.reliever_unresponsive
+    param: pef_percent
+    op: <
+    value: 60
   route: hospitalization
   timeframe: в течение суток
   actions:
@@ -68,7 +66,7 @@ decisions:
   - кислородотерапия по показаниям
   next:
   - PROT-PROTOCOL-005
-  explanation: Обострение, не купирующееся ингаляциями короткодействующих β2-агонистов.
+  explanation: ПСВ 50–60 % от лучшего значения — среднетяжёлое обострение с недостаточным ответом на начальную терапию (GINA); отсутствие ответа на β2-агонист относится к тяжёлому обострению (красный флаг, экстренный маршрут).
 - when:
     any:
     - scale_category: PROT-SCALE-005

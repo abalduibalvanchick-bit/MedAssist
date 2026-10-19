@@ -15,3 +15,9 @@ expect:
   scales: {PROT-SCALE-004: {value: 2, category: moderate}}
   rules_fired: [RULE-DIAG-004, RULE-DIAG-005, RULE-PHARM-009]
   warnings_from: [RULE-PHARM-009]
+  # Таблица PROT-ROUTING-004, строка 2: CURB-65 = 2 → госпитализация в течение суток.
+  # Одышка и цианоз не сообщены — экстренная строка не исключена.
+  route: hospitalization
+  route_timeframe: в течение суток
+  route_provisional: true
+  routing_rows: {PROT-ROUTING-004: 2}

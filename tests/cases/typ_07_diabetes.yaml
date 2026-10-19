@@ -13,3 +13,4 @@ expect:
   rules_fired: [RULE-DIAG-012, RULE-DIAG-013]
   exams: [DIAG-EXAM-005, DIAG-EXAM-006]
   questions_from: [PROT-SCALE-002]
+  routing_rows: {PROT-ROUTING-002: default}

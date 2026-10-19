@@ -15,3 +15,8 @@ expect:
   profiles: [GLB-PROFILE-003]
   working_diagnoses: [DIAG-DISEASE-006]
   scales: {PROT-SCALE-002: {value: 10, category: high}}
+  # HbA1c 8,5 ≥ 8 — строка 2 таблицы СД; гликемия не сообщена — ГГС/ДКА не исключены.
+  route: urgent_referral
+  route_timeframe: до 2 недель
+  route_provisional: true
+  routing_rows: {PROT-ROUTING-002: 2}

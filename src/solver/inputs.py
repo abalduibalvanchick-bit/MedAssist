@@ -128,3 +128,33 @@ def label_of(item: dict[str, Any]) -> str:
     if item["kind"] == "exam_result":
         return f"результат обследования: {item['label']}"
     return item["label"]
+
+
+_DERIVED_FIELDS = {"redflag": "triggers", "emergency": "criteria", "profile": "criteria"}
+
+
+def missing_inputs_deep(condition: Any, facts: "PatientFacts", kb: "KnowledgeBase", depth: int = 3) -> "ConditionRefs":
+    """Недостающие входные данные условия с раскрытием выводимых сущностей.
+
+    Неизвестный атом {redflag: X} (а также emergency, profile) сам по себе спросить нельзя;
+    вместо него запрашиваются недостающие данные условия карточки X (рекурсивно, до depth).
+    """
+    from ..conditions import ConditionRefs, missing_inputs
+
+    result = ConditionRefs()
+    refs = missing_inputs(condition, facts, kb.schema)
+    result.params |= refs.params
+    result.facts |= refs.facts
+    result.features |= refs.features
+    for cid in refs.card_ids:
+        card = kb.get(cid)
+        field_name = _DERIVED_FIELDS.get(card.category) if card is not None else None
+        if field_name and depth > 0 and card.metadata.get(field_name):
+            inner = missing_inputs_deep(card.metadata[field_name], facts, kb, depth - 1)
+            result.params |= inner.params
+            result.facts |= inner.facts
+            result.features |= inner.features
+            result.card_ids |= inner.card_ids
+        else:
+            result.card_ids.add(cid)
+    return result

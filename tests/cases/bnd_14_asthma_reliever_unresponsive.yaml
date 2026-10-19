@@ -1,0 +1,16 @@
+id: BND-14
+group: boundary
+title: Обострение астмы без ответа на сальбутамол — экстренный маршрут
+# Отсутствие ответа на β2-агонист — признак тяжёлого обострения (GINA): красный флаг
+# астматического статуса → таблица PROT-ROUTING-005, строка 1 → экстренная помощь.
+patient:
+  age: 36
+  features: [wheezing.expiratory, wheezing.reliever_unresponsive]
+  params: {pef_percent: 60, spo2: 94, rr: 24}
+  facts: {known_asthma: true}
+expect:
+  status: ok
+  urgency: emergency
+  red_flags: [DIAG-REDFLAG-006]
+  route: emergency
+  routing_rows: {PROT-ROUTING-005: 1}

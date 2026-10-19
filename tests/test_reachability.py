@@ -102,3 +102,29 @@ def test_rules_suspecting_emergency_raise_urgency():
         if not any(level in ("urgent", "emergency") for level in levels):
             offenders.append(rule.id)
     assert not offenders, f"не повышают срочность: {offenders}"
+
+
+ROUTING_ROWS = [(card.id, i) for card in KB.category("routing") for i, _ in enumerate(card.metadata.get("decisions") or [])]
+
+
+@pytest.mark.parametrize("card_id,row", ROUTING_ROWS, ids=[f"{c}:{r + 1}" for c, r in ROUTING_ROWS])
+def test_routing_row_is_reachable(card_id, row):
+    """Каждая строка таблицы решений может быть выбрана: строится пациент, для которого её условие
+    истинно, а условия всех предыдущих (более тяжёлых) строк ложны. Строка, условие которой влечёт
+    условие более ранней строки, недостижима — это мёртвое знание в базе."""
+    card = KB.get(card_id)
+    decisions = card.metadata["decisions"]
+    condition = {"all": [decisions[row]["when"], *({"not": d["when"]} for d in decisions[:row])]}
+    try:
+        request = witness_for(condition, KB)
+    except Unsatisfiable as exc:
+        pytest.fail(f"{card_id}, строка {row + 1}: условие несовместимо с отрицанием предыдущих строк ({exc})")
+    patient = request["patient"]
+    for disease in card.metadata.get("for") or []:     # активировать карточку
+        if KB.get(disease).category == "disease" and disease not in patient.get("diseases", []):
+            patient.setdefault("diseases", []).append(disease)
+    solution = solve(request, kb=KB)
+    chosen = {d["id"]: d["row"] for d in solution["routing"]["decisions"]}
+    assert chosen.get(card_id) == row, (f"{card_id}: для пациента {patient} выбрана строка "
+                                        f"{chosen.get(card_id)}, ожидалась {row} — строка недостижима или "
+                                        f"перекрыта более ранней")

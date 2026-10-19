@@ -52,10 +52,17 @@ def format_solution(solution: dict[str, Any], *, show_trace: bool = True) -> str
     section("Уже выполнено", [f"{e['title']}: {_results(e)}" for e in solution.get("completed_exams") or []])
     section("После стабилизации (плановое обследование)",
             [f"{e['title']} — {', '.join(_ROLES.get(r, r) for r in e['roles'])}" for e in solution.get("deferred_exams") or []])
-    section("Маршрут", [f"{_ROUTES.get(r['route'], r['route'])}" + (f", {r['timeframe']}" if r.get("timeframe") else "") + f" [{r['source']}]"
-                        for r in solution.get("routes") or []])
+    routing = solution.get("routing") or {}
+    if routing.get("route"):
+        head = routing["label"] + (f", {routing['timeframe']}" if routing.get("timeframe") else "")
+        if routing.get("provisional"):
+            head += " (предварительно: более тяжёлый маршрут не исключён, см. вопросы)"
+        add(f"Маршрут: {head}" + ("" if lay else f" [{', '.join(routing.get('sources') or [])}]"))
+        for d in routing.get("decisions") or []:
+            row = "по умолчанию" if d["row"] is None else f"строка {d['row'] + 1}"
+            add(f"  - {d['title']}: {d['label']}" + (f", {d['timeframe']}" if d.get("timeframe") else "") + f" ({row})")
+            out.extend(f"      · {a}" for a in d.get("actions") or [])
     section("Дальнейшие действия", [f"{p['title']} [{p['id']}]" for p in solution.get("protocols") or []])
-    section("Маршрутизация", [f"{r['title']}{ref(r['id'])}" for r in solution.get("routing_cards") or []])
     section("Предупреждения", [f"{w['text']} [{w['source']}]" for w in solution.get("warnings") or []])
     questions = []
     for q in solution.get("questions") or []:

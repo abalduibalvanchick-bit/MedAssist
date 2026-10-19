@@ -104,7 +104,7 @@ def justify_false(node: Any, facts: PatientFacts, kb: "KnowledgeBase") -> list[s
 
 
 _KIND_TITLES = {"input": "Из входных данных", "profile": "Профиль", "scale": "Шкала", "redflag": "Красный флаг",
-                "emergency": "Неотложное состояние", "rule": "Правило"}
+                "emergency": "Неотложное состояние", "rule": "Правило", "routing": "Маршрутизация"}
 
 
 def render_explanation(memory: "Conclusions", kb: "KnowledgeBase") -> str:

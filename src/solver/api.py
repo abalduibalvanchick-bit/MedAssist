@@ -12,7 +12,7 @@
     status          ok | need_more_data | refused | invalid
     urgency         срочность и её основания
     profiles, red_flags, emergencies, scales, hypotheses, working_diagnoses
-    exams, deferred_exams, completed_exams, routes, protocols, routing_cards, warnings, questions
+    exams, deferred_exams, completed_exams, routing, routes, protocols, warnings, questions
     refusal, input_issues, disclaimer, explanation, trace, stats
 
 Роль пользователя (access_level из схемы) определяет состав ответа: пациенту
@@ -30,6 +30,7 @@ from .explain import render_explanation
 from .facts import parse_case
 from .knowledge import KnowledgeBase, load_default_kb
 from .questions import build_questions, detail_questions
+from .routing import routing_to_dict, select_routes
 
 ROLES = ("professional", "nursing", "student", "patient")
 _ROLE_ORDER = {"confirms": 0, "excludes": 1, "stratifies": 2, "supports": 3, "monitors": 4}
@@ -102,7 +103,11 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
 
     engine = InferenceEngine(kb)
     memory = engine.run(parsed.facts)
+    routing = select_routes(memory, kb)          # T1: после неподвижной точки, до вопросов
     questions = build_questions(memory, kb) if memory.refusal is None else []
+    if routing.questions:                        # вопросы маршрутизации — перед вопросами шкал
+        cut = next((i for i, q in enumerate(questions) if q["kind"] == "scale"), len(questions))
+        questions[cut:cut] = routing.questions
 
     # Ранжирование гипотез: по весу; при равном весе первой идёт более опасная
     # (срочность карточки), чтобы угрожающее жизни состояние не уступало хроническому
@@ -166,7 +171,7 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
         "completed_exams": completed_exams,
         "routes": memory.routes,
         "protocols": [_card_ref(kb, p["id"], source=p["source"]) for p in memory.protocols],
-        "routing_cards": [_card_ref(kb, r["id"], source=r["source"]) for r in memory.routing_refs],
+        "routing": routing_to_dict(routing, kb),
         "warnings": memory.warnings,
         "questions": questions,
         "refusal": memory.refusal,
@@ -181,6 +186,8 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
     }
 
     if role == "patient":
+        # Пациенту — куда и когда обращаться, без служебных таблиц решений.
+        solution["routing"] = {k: solution["routing"][k] for k in ("route", "label", "timeframe", "provisional")}
         # Памятки — только по рабочим диагнозам: слабые гипотезы пациенту не показываются.
         solution["advice"] = _patient_advice(kb, memory.working_diagnoses)
         for key in ("hypotheses", "exams", "deferred_exams", "completed_exams", "warnings", "scales", "fired_rules", "trace", "explanation", "protocols"):

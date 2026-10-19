@@ -494,3 +494,7 @@
 | `working_diagnosis_score` | `3` |
 | `max_iterations` | `20` |
 | `max_dialog_rounds` | `5` |
+| `route_severity` | `['outpatient', 'urgent_referral', 'hospitalization', 'emergency']` |
+| `route_urgency` | `{'emergency': 'emergency'}` |
+| `urgency_route` | `{'emergency': 'emergency'}` |
+| `route_labels` | `{'outpatient': 'амбулаторное ведение', 'urgent_referral': 'срочное направление к специалисту', 'hospitalization': 'госпитализация', 'emergency': 'экстренная помощь'}` |

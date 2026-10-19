@@ -25,18 +25,18 @@ class Unsatisfiable(Exception):
     pass
 
 
-def _number_for(spec: dict[str, Any], op: str, value: Any, negate: bool = False) -> float:
+def _number_for_all(spec: dict[str, Any], rules: list[tuple[str, Any, bool]]) -> float:
+    """Значение параметра, удовлетворяющее всем ограничениям (op, value, отрицание)."""
     lo, hi = spec.get("min", 0), spec.get("max", 1000)
-    step = 1 if float(value).is_integer() else 0.1
-    if op == "between":
-        a, b = value
-        candidates = [a - step, b + step] if negate else [(a + b) / 2]
-    else:
-        candidates = [value + step, value - step, value, value + 10 * step, value - 10 * step]
-    for c in candidates:
-        if lo <= c <= hi and (compare(c, op, value) != negate):
-            return int(c) if float(c).is_integer() else round(c, 1)
-    raise Unsatisfiable(f"нет значения для {op} {value} в [{lo}, {hi}]")
+    candidates = {lo, hi}
+    for op, value, _ in rules:
+        for threshold in (value if isinstance(value, list) else [value]):
+            for delta in (0, 1, -1, 0.1, -0.1, 10, -10):
+                candidates.add(round(threshold + delta, 1))
+    for c in sorted(candidates):
+        if lo <= c <= hi and all(compare(c, op, value) != negate for op, value, negate in rules):
+            return int(c) if float(c).is_integer() else c
+    raise Unsatisfiable(f"нет значения в [{lo}, {hi}] для ограничений {rules}")
 
 
 class Witness:
@@ -44,6 +44,8 @@ class Witness:
         self.kb = kb
         self.schema = kb.schema
         self.patient: dict[str, Any] = {"age": 50, "params": {}, "facts": {}}
+        # Все ограничения на числовой параметр: значение подбирается так, чтобы выполнялись все.
+        self.constraints: dict[str, list[tuple[str, Any, bool]]] = {}
 
     # ------------------------------------------------------------ helpers
     def _list(self, key: str) -> list:
@@ -159,12 +161,13 @@ class Witness:
                     expected = not expected
                 self._set_param(name, bool(expected) != negate)
                 return
-            current = self.patient["params"].get(name, self.patient.get("age") if name == "age" else None)
-            if current is not None and name != "age":
-                if compare(float(current), node["op"], node["value"]) != negate:
-                    return
-                raise Unsatisfiable(f"конфликт параметра {name}")
-            self._set_param(name, _number_for(spec, node["op"], node["value"], negate))
+            rules = self.constraints.setdefault(name, []) + [(node["op"], node["value"], negate)]
+            value = _number_for_all(spec, rules)
+            self.constraints[name] = rules
+            if name == "age":
+                self.patient["age"] = value
+            else:
+                self.patient["params"][name] = value
             return
         if "exam_result" in node:
             if negate:

@@ -11,3 +11,4 @@ expect:
   working_diagnoses: [DIAG-DISEASE-001]
   rules_fired: [RULE-PHARM-007]
   warnings_from: [RULE-PHARM-007]
+  routing_rows: {PROT-ROUTING-001: default}

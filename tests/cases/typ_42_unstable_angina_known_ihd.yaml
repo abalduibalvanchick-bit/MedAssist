@@ -1,0 +1,17 @@
+id: TYP-42
+group: typical
+title: Давящая боль в покое 25 минут у пациента с известной ИБС — экстренный маршрут по таблице ИБС
+# Таблица PROT-ROUTING-003, строка 1: красный флаг нестабильной стенокардии → экстренно,
+# алгоритм неотложной помощи при подозрении на ОКС.
+patient:
+  age: 61
+  features: [chest_pain.pressing, chest_pain.at_rest]
+  params: {symptom_duration_min: 25}
+  facts: {known_ihd: true}
+expect:
+  status: ok
+  urgency: emergency
+  red_flags: [DIAG-REDFLAG-005]
+  route: emergency
+  routing_rows: {PROT-ROUTING-003: 1}
+  protocols: [PROT-EMERGENCY_P-003]

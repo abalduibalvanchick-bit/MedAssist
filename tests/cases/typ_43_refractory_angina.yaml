@@ -1,0 +1,19 @@
+id: TYP-43
+group: typical
+title: Стенокардия III ФК, рефрактерная к двум препаратам — плановая госпитализация
+# Таблица PROT-ROUTING-003, строка 2: рефрактерная стенокардия → плановая госпитализация.
+# Длительность приступа и ЭКГ не сообщены, поэтому ОКС не исключён: маршрут предварительный,
+# решатель задаёт вопрос, который подтвердит или исключит экстренную строку.
+patient:
+  age: 67
+  features: [chest_pain.pressing, chest_pain.exertional, chest_pain.relieved_by_rest]
+  denied_features: [chest_pain.at_rest, chest_pain.new_onset, chest_pain.nitrate_unresponsive]
+  params: {ccs_class: 3, sbp: 130, dbp: 80}
+  facts: {known_ihd: true, refractory_angina: true, heart_failure: false}
+expect:
+  status: ok
+  route: hospitalization
+  route_timeframe: плановая госпитализация
+  route_provisional: true
+  routing_rows: {PROT-ROUTING-003: 2}
+  questions_from: [PROT-ROUTING-003]

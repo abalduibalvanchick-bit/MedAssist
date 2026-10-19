@@ -11,7 +11,9 @@
   I4  «нужны данные» всегда сопровождается хотя бы одним вопросом (требование Ф6);
   I5  обследование не находится одновременно в двух списках (рекомендовано / выполнено / отложено);
   I6  отказ (вне области применимости) не содержит диагностических выводов;
-  I7  пациенту не показываются гипотезы, обследования, предупреждения и ход вывода.
+  I7  пациенту не показываются гипотезы, обследования, предупреждения и ход вывода;
+  I8  маршрут: экстренный маршрут означает экстренную срочность; итоговый маршрут не легче
+      маршрута любой карточки и правила; предварительный маршрут сопровождается вопросом.
 """
 
 from __future__ import annotations
@@ -84,6 +86,16 @@ def test_invariants_hold_for_random_valid_patients():
             violations.append(f"I5 обследование в двух списках: {patient}")
         if s["status"] == "refused" and (s["hypotheses"] or s["red_flags"] or s["emergencies"]):
             violations.append(f"I6 отказ с выводами: {patient}")
+        routing = s["routing"]
+        severity = KB.schema.solver_setting("route_severity", [])
+        rank = severity.index(routing["route"]) if routing["route"] in severity else -1
+        if routing["route"] == "emergency" and level != "emergency":
+            violations.append(f"I8 экстренный маршрут при срочности {level}: {patient}")
+        for item in routing["decisions"] + s["routes"]:
+            if severity.index(item["route"]) > rank:
+                violations.append(f"I8 итоговый маршрут легче {item['route']}: {patient}")
+        if routing["provisional"] and not any(q["kind"] == "routing" for q in s["questions"]):
+            violations.append(f"I8 предварительный маршрут без вопроса: {patient}")
         lay = solve({"patient": patient}, role="patient", kb=KB)
         if any(key in lay for key in ("hypotheses", "exams", "warnings", "trace", "explanation")):
             violations.append(f"I7 служебные сведения пациенту: {patient}")

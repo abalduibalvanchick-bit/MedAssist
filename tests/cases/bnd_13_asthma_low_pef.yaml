@@ -1,0 +1,18 @@
+id: BND-13
+group: boundary
+title: Обострение астмы, ПСВ 55 % — госпитализация в течение суток
+# Таблица PROT-ROUTING-005, строка 2: ПСВ 55 < 60 при отсутствии признаков тяжёлого обострения
+# (ПСВ ≥ 50, ЧДД ≤ 30, SpO₂ ≥ 92, ответ на β2-агонист есть). Речь полными фразами и сознание
+# не сообщены — экстренная строка не исключена, маршрут предварительный.
+patient:
+  age: 36
+  features: [wheezing.expiratory]
+  denied_features: [wheezing.reliever_unresponsive, wheezing.silent_chest]
+  params: {pef_percent: 55, spo2: 94, rr: 24}
+  facts: {known_asthma: true}
+expect:
+  status: ok
+  route: hospitalization
+  route_timeframe: в течение суток
+  route_provisional: true
+  routing_rows: {PROT-ROUTING-005: 2}

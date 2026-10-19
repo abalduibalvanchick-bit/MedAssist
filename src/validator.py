@@ -160,6 +160,20 @@ class KnowledgeBaseValidator:
         self._collect_stats(report)
         return report
 
+    def _validate_routing_order(self, card: KnowledgeCard, report: ValidationReport) -> None:
+        """Строки таблицы решений упорядочены от тяжёлого маршрута к лёгкому, default — не тяжелее последней.
+
+        На этом порядке основан выбор строки: первая истинная — самая тяжёлая из выполненных."""
+        order = list(self.schema.solver_setting("route_severity", []))
+        if not order:
+            return
+        routes = [d.get("route") for d in card.metadata.get("decisions") or [] if isinstance(d, dict)]
+        default = (card.metadata.get("default") or {}).get("route")
+        ranks = [order.index(r) for r in routes + ([default] if default else []) if r in order]
+        if any(a < b for a, b in zip(ranks, ranks[1:])):
+            self._add(report, card, "ERROR", "ROUTING_ORDER",
+                      f"Строки decisions и default должны идти от тяжёлого маршрута к лёгкому: {routes} → {default}.")
+
     def _validate_fact_vocabulary(self, report: ValidationReport) -> None:
         """Свойства фактов словаря: derived_from — условие только над параметрами;
         implies_disease — существующая карточка заболевания."""
@@ -419,6 +433,8 @@ class KnowledgeBaseValidator:
         self._validate_folder_category(card, report, card.category)
         self._validate_dates(card, report)
         self._validate_machine_layer(card, report)
+        if card.category == "routing":
+            self._validate_routing_order(card, report)
         self._validate_quality(card, report)
 
     def _validate_identity(self, card: KnowledgeCard, report: ValidationReport) -> None:

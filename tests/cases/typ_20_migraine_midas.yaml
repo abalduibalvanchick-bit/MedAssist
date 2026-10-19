@@ -11,3 +11,5 @@ expect:
   scales: {PROT-SCALE-006: {value: 25, category: severe}}
   # Головной боли сейчас нет — вопрос о мигренозном статусе не задаётся.
   questions_not_from: [DIAG-EMERGENCY-006]
+  route: urgent_referral
+  routing_rows: {PROT-ROUTING-006: 3}

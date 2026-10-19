@@ -18,3 +18,5 @@ expect:
   profiles: [GLB-PROFILE-001]
   protocols: [PROT-EMERGENCY_P-002]
   rules_fired: [RULE-GLB-004, RULE-DIAG-046]
+  route: emergency
+  routing_rows: {PROT-ROUTING-002: 1}

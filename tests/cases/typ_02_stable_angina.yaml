@@ -16,3 +16,4 @@ expect:
   rules_fired: [RULE-DIAG-001]
   rules_not_fired: [RULE-DIAG-002]
   questions_from: [DIAG-REDFLAG-001]
+  routing_rows: {PROT-ROUTING-003: default}

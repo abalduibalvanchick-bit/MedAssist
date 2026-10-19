@@ -14,6 +14,7 @@ medassist/
         mvp_modules.md
         naming_rules.md
         schema.md
+        solver_design.md
         solver_test_report.md
         verification_rules.md
     examples/
@@ -341,6 +342,7 @@ medassist/
             knowledge.py
             questions.py
             report.py
+            routing.py
             scales.py
         __init__.py
         card_writer.py
@@ -372,6 +374,8 @@ medassist/
             bnd_10_metformin_contrast.yaml
             bnd_11_hypertension_hyperkalemia.yaml
             bnd_12_pneumonia_no_vitals.yaml
+            bnd_13_asthma_reliever_unresponsive.yaml
+            bnd_14_asthma_reliever_unresponsive.yaml
             neg_01_child.yaml
             neg_02_contradiction.yaml
             neg_03_unknown_codes.yaml
@@ -418,6 +422,9 @@ medassist/
             typ_38_prolonged_fever_cough.yaml
             typ_39_orthostatic_dizziness.yaml
             typ_40_chronic_migraine.yaml
+            typ_41_crisis_known_hypertension.yaml
+            typ_42_unstable_angina_known_ihd.yaml
+            typ_43_refractory_angina.yaml
         expected_results/
             .gitkeep
         scenarios/
@@ -438,6 +445,7 @@ medassist/
         test_reachability.py
         test_repository.py
         test_robustness.py
+        test_routing.py
         test_search.py
         test_solver.py
         test_stage3.py

@@ -271,6 +271,17 @@ class Schema:
                 problems.append(f"Ограничение {cid}: нужно ровно одно из полей compare / forbid")
             if not item.get("message"):
                 problems.append(f"Ограничение {cid}: отсутствует message")
+        routes = set(self.raw.get("enums", {}).get("route", []))
+        solver = self.raw.get("solver", {}) or {}
+        if solver.get("route_severity") is not None and set(solver["route_severity"]) != routes:
+            problems.append("solver.route_severity должен содержать ровно значения перечисления route")
+        urgencies = set(self.raw.get("enums", {}).get("urgency", []))
+        for key, value in (solver.get("route_urgency") or {}).items():
+            if key not in routes or value not in urgencies:
+                problems.append(f"solver.route_urgency: {key} → {value} вне перечислений route/urgency")
+        for key, value in (solver.get("urgency_route") or {}).items():
+            if key not in urgencies or value not in routes:
+                problems.append(f"solver.urgency_route: {key} → {value} вне перечислений urgency/route")
             compare = item.get("compare")
             if isinstance(compare, dict):
                 for side in ("left", "right"):

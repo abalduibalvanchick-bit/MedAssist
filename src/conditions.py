@@ -105,6 +105,10 @@ class PatientFacts:
     # Что выведено из входных данных по словарю схемы (derived_from, implies_disease):
     # [{"code", "kind": "fact" | "disease", "value", "because": [...], "source"}].
     derived: list[dict] = field(default_factory=list)
+    # Выводимые сущности (красные флаги, неотложные состояния, профили), исключённые
+    # после неподвижной точки вывода: их условие ложно при данных фактах. Заполняет
+    # InferenceEngine.run; до этого невыведенная сущность — «неизвестно».
+    excluded: set[str] = field(default_factory=set)
 
     def has_symptom(self, symptom_id: str) -> Truth:
         if symptom_id in self.symptoms:
@@ -128,7 +132,7 @@ class PatientFacts:
     def _in_set(self, collection: set[str], item: str) -> Truth:
         if item in collection:
             return Truth.TRUE
-        return Truth.FALSE if self.closed_world else Truth.UNKNOWN
+        return Truth.FALSE if self.closed_world or item in self.excluded else Truth.UNKNOWN
 
 
 # ---------------------------------------------------------------------------

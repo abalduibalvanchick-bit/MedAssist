@@ -12,3 +12,6 @@ expect:
   status: ok
   urgency: emergency
   emergencies: [DIAG-EMERGENCY-006]
+  route: emergency
+  route_timeframe: в течение часов
+  routing_rows: {PROT-ROUTING-006: 2}

@@ -10,3 +10,5 @@ patient:
 expect:
   status: ok
   scales: {PROT-SCALE-005: {value: 14, category: uncontrolled}}
+  route: urgent_referral
+  routing_rows: {PROT-ROUTING-005: 3}

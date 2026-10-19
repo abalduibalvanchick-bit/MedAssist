@@ -19,6 +19,9 @@
     input_issues                      — коды замечаний к входным данным
     trace_order                       — источники встречаются в трассе в этом порядке
     max_time_ms                       — ограничение времени решения (по умолчанию 200 мс)
+    route, route_timeframe,
+    route_provisional                 — итоговый маршрут, срок, предварительность
+    routing_rows: {ID: N | default}   — выбранная строка таблицы решений карточки (с 1)
 """
 
 from __future__ import annotations
@@ -97,6 +100,18 @@ def check_case(case: dict[str, Any], solution: dict[str, Any]) -> list[str]:
     asked = " | ".join(a for q in questions for a in q.get("ask") or [])
     for fragment in exp.get("question_asks") or []:
         need(fragment in asked, f"не запрошено «{fragment}»")
+    routing = solution.get("routing") or {}
+    if "route" in exp:
+        need(routing.get("route") == exp["route"], f"маршрут {routing.get('route')!r}, ожидался {exp['route']!r}")
+    if "route_timeframe" in exp:
+        need(routing.get("timeframe") == exp["route_timeframe"],
+             f"срок {routing.get('timeframe')!r}, ожидался {exp['route_timeframe']!r}")
+    if "route_provisional" in exp:
+        need(routing.get("provisional") == exp["route_provisional"],
+             f"предварительность {routing.get('provisional')}, ожидалась {exp['route_provisional']}")
+    rows = {d["id"]: ("default" if d["row"] is None else d["row"] + 1) for d in routing.get("decisions") or []}
+    for card_id, row in (exp.get("routing_rows") or {}).items():
+        need(rows.get(card_id) == row, f"{card_id}: строка {rows.get(card_id)}, ожидалась {row}")
     codes = {i["code"] for i in solution.get("input_issues") or []}
     missing = set(exp.get("input_issues") or []) - codes
     need(not missing, f"нет замечаний к входу {sorted(missing)}")

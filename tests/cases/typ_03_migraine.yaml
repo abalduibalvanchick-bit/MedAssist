@@ -16,3 +16,7 @@ expect:
   rules_fired: [RULE-DIAG-008, RULE-DIAG-025]
   # Текущий приступ с признаками мигрени — вопрос о мигренозном статусе уместен.
   questions_from: [DIAG-EMERGENCY-006]
+  # Маршрут по умолчанию — амбулаторно; нарушение сознания и длительность приступа не сообщены.
+  route: outpatient
+  route_provisional: true
+  routing_rows: {PROT-ROUTING-006: default}

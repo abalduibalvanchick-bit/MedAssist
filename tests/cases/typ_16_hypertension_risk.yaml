@@ -13,3 +13,8 @@ expect:
   urgency: routine
   hypotheses_top: DIAG-DISEASE-001
   scales: {PROT-SCALE-001: {value: 4, category: high}}
+  # Высокий риск по шкале — строка 2 таблицы АГ; криз исключён (САД 165 < 180, ДАД 95 < 120).
+  route: urgent_referral
+  route_timeframe: 24–72 часа
+  route_provisional: false
+  routing_rows: {PROT-ROUTING-001: 2}

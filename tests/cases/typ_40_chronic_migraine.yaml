@@ -10,3 +10,5 @@ expect:
   status: ok
   protocols: [PROT-PROTOCOL-006]
   rules_fired: [RULE-PROT-005]
+  route: urgent_referral
+  routing_rows: {PROT-ROUTING-006: 3}

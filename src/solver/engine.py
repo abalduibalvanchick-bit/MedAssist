@@ -83,6 +83,22 @@ class Conclusions:
     iterations: int = 0
 
 
+def record_step(memory: Conclusions, kind: str, source: str, title: str, because: list[str],
+                effects: list[str], iteration: int) -> None:
+    """Добавляет шаг в трассу вывода (используется ядром и модулями этапа 2)."""
+    memory.trace.append(TraceStep(len(memory.trace) + 1, iteration, kind, source, title, because, effects))
+
+
+def raise_urgency(memory: Conclusions, level: str, source: str, reason: str, effects: list[str]) -> None:
+    """Повышает срочность (никогда не понижает) и запоминает основание."""
+    if level not in URGENCY_ORDER:
+        return
+    memory.urgency_sources.append({"level": level, "source": source, "reason": reason})
+    if URGENCY_ORDER.index(level) > URGENCY_ORDER.index(memory.urgency):
+        memory.urgency = level
+        effects.append(f"срочность повышена: {URGENCY_LABELS[level]}")
+
+
 class InferenceEngine:
     def __init__(self, kb: KnowledgeBase, *, working_diagnosis_score: int | None = None,
                  max_iterations: int | None = None) -> None:
@@ -118,12 +134,30 @@ class InferenceEngine:
             changed |= self._fire_rules(memory)
             if memory.refusal is not None or not changed:
                 break
+        if memory.refusal is None:
+            self._mark_excluded(memory)
         return memory
+
+    def _mark_excluded(self, memory: Conclusions) -> None:
+        """После неподвижной точки: сущность, чьё условие ложно, исключена (а не «неизвестна»).
+
+        До неподвижной точки этого делать нельзя — условие может стать истинным на следующей
+        итерации. После неё новых выводов нет, поэтому ложное условие окончательно ложно.
+        Исключения используют модули этапа 2 (маршрутизация, протоколы) и вопросы.
+        """
+        facts = memory.facts
+        for category, field_name, derived in (("redflag", "triggers", facts.red_flags),
+                                              ("emergency", "criteria", facts.emergencies),
+                                              ("profile", "criteria", facts.profiles)):
+            for card in self.kb.category(category):
+                condition = card.metadata.get(field_name)
+                if card.id not in derived and condition and evaluate(condition, facts, self.schema) is Truth.FALSE:
+                    facts.excluded.add(card.id)
 
     # ------------------------------------------------------------------ шаги
     def _record(self, memory: Conclusions, kind: str, source: str, title: str,
                 because: list[str], effects: list[str]) -> None:
-        memory.trace.append(TraceStep(len(memory.trace) + 1, self._iteration, kind, source, title, because, effects))
+        record_step(memory, kind, source, title, because, effects, self._iteration)
 
     def _derive_profiles(self, memory: Conclusions) -> bool:
         changed = False
@@ -240,12 +274,7 @@ class InferenceEngine:
         return effects
 
     def _raise_urgency(self, memory: Conclusions, level: str, source: str, reason: str, effects: list[str]) -> None:
-        if level not in URGENCY_ORDER:
-            return
-        memory.urgency_sources.append({"level": level, "source": source, "reason": reason})
-        if URGENCY_ORDER.index(level) > URGENCY_ORDER.index(memory.urgency):
-            memory.urgency = level
-            effects.append(f"срочность повышена: {URGENCY_LABELS[level]}")
+        raise_urgency(memory, level, source, reason, effects)
 
     def _add_protocol(self, memory: Conclusions, card_id: str, source: str, effects: list[str]) -> None:
         card = self.kb.get(card_id)
