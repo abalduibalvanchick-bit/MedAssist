@@ -21,6 +21,8 @@ medassist/
         child_refusal.yaml
         migraine.yaml
         pneumonia.yaml
+        pneumonia_elderly.yaml
+        pneumonia_no_urea.yaml
         stroke.yaml
     indices/
         diag_catalog.md
@@ -331,9 +333,11 @@ medassist/
         solver/
             __init__.py
             api.py
+            dialog.py
             engine.py
             explain.py
             facts.py
+            inputs.py
             knowledge.py
             questions.py
             report.py
@@ -390,6 +394,7 @@ medassist/
         conftest.py
         solver_cases.py
         test_conditions.py
+        test_dialog.py
         test_linker.py
         test_log.md
         test_migration.py

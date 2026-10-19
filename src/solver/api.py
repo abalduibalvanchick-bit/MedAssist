@@ -12,7 +12,7 @@
     status          ok | need_more_data | refused | invalid
     urgency         срочность и её основания
     profiles, red_flags, emergencies, scales, hypotheses, working_diagnoses
-    exams, routes, protocols, warnings, questions
+    exams, routes, protocols, routing_cards, warnings, questions
     refusal, input_issues, disclaimer, explanation, trace, stats
 
 Роль пользователя (access_level из схемы) определяет состав ответа: пациенту
@@ -90,7 +90,7 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
 
     hypotheses = sorted(memory.hypotheses.values(), key=lambda h: (-h.score, h.target))
     concluded = bool(memory.facts.red_flags or memory.facts.emergencies or hypotheses
-                     or memory.routes or memory.protocols or memory.facts.diseases)
+                     or memory.routes or memory.protocols or memory.routing_refs or memory.facts.diseases)
     if memory.refusal is not None:
         status = "refused"
     elif not concluded:
@@ -118,6 +118,7 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
         "exams": [_card_ref(kb, eid, roles=v["roles"], sources=v["sources"]) for eid, v in sorted(memory.exams.items())],
         "routes": memory.routes,
         "protocols": [_card_ref(kb, p["id"], source=p["source"]) for p in memory.protocols],
+        "routing_cards": [_card_ref(kb, r["id"], source=r["source"]) for r in memory.routing_refs],
         "warnings": memory.warnings,
         "questions": questions,
         "refusal": memory.refusal,

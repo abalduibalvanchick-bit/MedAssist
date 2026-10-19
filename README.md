@@ -91,7 +91,19 @@ python scripts/rebuild_all.py
 python main.py --solve examples/chest_pain_acs.yaml               # для врача, с ходом вывода
 python main.py --solve examples/chest_pain_acs.yaml --role patient
 python main.py --solve examples/pneumonia.yaml --json             # решение в JSON
+python main.py --solve examples/pneumonia_no_urea.yaml --dialog   # уточняющий диалог в консоли
 python scripts/run_solver_cases.py                                # сценарии и отчёт docs/solver_test_report.md
+```
+
+Уточняющие вопросы содержат поля ввода (`questions[].inputs`): код, тип значения, единицы и
+допустимые варианты. Ответы `{код: значение}` подставляются функцией `apply_answers`, после чего
+задача решается повторно; `run_dialog` выполняет этот цикл целиком.
+
+```python
+from src.solver import solve, apply_answers, run_dialog
+solution = solve(request)                          # вопрос: «Мочевина, ммоль/л» (code: urea)
+request2, issues = apply_answers(request, {"urea": 8})
+solution2 = solve(request2)                        # CURB-65 вычислена
 ```
 
 Формат задачи — см. `examples/*.yaml` и `src/solver/facts.py`; тестовые сценарии — `tests/cases/`.
@@ -103,6 +115,8 @@ python scripts/run_solver_cases.py                                # сценар
 | `engine.py` | прямой вывод до неподвижной точки с трассировкой |
 | `scales.py` | расчёт шкал, в том числе при неполных данных |
 | `questions.py` | уточняющие вопросы |
+| `inputs.py` | поля ввода вопросов: код, тип, единицы, варианты |
+| `dialog.py` | подстановка ответов и цикл уточняющего диалога |
 | `explain.py` | обоснования и текст объяснения |
 | `api.py` | точка входа `solve(запрос, роль)` |
 | `report.py` | текстовое представление решения |
@@ -116,6 +130,8 @@ python scripts/run_solver_cases.py                                # сценар
   красных флагов, параметры шкал, таблицы маршрутизации) — `docs/schema.md`.
 - **Условия**: единый мини-язык с трёхзначной логикой — `docs/conditions.md`.
 - **Правила**: `kb/rules/*.yaml`, формат — `docs/schema.md`, раздел «Правила».
+- **Ограничения входных данных** (`input_constraints`) и **параметры решателя** (`solver`) — в той же схеме:
+  код решателя не содержит медицинских порогов и констант.
 
 ## Команда
 

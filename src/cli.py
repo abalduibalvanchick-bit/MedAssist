@@ -125,11 +125,60 @@ def run_solver(args) -> None:
     except (OSError, yaml.YAMLError) as exc:
         print(f"Не удалось прочитать файл задачи: {exc}")
         return
-    solution = solve(request, role=args.role, kb=load_default_kb(str(Path(args.kb_root))), include_trace=not args.no_trace)
+    kb = load_default_kb(str(Path(args.kb_root)))
+    if args.dialog:
+        run_dialog_console(request, args, kb)
+        return
+    solution = solve(request, role=args.role, kb=kb, include_trace=not args.no_trace)
     if args.json:
         print(json.dumps(solution, ensure_ascii=False, indent=2))
     else:
         print(format_solution(solution, show_trace=not args.no_trace))
+
+
+def _ask_console(item: dict) -> str | None:
+    """Задаёт один вопрос в консоли. Пустой ввод — значение неизвестно."""
+    hint = {"boolean": "да/нет", "number": "число"}.get(item["type"], "")
+    if item["type"] == "number" and item.get("unit"):
+        hint = f"число, {item['unit']}"
+    if item["type"] == "choice":
+        for i, option in enumerate(item["options"], start=1):
+            print(f"      {i}. {option['label']}")
+        hint = "номер варианта"
+    label = item["label"]
+    if item["kind"] == "feature" and item.get("symptom_title"):
+        label = item["label"][0].upper() + item["label"][1:]
+    try:
+        answer = input(f"  ? {label} ({hint}, Enter — неизвестно): ").strip()
+    except EOFError:
+        return None
+    return answer or None
+
+
+def run_dialog_console(request, args, kb) -> None:
+    """Консольный уточняющий диалог: вопросы решателя → ответы → повторное решение."""
+    from .solver.dialog import run_dialog
+    from .solver.report import format_solution
+
+    def ask(item: dict) -> str | None:
+        return _ask_console(item)
+
+    first = True
+
+    def ask_with_header(item: dict) -> str | None:
+        nonlocal first
+        if first:
+            print("\nРешателю не хватает данных. Ответьте на вопросы (Enter — пропустить).")
+            first = False
+        return ask(item)
+
+    result = run_dialog(request, ask_with_header, role=args.role, kb=kb)
+    for issue in result.issues:
+        print(f"  [{issue['severity']}] {issue['message']}")
+    if result.rounds:
+        print(f"\nРаундов уточнения: {len(result.rounds)}")
+    print()
+    print(format_solution(result.solution, show_trace=not args.no_trace))
 
 
 def run_cli(argv: list[str] | None = None) -> None:
@@ -147,6 +196,7 @@ def run_cli(argv: list[str] | None = None) -> None:
     parser.add_argument("--role", default="professional", help="Роль пользователя: professional, nursing, student, patient")
     parser.add_argument("--json", action="store_true", help="Вывести решение в JSON")
     parser.add_argument("--no-trace", action="store_true", help="Не показывать ход вывода")
+    parser.add_argument("--dialog", action="store_true", help="Вместе с --solve: уточняющий диалог в консоли")
 
     args = parser.parse_args(argv)
     if args.solve:

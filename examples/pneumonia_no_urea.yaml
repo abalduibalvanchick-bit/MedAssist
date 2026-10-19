@@ -1,0 +1,13 @@
+# Внебольничная пневмония у пожилого, мочевина не измерена — решатель запросит её.
+patient:
+  age: 70
+  features:
+  - cough.productive
+  - fever.chills
+  params:
+    rr: 24
+    sbp: 110
+    dbp: 70
+    spo2: 95
+  facts:
+    confusion: false

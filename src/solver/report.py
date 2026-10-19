@@ -49,6 +49,7 @@ def format_solution(solution: dict[str, Any], *, show_trace: bool = True) -> str
     section("Маршрут", [f"{_ROUTES.get(r['route'], r['route'])}" + (f", {r['timeframe']}" if r.get("timeframe") else "") + f" [{r['source']}]"
                         for r in solution.get("routes") or []])
     section("Дальнейшие действия", [f"{p['title']} [{p['id']}]" for p in solution.get("protocols") or []])
+    section("Маршрутизация", [f"{r['title']}{ref(r['id'])}" for r in solution.get("routing_cards") or []])
     section("Предупреждения", [f"{w['text']} [{w['source']}]" for w in solution.get("warnings") or []])
     questions = []
     for q in solution.get("questions") or []:
