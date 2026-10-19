@@ -12,7 +12,7 @@
     status          ok | need_more_data | refused | invalid
     urgency         срочность и её основания
     profiles, red_flags, emergencies, scales, hypotheses, working_diagnoses
-    exams, routes, protocols, routing_cards, warnings, questions
+    exams, deferred_exams, completed_exams, routes, protocols, routing_cards, warnings, questions
     refusal, input_issues, disclaimer, explanation, trace, stats
 
 Роль пользователя (access_level из схемы) определяет состав ответа: пациенту
@@ -25,13 +25,29 @@ from __future__ import annotations
 import time
 from typing import Any
 
-from .engine import URGENCY_LABELS, InferenceEngine
+from .engine import URGENCY_LABELS, URGENCY_ORDER, InferenceEngine
 from .explain import render_explanation
 from .facts import parse_case
 from .knowledge import KnowledgeBase, load_default_kb
 from .questions import build_questions
 
 ROLES = ("professional", "nursing", "student", "patient")
+_ROLE_ORDER = {"confirms": 0, "excludes": 1, "stratifies": 2, "supports": 3, "monitors": 4}
+_REPEATABLE_FREE = {"excludes", "stratifies", "supports"}
+
+
+def _known_results(kb: KnowledgeBase, exam_id: str, facts) -> list[dict[str, Any]]:
+    """Уже сообщённые результаты обследования: значения параметров из measures и exam_results."""
+    card = kb.get(exam_id)
+    results: list[dict[str, Any]] = []
+    for code in (card.metadata.get("measures") or []) if card else []:
+        if code in facts.params:
+            results.append({"code": code, "label": kb.label("param", code), "value": facts.params[code]})
+    if card is not None and exam_id in facts.exam_results:
+        value = facts.exam_results[exam_id]
+        label = next((str(r.get("label")) for r in card.metadata.get("results") or [] if str(r.get("value")) == value), value)
+        results.append({"code": exam_id, "label": "результат", "value": label})
+    return results
 
 
 def _card_ref(kb: KnowledgeBase, card_id: str, **extra: Any) -> dict[str, Any]:
@@ -88,15 +104,43 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
     memory = engine.run(parsed.facts)
     questions = build_questions(memory, kb) if memory.refusal is None else []
 
-    hypotheses = sorted(memory.hypotheses.values(), key=lambda h: (-h.score, h.target))
+    # Ранжирование гипотез: по весу; при равном весе первой идёт более опасная
+    # (срочность карточки), чтобы угрожающее жизни состояние не уступало хроническому
+    # заболеванию из-за порядка идентификаторов.
+    hypotheses = sorted(memory.hypotheses.values(),
+                        key=lambda h: (-h.score, -URGENCY_ORDER.index(kb.card_urgency(h.target))
+                                       if kb.card_urgency(h.target) in URGENCY_ORDER else 0, h.target))
+    # Решение получено, если сделан хотя бы один вывод: распознано состояние, есть гипотеза,
+    # маршрут, протокол, установленный диагноз, предупреждение или знание повысило срочность.
+    raised = any(src["level"] in ("urgent", "emergency") for src in memory.urgency_sources)
     concluded = bool(memory.facts.red_flags or memory.facts.emergencies or hypotheses
-                     or memory.routes or memory.protocols or memory.routing_refs or memory.facts.diseases)
+                     or memory.routes or memory.protocols or memory.routing_refs or memory.facts.diseases
+                     or memory.warnings or raised)
     if memory.refusal is not None:
         status = "refused"
     elif not concluded:
         status = "need_more_data"
     else:
         status = "ok"
+
+    # Обследования: сначала подтверждающие и исключающие, затем оценка тяжести и прочие.
+    # В экстренной ситуации обследования только из плановых правил (phase: planned)
+    # выводятся отдельно — «после стабилизации», чтобы не смешиваться с неотложными.
+    # Обследование, результат которого уже сообщён (поле measures карточки exam или
+    # exam_results), не рекомендуется повторно, а выводится как выполненное. Исключение —
+    # роли «подтверждение» и «контроль»: для них нужен повторный или динамический замер
+    # (АД на двух визитах, тропонин в динамике).
+    planned_rules = {r.id for r in kb.rules if r.phase == "planned"}
+    exams, deferred_exams, completed_exams = [], [], []
+    for eid, v in sorted(memory.exams.items(), key=lambda kv: (min(_ROLE_ORDER.get(r, 9) for r in kv[1]["roles"]), kv[0])):
+        ref = _card_ref(kb, eid, roles=v["roles"], sources=v["sources"])
+        known = _known_results(kb, eid, memory.facts)
+        if known and set(v["roles"]) <= _REPEATABLE_FREE:
+            completed_exams.append({**ref, "results": known})
+        elif memory.urgency == "emergency" and set(v["sources"]) <= planned_rules:
+            deferred_exams.append(ref)
+        else:
+            exams.append(ref)
 
     solution: dict[str, Any] = {
         "status": status,
@@ -115,7 +159,9 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
             for sid, r in sorted(memory.scales.items())
             if r.category is not None and _scale_relevant(kb, sid, memory)
         ],
-        "exams": [_card_ref(kb, eid, roles=v["roles"], sources=v["sources"]) for eid, v in sorted(memory.exams.items())],
+        "exams": exams,
+        "deferred_exams": deferred_exams,
+        "completed_exams": completed_exams,
         "routes": memory.routes,
         "protocols": [_card_ref(kb, p["id"], source=p["source"]) for p in memory.protocols],
         "routing_cards": [_card_ref(kb, r["id"], source=r["source"]) for r in memory.routing_refs],
@@ -135,6 +181,6 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
     if role == "patient":
         # Памятки — только по рабочим диагнозам: слабые гипотезы пациенту не показываются.
         solution["advice"] = _patient_advice(kb, memory.working_diagnoses)
-        for key in ("hypotheses", "exams", "warnings", "scales", "fired_rules", "trace", "explanation", "protocols"):
+        for key in ("hypotheses", "exams", "deferred_exams", "completed_exams", "warnings", "scales", "fired_rules", "trace", "explanation", "protocols"):
             solution.pop(key, None)
     return solution

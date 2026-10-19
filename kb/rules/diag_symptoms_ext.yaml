@@ -85,21 +85,6 @@
   source_cards: [DIAG-SYMPTOM-015, DIAG-EMERGENCY-002]
   explanation: Внезапное выпадение зрения — проявление транзиторной ишемической атаки или инсульта и требует экстренной оценки.
 
-- id: RULE-DIAG-039
-  domain: diag
-  title: Зрительная аура перед головной болью
-  priority: 60
-  if:
-    all:
-      - {symptom: DIAG-SYMPTOM-001}
-      - {feature: visual_disturbance.aura}
-      - not: {feature: visual_disturbance.sudden_loss}
-  then:
-    - assert_hypothesis: {target: DIAG-DISEASE-005, weight: 2}
-    - recommend_exam: {target: DIAG-EXAM-009, role: excludes}
-  source_cards: [DIAG-SYMPTOM-015, DIAG-DISEASE-005]
-  explanation: Постепенно развивающиеся и обратимые зрительные феномены перед головной болью — типичная мигренозная аура (ICHD-3).
-
 - id: RULE-DIAG-040
   domain: diag
   title: Тошнота и рвота у пациента с диабетом

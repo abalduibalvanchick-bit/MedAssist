@@ -368,6 +368,10 @@ medassist/
             bnd_06_pef_severe.yaml
             bnd_07_pneumonia_no_urea.yaml
             bnd_08_pneumonia_immunocompromised.yaml
+            bnd_09_fever_low_gcs.yaml
+            bnd_10_metformin_contrast.yaml
+            bnd_11_hypertension_hyperkalemia.yaml
+            bnd_12_pneumonia_no_vitals.yaml
             neg_01_child.yaml
             neg_02_contradiction.yaml
             neg_03_unknown_codes.yaml
@@ -394,6 +398,26 @@ medassist/
             typ_18_ihd_risk.yaml
             typ_19_asthma_act.yaml
             typ_20_migraine_midas.yaml
+            typ_21_thunderclap_headache.yaml
+            typ_22_sudden_vision_loss.yaml
+            typ_23_pneumonia_shock.yaml
+            typ_24_syncope_chest_pain.yaml
+            typ_25_sudden_dyspnea_chest_pain.yaml
+            typ_26_diabetes_abdominal_pain.yaml
+            typ_27_unilateral_leg_edema.yaml
+            typ_28_diabetes_hypertension_ckd.yaml
+            typ_29_migraine_ihd_triptans.yaml
+            typ_30_migraine_asthma_ulcer.yaml
+            typ_31_ihd_anticoagulants.yaml
+            typ_32_diabetes_pregnancy.yaml
+            typ_33_episodic_wheeze.yaml
+            typ_34_nocturnal_cough_allergen.yaml
+            typ_35_epigastric_pain_elderly.yaml
+            typ_36_polyuria_no_glucose.yaml
+            typ_37_new_hypertension_occipital.yaml
+            typ_38_prolonged_fever_cough.yaml
+            typ_39_orthostatic_dizziness.yaml
+            typ_40_chronic_migraine.yaml
         expected_results/
             .gitkeep
         scenarios/

@@ -1,0 +1,15 @@
+id: TYP-36
+group: typical
+title: Полиурия, жажда и слабость без измерения гликемии — запрос глюкозы
+# Классические симптомы дают рабочий диагноз СД для планирования обследования;
+# слабость усиливает подозрение; решатель запрашивает гликемию.
+patient:
+  age: 48
+  symptoms: [DIAG-SYMPTOM-006, DIAG-SYMPTOM-007, DIAG-SYMPTOM-011]
+expect:
+  status: ok
+  hypotheses_top: DIAG-DISEASE-006
+  rules_fired: [RULE-DIAG-031, RULE-DIAG-041]
+  questions_from: [RULE-DIAG-031]
+  # Диабет не подтверждён анализом — скрининг осложнений ещё не назначается.
+  absent_exams: [DIAG-EXAM-011, DIAG-EXAM-015, DIAG-EXAM-016]

@@ -38,6 +38,8 @@ results:
 - value: a3
   label: более 30 мг/ммоль (значительно повышена, А3)
 turnaround: 1 день
+measures:
+- microalbuminuria
 sources:
 - KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease. Kidney Int. 2024;105(4S):S117–S314.
 - American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).

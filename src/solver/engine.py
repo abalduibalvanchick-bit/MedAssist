@@ -97,6 +97,14 @@ class InferenceEngine:
     def run(self, facts: PatientFacts) -> Conclusions:
         memory = Conclusions(facts=facts)
         self._iteration = 0
+        for item in facts.derived:
+            if item["kind"] == "disease":
+                self._record(memory, "input", item["code"], self.kb.title(item["code"]), item["because"],
+                             [f"установленный диагноз: {self.kb.title(item['code'])}"])
+            else:
+                label = self.kb.label("fact", item["code"])
+                self._record(memory, "input", item["code"], label, item["because"],
+                             [f"{label}: {'да' if item['value'] else 'нет'}"])
         known_diseases = set(facts.diseases)
         memory.working_diagnoses = sorted(known_diseases)
         for iteration in range(1, self.max_iterations + 1):

@@ -1,0 +1,13 @@
+id: TYP-24
+group: typical
+title: Обморок на фоне боли в груди — гемодинамически значимое состояние
+# Синкопе с болью в груди — экстренно, ЭКГ для подтверждения.
+patient:
+  age: 58
+  symptoms: [DIAG-SYMPTOM-002]
+  facts: {syncope: true}
+expect:
+  status: ok
+  urgency: emergency
+  exams: [DIAG-EXAM-002]
+  rules_fired: [RULE-PROT-002]

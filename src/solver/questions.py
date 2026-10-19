@@ -26,7 +26,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any
 
-from ..conditions import EvalTrace, Truth, evaluate, missing_inputs
+from ..conditions import Truth, evaluate, missing_inputs
 from .inputs import describe_input, inputs_from_refs, is_known, known_atoms, label_of
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -49,16 +49,34 @@ def _clarification_inputs(rule_id: str, memory: "Conclusions", kb: "KnowledgeBas
 
 
 # Клинические «якоря»: условие опасного состояния считается частично
-# выполненным, только если истинен хотя бы один такой атом. Одних общих
-# фактов и параметров (возраст, спутанность сознания) недостаточно — иначе
-# решатель задавал бы вопросы о состояниях, не связанных с жалобами.
-_ANCHOR_ATOMS = ("symptom", "feature", "disease", "exam_result", "redflag", "emergency")
+# выполненным, только если истинен хотя бы один такой атом — проявление
+# текущего обращения (жалоба, её признак, результат обследования, уже
+# распознанное опасное состояние). Общих фактов и параметров (возраст,
+# спутанность) и фоновых диагнозов из анамнеза недостаточно — иначе решатель
+# спрашивал бы о состояниях, не связанных с жалобами (пациента с известной
+# мигренью без головной боли — о мигренозном статусе).
+_ANCHOR_ATOMS = ("symptom", "feature", "exam_result", "redflag", "emergency")
+
+
+def _anchor_atoms(node: Any):
+    """Все атомы-якоря условия (без учёта порядка вычисления и сокращённой оценки)."""
+    if isinstance(node, dict):
+        if any(a in node for a in _ANCHOR_ATOMS) and not any(c in node for c in ("all", "any", "not", "at_least")):
+            yield node
+            return
+        for key, value in node.items():
+            if key == "not":
+                continue  # отрицаемое проявление якорем не является
+            yield from _anchor_atoms(value)
+    elif isinstance(node, list):
+        for value in node:
+            yield from _anchor_atoms(value)
 
 
 def _partially_met(condition: dict[str, Any], memory: "Conclusions", kb: "KnowledgeBase") -> bool:
-    trace: list[EvalTrace] = []
-    evaluate(condition, memory.facts, kb.schema, trace=trace)
-    return any(e.result is Truth.TRUE and any(a in e.node for a in _ANCHOR_ATOMS) for e in trace)
+    """Истинен ли хотя бы один атом-якорь условия. Атомы оцениваются по отдельности,
+    поэтому результат не зависит от порядка ветвей any/all и сокращённого вычисления."""
+    return any(evaluate(atom, memory.facts, kb.schema) is Truth.TRUE for atom in _anchor_atoms(condition))
 
 
 def build_questions(memory: "Conclusions", kb: "KnowledgeBase") -> list[dict[str, Any]]:
@@ -91,7 +109,9 @@ def build_questions(memory: "Conclusions", kb: "KnowledgeBase") -> list[dict[str
 
     # Шкалы уточняются только для рабочих диагнозов: для слабых гипотез
     # вопросы о шкалах были бы шумом (особенно в экстренной ситуации).
-    relevant = set(memory.working_diagnoses)
+    # В экстренной ситуации вопросы для шкал не задаются: время уходит на неотложные
+    # действия, а оценка хронического заболевания выполняется после стабилизации.
+    relevant = set(memory.working_diagnoses) if memory.urgency != "emergency" else set()
     for scale_id, result in memory.scales.items():
         if result.category is not None or not result.missing:
             continue

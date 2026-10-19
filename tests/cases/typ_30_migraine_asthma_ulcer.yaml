@@ -1,0 +1,16 @@
+id: TYP-30
+group: typical
+title: Мигрень 6 дней в месяц у пациента с астмой и язвенным анамнезом — ограничения терапии
+# НПВС противопоказаны (язвенный анамнез, RULE-PHARM-004); β-блокаторы для профилактики
+# нежелательны при астме (RULE-PHARM-005, частота ≥ 4 дней в месяц).
+patient:
+  age: 38
+  params: {migraine_days_per_month: 6}
+  facts: {known_migraine: true, known_asthma: true, gi_bleeding_history: true}
+expect:
+  status: ok
+  rules_fired: [RULE-PHARM-004, RULE-PHARM-005]
+  warnings_from: [RULE-PHARM-004, RULE-PHARM-005]
+  rules_not_fired: [RULE-PROT-005]
+  # Жалоб нет — вопросы о мигренозном статусе и тяжёлом обострении астмы не задаются.
+  questions_not_from: [DIAG-EMERGENCY-006, DIAG-REDFLAG-006]

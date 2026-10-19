@@ -37,6 +37,8 @@ results:
   indicates:
   - DIAG-DISEASE-006
 turnaround: экспресс-тест — немедленно; лаборатория — 1 час
+measures:
+- ketones_positive
 sources:
 - 'Umpierrez G.E. et al. Hyperglycemic crises in adults with diabetes: a consensus report. Diabetes Care. 2024;47:1257–1275.'
 - Dhatariya K.K. et al. Diabetic ketoacidosis. Nat Rev Dis Primers. 2020;6:40.

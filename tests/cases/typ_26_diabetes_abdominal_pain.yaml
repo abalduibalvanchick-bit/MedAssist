@@ -1,0 +1,17 @@
+id: TYP-26
+group: typical
+title: Боль в животе с рвотой у пациента с диабетом, гликемия неизвестна — возможный кетоацидоз
+# Срочно; решатель запрашивает гликемию и кетоны и рекомендует глюкозу;
+# кетоацидоз не подтверждён (нет гликемии), но и не исключён — вопрос о нём задаётся.
+patient:
+  age: 45
+  features: [abdominal_pain.vomiting]
+  facts: {known_diabetes: true}
+expect:
+  status: ok
+  urgency: urgent
+  absent_red_flags: [DIAG-REDFLAG-004]
+  working_diagnoses: [DIAG-DISEASE-006]
+  exams: [DIAG-EXAM-005]
+  rules_fired: [RULE-DIAG-021]
+  questions_from: [RULE-DIAG-021, DIAG-REDFLAG-004]

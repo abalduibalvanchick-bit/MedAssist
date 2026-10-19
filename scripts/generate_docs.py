@@ -138,7 +138,11 @@ def gen_conditions(schema) -> str:
     lines.append(table(["Код", "Тип", "Единица", "Название"],
                        [[code(k), v.get("type", ""), v.get("unit", ""), v.get("label", "")] for k, v in schema.parameters.items()]))
     lines.append("\n## Факты\n")
-    lines.append(table(["Код", "Название"], [[code(k), v.get("label", "")] for k, v in schema.facts.items()]))
+    lines.append("Факт с `derived_from` выводится из измерения, если не сообщён явно (при противоречии приоритет "
+                 "у измерения); истинный факт с `implies_disease` означает установленный диагноз.\n\n")
+    lines.append(table(["Код", "Название", "Выводится из", "Означает диагноз"],
+                       [[code(k), v.get("label", ""), describe(v["derived_from"], schema) if v.get("derived_from") else "",
+                         code(v["implies_disease"]) if v.get("implies_disease") else ""] for k, v in schema.facts.items()]))
     lines.append("\n## Пример\n")
     lines.append("```yaml\n"
                  "triggers:\n"

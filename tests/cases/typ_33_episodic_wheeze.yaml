@@ -1,0 +1,16 @@
+id: TYP-33
+group: typical
+title: Эпизодическая одышка с экспираторными хрипами после триггеров — бронхиальная астма
+# Гипотеза астмы (вес 3, рабочий диагноз), спирометрия для подтверждения;
+# тяжёлых признаков нет — плановая срочность.
+patient:
+  age: 24
+  features: [wheezing.expiratory, wheezing.after_trigger, dyspnea.episodic]
+  params: {spo2: 97, rr: 18}
+expect:
+  status: ok
+  urgency: routine
+  hypotheses_top: DIAG-DISEASE-004
+  working_diagnoses: [DIAG-DISEASE-004]
+  exams: [DIAG-EXAM-008]
+  rules_fired: [RULE-DIAG-006]

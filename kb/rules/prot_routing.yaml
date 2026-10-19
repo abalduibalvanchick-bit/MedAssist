@@ -108,6 +108,7 @@
 - id: RULE-PROT-008
   domain: prot
   title: Артериальная гипертензия — обследование органов-мишеней
+  phase: planned
   priority: 40
   if: {disease: DIAG-DISEASE-001}
   then:
@@ -121,11 +122,19 @@
 - id: RULE-PROT-009
   domain: prot
   title: Сахарный диабет 2 типа — скрининг осложнений
+  phase: planned
   priority: 40
-  if: {disease: DIAG-DISEASE-006}
+  if:
+    any:
+      - {fact: known_diabetes}
+      - all:
+          - {disease: DIAG-DISEASE-006}
+          - any:
+              - {param: glucose, op: ">=", value: 11.1}
+              - {param: hba1c, op: ">=", value: 6.5}
   then:
     - recommend_exam: {target: DIAG-EXAM-011, role: stratifies}
     - recommend_exam: {target: DIAG-EXAM-015, role: stratifies}
     - recommend_exam: {target: DIAG-EXAM-016, role: stratifies}
   source_cards: [PROT-PROTOCOL-002, DIAG-EXAM-011, DIAG-EXAM-015, DIAG-EXAM-016]
-  explanation: СКФ, альбуминурия и липидный профиль определяются при установлении диагноза и ежегодно (ADA 2025).
+  explanation: СКФ, альбуминурия и липидный профиль определяются при установлении диагноза и ежегодно (ADA 2025); до лабораторного подтверждения диабета скрининг осложнений не назначается.

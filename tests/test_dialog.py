@@ -207,3 +207,75 @@ def test_validator_checks_forbid_conditions(kb):
     schema = Schema(raw=raw, path=kb.schema.path)
     report = KnowledgeBaseValidator(build_repository(), schema=schema).validate()
     assert any(i.code == "CONSTRAINT_BAD_CONDITION" and i.card_id == "IC-997" for i in report.errors)
+
+
+# ------------------------------------------------------------------ факты, выводимые по словарю схемы
+def test_hypotension_derived_from_measured_sbp(kb):
+    solution = solve({"patient": {"age": 60, "symptoms": ["DIAG-SYMPTOM-002"], "params": {"sbp": 80, "dbp": 50}}}, kb=kb)
+    assert solution["urgency"]["level"] == "emergency"
+    assert "RULE-PROT-001" in solution["fired_rules"]
+    assert any(step["kind"] == "input" and step["source"] == "hypotension" for step in solution["trace"])
+
+
+def test_normal_sbp_derives_no_hypotension(kb):
+    facts = parse_case({"patient": {"age": 60, "params": {"sbp": 125, "dbp": 80}}}, kb).facts
+    assert facts.facts["hypotension"] is False
+
+
+def test_confusion_derived_from_gcs(kb):
+    solution = solve({"patient": {"age": 40, "symptoms": ["DIAG-SYMPTOM-004"], "params": {"gcs": 12}}}, kb=kb)
+    assert solution["urgency"]["level"] == "emergency" and "RULE-PROT-003" in solution["fired_rules"]
+    assert parse_case({"patient": {"params": {"gcs": 15}}}, kb).facts.facts["confusion"] is False
+
+
+def test_measurement_wins_over_reported_fact(kb):
+    parsed = parse_case({"patient": {"age": 60, "params": {"sbp": 80, "dbp": 50}, "facts": {"hypotension": False}}}, kb)
+    assert parsed.facts.facts["hypotension"] is True
+    assert any(i.code == "INCONSISTENT_FACT" for i in parsed.issues) and not parsed.has_errors
+
+
+def test_unknown_measurement_leaves_fact_unknown(kb):
+    assert "hypotension" not in parse_case({"patient": {"age": 60}}, kb).facts.facts
+
+
+def test_known_disease_fact_establishes_diagnosis(kb):
+    solution = solve({"patient": {"age": 55, "params": {"sbp": 150, "dbp": 95}, "facts": {"known_hypertension": True}}}, kb=kb)
+    assert [d["id"] for d in solution["working_diagnoses"]] == ["DIAG-DISEASE-001"]
+    assert "RULE-PROT-008" in solution["fired_rules"]
+    false_fact = parse_case({"patient": {"facts": {"known_hypertension": False}}}, kb).facts
+    assert "DIAG-DISEASE-001" not in false_fact.diseases
+
+
+def test_every_implied_disease_mapping_is_a_disease_card(kb):
+    implied = {spec["implies_disease"] for spec in kb.schema.facts.values() if spec.get("implies_disease")}
+    assert implied and all(kb.get(d).category == "disease" for d in implied)
+
+
+def test_validator_rejects_bad_fact_vocabulary(kb):
+    from src.cli import build_repository
+    from src.validator import KnowledgeBaseValidator
+
+    raw = copy.deepcopy(kb.schema.raw)
+    raw["facts"]["obesity"]["derived_from"] = {"fact": "smoker"}
+    raw["facts"]["smoker"]["implies_disease"] = "PROT-SCALE-001"
+    report = KnowledgeBaseValidator(build_repository(), schema=Schema(raw=raw, path=kb.schema.path)).validate()
+    codes = {(i.code, i.card_id) for i in report.errors}
+    assert ("FACT_BAD_DERIVATION", "obesity") in codes and ("FACT_BAD_DISEASE", "smoker") in codes
+
+
+def test_safety_question_anchor_does_not_depend_on_branch_order(kb):
+    from src.conditions import PatientFacts
+    from src.solver.questions import _partially_met
+
+    class Memory:
+        facts = PatientFacts(features={"headache.recurrent_attacks"}, diseases={"DIAG-DISEASE-005"})
+
+    a = {"all": [{"any": [{"disease": "DIAG-DISEASE-005"}, {"feature": "headache.recurrent_attacks"}]},
+                 {"feature": "headache.over_72h"}]}
+    b = {"all": [{"any": [{"feature": "headache.recurrent_attacks"}, {"disease": "DIAG-DISEASE-005"}]},
+                 {"feature": "headache.over_72h"}]}
+    assert _partially_met(a, Memory, kb) and _partially_met(b, Memory, kb)
+    only_background = {"all": [{"disease": "DIAG-DISEASE-005"}, {"feature": "headache.over_72h"}]}
+    assert not _partially_met(only_background, Memory, kb), "фоновый диагноз — не якорь"
+    negated = {"all": [{"not": {"feature": "headache.recurrent_attacks"}}, {"feature": "headache.over_72h"}]}
+    assert not _partially_met(negated, Memory, kb), "отрицаемое проявление — не якорь"

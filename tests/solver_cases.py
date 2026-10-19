@@ -7,7 +7,9 @@
     red_flags, emergencies, profiles,
     working_diagnoses, exams,
     protocols, rules_fired            — ожидаемые элементы присутствуют
-    rules_not_fired, no_scales        — элементы отсутствуют
+    rules_not_fired, no_scales,
+    absent_red_flags, absent_emergencies,
+    absent_exams, questions_not_from  — элементы отсутствуют
     no_red_flags, no_emergencies,
     no_hypotheses                     — список пуст
     hypotheses_top                    — гипотеза с наибольшим весом
@@ -60,6 +62,9 @@ def check_case(case: dict[str, Any], solution: dict[str, Any]) -> list[str]:
     need(not missing, f"не сработали правила {sorted(missing)}")
     extra = set(exp.get("rules_not_fired") or []) & fired
     need(not extra, f"сработали лишние правила {sorted(extra)}")
+    for key in ("red_flags", "emergencies", "exams"):
+        extra = set(exp.get(f"absent_{key}") or []) & set(_ids(solution.get(key)))
+        need(not extra, f"{key}: лишние {sorted(extra)}")
     for key in ("red_flags", "emergencies", "hypotheses"):
         if exp.get(f"no_{key}"):
             need(not solution.get(key), f"{key} должен быть пуст, получено {_ids(solution.get(key))}")
@@ -85,6 +90,8 @@ def check_case(case: dict[str, Any], solution: dict[str, Any]) -> list[str]:
     questions = solution.get("questions") or []
     missing = set(exp.get("questions_from") or []) - {q["source"] for q in questions}
     need(not missing, f"нет вопросов от {sorted(missing)}")
+    extra = set(exp.get("questions_not_from") or []) & {q["source"] for q in solution.get("questions") or []}
+    need(not extra, f"лишние вопросы от {sorted(extra)}")
     missing = set(exp.get("questions_kinds") or []) - {q["kind"] for q in questions}
     need(not missing, f"нет вопросов вида {sorted(missing)}")
     asked = " | ".join(a for q in questions for a in q.get("ask") or [])

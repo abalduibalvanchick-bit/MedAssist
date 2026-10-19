@@ -1,0 +1,13 @@
+id: BND-10
+group: boundary
+title: Диабет, СКФ 50, планируется КТ с контрастом — приостановить метформин
+# Граница по СКФ: 50 < 60 — предупреждение о контрасте; 50 ≥ 30 — метформин не противопоказан.
+patient:
+  age: 60
+  params: {egfr: 50}
+  facts: {known_diabetes: true, contrast_study_planned: true}
+expect:
+  status: ok
+  rules_fired: [RULE-PHARM-002]
+  rules_not_fired: [RULE-PHARM-001]
+  warnings_from: [RULE-PHARM-002]

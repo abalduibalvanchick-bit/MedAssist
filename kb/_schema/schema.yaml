@@ -372,6 +372,12 @@ parameters:
   midas_q5:       {type: number,  unit: "дни",           label: "MIDAS, вопрос 5: пропущенные социальные мероприятия", min: 0, max: 90}
 
 # Булевы факты о пациенте, не являющиеся ни симптомами, ни диагнозами.
+#   derived_from    — условие над параметрами, из которого факт выводится, если
+#                     его значение не сообщено явно (САД 80 → гипотензия). Если
+#                     сообщённое значение противоречит измерению, приоритет у
+#                     измерения, а пользователь получает предупреждение.
+#   implies_disease — истинный факт означает ранее установленный диагноз:
+#                     заболевание считается рабочим диагнозом с начала решения.
 facts:
   smoker:               {label: "Курение"}
   pregnant:             {label: "Беременность"}
@@ -380,18 +386,18 @@ facts:
   on_anticoagulants:    {label: "Принимает антикоагулянты"}
   nsaid_use:            {label: "Принимает НПВС"}
   recent_surgery:       {label: "Недавняя операция или травма"}
-  confusion:            {label: "Спутанность или угнетение сознания"}
-  known_hypertension:   {label: "Ранее установленная артериальная гипертензия"}
-  known_diabetes:       {label: "Ранее установленный сахарный диабет"}
-  known_ihd:            {label: "Ранее установленная ИБС"}
-  known_asthma:         {label: "Ранее установленная бронхиальная астма"}
-  known_migraine:       {label: "Ранее установленная мигрень"}
-  hypotension:          {label: "Гипотензия (САД < 90 мм рт. ст.)"}
+  confusion:            {label: "Спутанность или угнетение сознания", derived_from: {param: gcs, op: "<", value: 15}}
+  known_hypertension:   {label: "Ранее установленная артериальная гипертензия", implies_disease: DIAG-DISEASE-001}
+  known_diabetes:       {label: "Ранее установленный сахарный диабет", implies_disease: DIAG-DISEASE-006}
+  known_ihd:            {label: "Ранее установленная ИБС", implies_disease: DIAG-DISEASE-002}
+  known_asthma:         {label: "Ранее установленная бронхиальная астма", implies_disease: DIAG-DISEASE-004}
+  known_migraine:       {label: "Ранее установленная мигрень", implies_disease: DIAG-DISEASE-005}
+  hypotension:          {label: "Гипотензия (САД < 90 мм рт. ст.)", derived_from: {param: sbp, op: "<", value: 90}}
   syncope:              {label: "Обморок"}
   weight_loss:          {label: "Непреднамеренное снижение массы тела"}
   dyslipidemia:         {label: "Дислипидемия"}
   family_history_cvd:   {label: "Ранние сердечно-сосудистые заболевания у родственников"}
-  obesity:              {label: "Ожирение"}
+  obesity:              {label: "Ожирение", derived_from: {param: bmi, op: ">=", value: 30}}
   sedentary:            {label: "Низкая физическая активность"}
   allergen_exposure:    {label: "Контакт с аллергеном или триггером"}
   therapy_nonadherence: {label: "Нарушение режима приёма назначенной терапии"}
@@ -444,8 +450,8 @@ facts:
 # any с unknown -> unknown (если нет true); not unknown -> unknown.
 # Решатель трактует unknown как повод запросить уточнение, а не как false.
 condition_language:
-  # known — метаатом: истинен, если значение параметра или факта сообщено (никогда не unknown);
-  # используется в правилах запроса уточнений.
+  # known — метаатом: истинен, если сообщено значение параметра, факта или результат
+  # обследования (ID карточки exam); никогда не unknown; используется в правилах запроса уточнений.
   atoms: [symptom, feature, param, fact, disease, redflag, emergency, profile, scale, scale_category, exam_result, known]
   combinators: [all, any, not, at_least]
   operators: [">", ">=", "<", "<=", "==", "!=", "between"]
@@ -505,6 +511,7 @@ machine_layer:
           indicates: {type: "list[id(disease,emergency)]", optional: true, implies: diagnoses}
       contraindications: {type: "list[condition]", optional: true}
       turnaround: {type: string, optional: true, doc: "Ориентировочное время получения результата"}
+      measures: {type: "list[parameter]", optional: true, doc: "Параметры пациента, которые даёт обследование; если значение уже сообщено, обследование считается выполненным"}
   difdiag:
     required_for_approved: [leading_symptom, branches]
     fields:
@@ -742,8 +749,12 @@ machine_layer:
 # валидацию по этой схеме. Файл может содержать одно правило или список.
 rules:
   required: [id, domain, title, if, then, source_cards, explanation]
-  optional: [priority, evidence_level, status, tags, notes]
+  optional: [priority, evidence_level, status, tags, notes, phase]
   default_priority: 50
+  # phase: acute (по умолчанию) | planned. Плановые правила (обследование при
+  # хроническом заболевании) в экстренной ситуации не смешиваются с неотложными
+  # рекомендациями: их обследования выводятся отдельно — «после стабилизации».
+  phases: [acute, planned]
   actions:
     assert_hypothesis:  {target: "id(disease,emergency)", extra: {weight: "enum(weight)"}}
     trigger_red_flag:   {target: "id(redflag)"}

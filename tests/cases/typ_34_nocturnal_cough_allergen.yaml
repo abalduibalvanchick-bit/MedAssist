@@ -1,0 +1,13 @@
+id: TYP-34
+group: typical
+title: Ночной кашель после контакта с аллергеном — кашлевой вариант астмы
+# Гипотеза астмы с весом 2 — ниже порога рабочего диагноза.
+patient:
+  age: 30
+  features: [cough.nocturnal]
+  facts: {allergen_exposure: true}
+expect:
+  status: ok
+  urgency: routine
+  hypotheses_top: DIAG-DISEASE-004
+  rules_fired: [RULE-DIAG-007]

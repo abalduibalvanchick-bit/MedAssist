@@ -10,5 +10,5 @@ expect:
   status: ok
   no_red_flags: true
   hypotheses_top: DIAG-DISEASE-005
-  rules_fired: [RULE-DIAG-039]
+  rules_fired: [RULE-DIAG-009]
   rules_not_fired: [RULE-DIAG-038]

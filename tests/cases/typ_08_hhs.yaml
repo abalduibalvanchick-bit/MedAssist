@@ -9,8 +9,12 @@ patient:
 expect:
   status: ok
   urgency: emergency
-  red_flags: [DIAG-REDFLAG-004]
+  # Без данных о кетонах кетоацидоз нельзя ни подтвердить, ни исключить: флага ДКА нет,
+  # решатель запрашивает кетоны (RULE-DIAG-046) и рекомендует их определение.
+  absent_red_flags: [DIAG-REDFLAG-004]
   emergencies: [DIAG-EMERGENCY-004]
+  exams: [DIAG-EXAM-014]
+  questions_from: [RULE-DIAG-046]
   profiles: [GLB-PROFILE-001]
   protocols: [PROT-EMERGENCY_P-002]
-  rules_fired: [RULE-GLB-004]
+  rules_fired: [RULE-GLB-004, RULE-DIAG-046]

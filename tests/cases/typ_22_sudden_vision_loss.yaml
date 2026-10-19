@@ -1,0 +1,18 @@
+id: TYP-22
+group: typical
+title: Внезапная потеря зрения на один глаз у гипертоника — ТИА или инсульт
+# Внезапное выпадение зрения — проявление острой ишемии: экстренно, гипотеза ОНМК.
+patient:
+  age: 66
+  features: [visual_disturbance.sudden_loss]
+  params: {sbp: 165, dbp: 95}
+  facts: {known_hypertension: true}
+expect:
+  status: ok
+  urgency: emergency
+  hypotheses_top: DIAG-EMERGENCY-002
+  working_diagnoses: [DIAG-DISEASE-001]
+  rules_fired: [RULE-DIAG-038]
+  # Экстренно: обследование органов-мишеней при АГ — после стабилизации, вопросов для шкал нет.
+  absent_exams: [DIAG-EXAM-011, DIAG-EXAM-015, DIAG-EXAM-016]
+  questions_not_from: [PROT-SCALE-001]

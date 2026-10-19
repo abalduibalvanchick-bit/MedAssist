@@ -1,0 +1,15 @@
+id: TYP-28
+group: typical
+title: Диабет и гипертензия при СКФ 25 — противопоказание метформина, коррекция антигипертензивной терапии
+# Профиль сниженной функции почек; метформин противопоказан и направление к специалисту
+# (RULE-PHARM-001); тиазиды неэффективны, коррекция дозы иАПФ (RULE-PHARM-010).
+patient:
+  age: 68
+  params: {egfr: 25, sbp: 145, dbp: 85}
+  facts: {known_diabetes: true, known_hypertension: true}
+expect:
+  status: ok
+  profiles: [GLB-PROFILE-003]
+  working_diagnoses: [DIAG-DISEASE-001, DIAG-DISEASE-006]
+  rules_fired: [RULE-PHARM-001, RULE-PHARM-010]
+  warnings_from: [RULE-PHARM-001, RULE-PHARM-010]

@@ -1,0 +1,13 @@
+id: BND-11
+group: boundary
+title: Гипертензия с калием 6,0 ммоль/л — иАПФ и БРА не начинать
+# Порог 5,5: при 6,0 предупреждение RULE-PHARM-007.
+patient:
+  age: 63
+  params: {potassium: 6.0, sbp: 150, dbp: 90}
+  facts: {known_hypertension: true}
+expect:
+  status: ok
+  working_diagnoses: [DIAG-DISEASE-001]
+  rules_fired: [RULE-PHARM-007]
+  warnings_from: [RULE-PHARM-007]

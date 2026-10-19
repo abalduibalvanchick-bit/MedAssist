@@ -1,0 +1,15 @@
+id: TYP-25
+group: typical
+title: Внезапная одышка с болью в груди — исключить ОКС, ТЭЛА, пневмоторакс
+# Экстренно; гипотеза ОКС, ЭКГ; предупреждение о состояниях вне модели (ТЭЛА, пневмоторакс).
+patient:
+  age: 40
+  symptoms: [DIAG-SYMPTOM-002]
+  features: [dyspnea.sudden_onset]
+  params: {spo2: 93}
+expect:
+  status: ok
+  urgency: emergency
+  exams: [DIAG-EXAM-002]
+  rules_fired: [RULE-DIAG-019]
+  warnings_from: [RULE-DIAG-019]

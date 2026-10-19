@@ -52,6 +52,9 @@ results:
 - value: arm_difference
   label: разница САД между руками более 15 мм рт. ст.
 turnaround: немедленно
+measures:
+- sbp
+- dbp
 sources:
 - Клинические рекомендации «Артериальная гипертензия у взрослых». Минздрав РФ, 2024.
 - Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.

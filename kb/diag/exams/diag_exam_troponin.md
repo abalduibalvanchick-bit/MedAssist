@@ -42,6 +42,8 @@ results:
 - value: positive_stable
   label: стабильно повышен без динамики
 turnaround: алгоритм 0/1 ч или 0/2 ч
+measures:
+- troponin_positive
 sources:
 - Byrne R.A. et al. 2023 ESC Guidelines for the management of acute coronary syndromes. Eur Heart J. 2023;44:3720–3826.
 - Thygesen K. et al. Fourth Universal Definition of Myocardial Infarction (2018). Circulation. 2018;138:e618–e651.

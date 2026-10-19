@@ -238,6 +238,10 @@ class Schema:
         return dict(self.raw["rules"]["actions"])
 
     @property
+    def rule_phases(self) -> list[str]:
+        return list(self.raw["rules"].get("phases", ["acute"]))
+
+    @property
     def rule_default_priority(self) -> int:
         return int(self.raw["rules"].get("default_priority", 50))
 

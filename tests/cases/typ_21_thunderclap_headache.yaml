@@ -1,0 +1,15 @@
+id: TYP-21
+group: typical
+title: Внезапная сильнейшая головная боль — исключить субарахноидальное кровоизлияние
+# Громоподобная головная боль — экстренно: красный флаг опасной головной боли,
+# гипотеза ОНМК (САК — геморрагический инсульт), экстренный маршрут.
+patient:
+  age: 45
+  features: [headache.sudden_onset, headache.worst_ever]
+  params: {sbp: 150, dbp: 90}
+expect:
+  status: ok
+  urgency: emergency
+  red_flags: [DIAG-REDFLAG-002]
+  hypotheses_top: DIAG-EMERGENCY-002
+  rules_fired: [RULE-DIAG-017]

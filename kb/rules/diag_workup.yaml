@@ -106,6 +106,21 @@
   source_cards: [PROT-SCALE-004, DIAG-DISEASE-003]
   explanation: Решение о месте лечения пневмонии принимается по шкале CURB-65.
 
+- id: RULE-DIAG-046
+  domain: diag
+  title: Выраженная гипергликемия — определить кетоны
+  priority: 75
+  if:
+    all:
+      - {param: glucose, op: ">", value: 13.9}
+      - not: {known: ketones_positive}
+      - not: {known: DIAG-EXAM-014}
+  then:
+    - recommend_exam: {target: DIAG-EXAM-014, role: excludes}
+    - request_clarification: "Определите кетоны в крови или моче: при гликемии выше 13,9 ммоль/л это отличает кетоацидоз от гиперосмолярного состояния."
+  source_cards: [DIAG-REDFLAG-004, DIAG-EMERGENCY-004, DIAG-EXAM-014]
+  explanation: Кетоацидоз и гиперосмолярное состояние различаются по кетонемии и кетонурии; без этого значения кетоацидоз нельзя ни подтвердить, ни исключить.
+
 - id: RULE-DIAG-031
   domain: diag
   title: Полиурия или жажда — уточнить гликемию

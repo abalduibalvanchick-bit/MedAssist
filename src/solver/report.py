@@ -46,6 +46,12 @@ def format_solution(solution: dict[str, Any], *, show_trace: bool = True) -> str
     section("Шкалы", [f"{s['title']}: " + (f"{s['value']:g} балл(ов), " if s.get("value") is not None else f"{s['range'][0]:g}–{s['range'][1]:g}, ")
                       + f"{s['category_label']}" for s in solution.get("scales") or []])
     section("Обследования", [f"{e['title']} — {', '.join(_ROLES.get(r, r) for r in e['roles'])}" for e in solution.get("exams") or []])
+    def _results(item: dict[str, Any]) -> str:
+        return "; ".join(f"{r['label']} = {r['value']}" for r in item.get("results") or [])
+
+    section("Уже выполнено", [f"{e['title']}: {_results(e)}" for e in solution.get("completed_exams") or []])
+    section("После стабилизации (плановое обследование)",
+            [f"{e['title']} — {', '.join(_ROLES.get(r, r) for r in e['roles'])}" for e in solution.get("deferred_exams") or []])
     section("Маршрут", [f"{_ROUTES.get(r['route'], r['route'])}" + (f", {r['timeframe']}" if r.get("timeframe") else "") + f" [{r['source']}]"
                         for r in solution.get("routes") or []])
     section("Дальнейшие действия", [f"{p['title']} [{p['id']}]" for p in solution.get("protocols") or []])

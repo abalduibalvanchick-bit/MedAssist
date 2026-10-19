@@ -44,6 +44,9 @@ results:
 - value: kidney_failure
   label: СКФ менее 15 (ХБП С5)
 turnaround: 1–2 часа
+measures:
+- creatinine
+- egfr
 sources:
 - KDIGO 2024 Clinical Practice Guideline for the Evaluation and Management of Chronic Kidney Disease. Kidney Int. 2024;105(4S):S117–S314.
 - Inker L.A. et al. New Creatinine- and Cystatin C–Based Equations to Estimate GFR without Race. N Engl J Med. 2021;385:1737–1749.

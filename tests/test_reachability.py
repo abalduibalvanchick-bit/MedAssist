@@ -88,3 +88,17 @@ def test_scale_item_options_are_exhaustive(scale_id, item):
                 f.diseases.add(cid)
         truths = [evaluate(c, f, KB.schema) for c in conditions]
         assert Truth.TRUE in truths, f"{scale_id}:{item['code']} — ни один вариант не подходит для {combo}"
+
+
+def test_rules_suspecting_emergency_raise_urgency():
+    """Правило, выдвигающее гипотезу неотложного состояния, повышает срочность не ниже «срочной»:
+    иначе неотложное состояние подозревается, а обследование допускается в плановом порядке."""
+    offenders = []
+    for rule in KB.rules:
+        targets = [a["assert_hypothesis"]["target"] for a in rule.actions if "assert_hypothesis" in a]
+        if not any(KB.get(t).category == "emergency" for t in targets):
+            continue
+        levels = [a["set_urgency"] for a in rule.actions if "set_urgency" in a]
+        if not any(level in ("urgent", "emergency") for level in levels):
+            offenders.append(rule.id)
+    assert not offenders, f"не повышают срочность: {offenders}"

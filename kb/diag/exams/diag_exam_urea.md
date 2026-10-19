@@ -33,6 +33,8 @@ results:
 - value: elevated
   label: более 7 ммоль/л
 turnaround: 1 час
+measures:
+- urea
 sources:
 - 'Lim W.S. et al. Defining community acquired pneumonia severity on presentation to hospital: an international derivation and validation study. Thorax. 2003;58:377–382.'
 - Клинические рекомендации «Внебольничная пневмония у взрослых». Минздрав РФ, 2024.

@@ -32,6 +32,7 @@ class Rule:
     explanation: str
     priority: int
     source_file: str
+    phase: str = "acute"
 
 
 @dataclass
@@ -77,6 +78,7 @@ class KnowledgeBase:
                     explanation=str(raw.get("explanation", "")),
                     priority=int(raw.get("priority", default_priority)),
                     source_file=path.name,
+                    phase=str(raw.get("phase", "acute")),
                 ))
         # Детерминированный порядок: сначала более приоритетные, затем по ID.
         rules.sort(key=lambda r: (-r.priority, r.id))

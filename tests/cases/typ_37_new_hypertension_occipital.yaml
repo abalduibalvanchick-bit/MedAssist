@@ -1,0 +1,17 @@
+id: TYP-37
+group: typical
+title: Впервые выявленное АД 170/100 с затылочной головной болью — протокол АГ
+# Гипертензия ранее не устанавливалась (сообщено явно): протокол впервые выявленной АГ
+# (RULE-PROT-006); вес гипотезы 2 + 2 = 4 — рабочий диагноз, обследование органов-мишеней.
+patient:
+  age: 55
+  features: [headache.occipital]
+  denied_features: [headache.sudden_onset, headache.worst_ever, headache.meningism]
+  denied_symptoms: [DIAG-SYMPTOM-010]
+  params: {sbp: 170, dbp: 100}
+  facts: {known_hypertension: false}
+expect:
+  status: ok
+  working_diagnoses: [DIAG-DISEASE-001]
+  protocols: [PROT-PROTOCOL-001]
+  rules_fired: [RULE-DIAG-011, RULE-PROT-006, RULE-PROT-008]

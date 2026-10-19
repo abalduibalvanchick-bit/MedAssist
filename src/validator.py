@@ -23,7 +23,7 @@ from typing import Any
 
 import yaml
 
-from .conditions import validate_condition
+from .conditions import collect_references, validate_condition
 from .machine_refs import iter_machine_refs
 from .card_writer import sync_body_sources
 from .pharmacology import duplicated_class_contraindications
@@ -156,8 +156,37 @@ class KnowledgeBaseValidator:
         self._validate_machine_refs_in_graph(report)
         report.total_rules = self._validate_rules(report)
         self._validate_input_constraints(report)
+        self._validate_fact_vocabulary(report)
         self._collect_stats(report)
         return report
+
+    def _validate_fact_vocabulary(self, report: ValidationReport) -> None:
+        """Свойства фактов словаря: derived_from — условие только над параметрами;
+        implies_disease — существующая карточка заболевания."""
+        for name, spec in self.schema.facts.items():
+            where = f"facts.{name}"
+            condition = spec.get("derived_from")
+            if condition is not None:
+                for issue in self._condition_issues(condition, f"{where}.derived_from"):
+                    self._add(report, None, "ERROR", "FACT_BAD_DERIVATION", f"{issue.path}: {issue.message}",
+                              file_path=str(self.schema.path), card_id=name)
+                refs = collect_references(condition, self.schema)
+                if refs.facts or refs.features or refs.card_ids:
+                    self._add(report, None, "ERROR", "FACT_BAD_DERIVATION",
+                              f"{where}.derived_from: допустимы только параметры (иначе возможны циклы вывода).",
+                              file_path=str(self.schema.path), card_id=name)
+            disease = spec.get("implies_disease")
+            if disease is not None:
+                card = self.repository.index.by_id.get(disease)
+                prefix = f"{self.schema.domains['diag']['id_prefix']}-DISEASE-"
+                if (card is not None and card.category != "disease") or not str(disease).startswith(prefix):
+                    self._add(report, None, "ERROR", "FACT_BAD_DISEASE",
+                              f"{where}.implies_disease: {disease} не является карточкой заболевания.",
+                              file_path=str(self.schema.path), card_id=name)
+                elif card is None:
+                    self._add(report, None, "WARNING", "FACT_DISEASE_NOT_FOUND",
+                              f"{where}.implies_disease: карточка {disease} отсутствует в базе.",
+                              file_path=str(self.schema.path), card_id=name)
 
     def _validate_input_constraints(self, report: ValidationReport) -> None:
         """Условия forbid в разделе input_constraints схемы — на корректность языка условий."""
@@ -691,6 +720,8 @@ class KnowledgeBaseValidator:
             for issue in self._condition_issues(rule["if"], "if"):
                 err("RULE_BAD_CONDITION", f"{issue.path}: {issue.message}")
         self._validate_rule_actions(rule, err)
+        if "phase" in rule and rule["phase"] not in self.schema.rule_phases:
+            err("RULE_BAD_PHASE", f"phase «{rule['phase']}» не из {self.schema.rule_phases}.")
         sources = rule.get("source_cards") or []
         if not sources:
             err("RULE_NO_SOURCES", "Правило должно ссылаться хотя бы на одну карточку-источник.")

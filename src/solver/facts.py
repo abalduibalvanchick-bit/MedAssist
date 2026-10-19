@@ -28,6 +28,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from ..conditions import PatientFacts, Truth, compare, evaluate
+from .explain import justify, justify_false
 from .knowledge import KnowledgeBase
 
 
@@ -72,6 +73,52 @@ def check_input_constraints(facts: PatientFacts, schema) -> list[str]:
             except (KeyError, IndexError, ValueError):
                 messages.append(str(item["message"]))
     return messages
+
+
+def derive_facts(facts: PatientFacts, kb: KnowledgeBase) -> list[tuple[str, str]]:
+    """Достраивает факты по словарю схемы. Возвращает предупреждения (код, текст).
+
+    derived_from: факт, не сообщённый явно, выводится из измерения (САД 80 →
+    гипотензия; САД 120 → гипотензии нет). Если сообщённое значение противоречит
+    измерению, используется измерение: решатель не должен пропустить опасное
+    состояние из-за устаревшего или ошибочного ответа.
+    implies_disease: истинный факт «ранее установленное заболевание» делает это
+    заболевание установленным диагнозом.
+    """
+    schema = kb.schema
+    warnings: list[tuple[str, str]] = []
+    for name, spec in sorted(schema.facts.items()):
+        condition = spec.get("derived_from")
+        if not condition:
+            continue
+        truth = evaluate(condition, facts, schema)
+        if truth is Truth.UNKNOWN:
+            continue
+        value = truth is Truth.TRUE
+        because = justify(condition, facts, kb) if value else [f"нет: {line}" for line in justify_false(condition, facts, kb)]
+        reported = facts.facts.get(name)
+        if reported is not None and reported == value:
+            continue
+        label = spec.get("label", name)
+        if reported is not None:
+            warnings.append(("INCONSISTENT_FACT",
+                             f"Сообщено «{label}: {'да' if reported else 'нет'}», но по измерению ({'; '.join(because)}) "
+                             f"— {'да' if value else 'нет'}; используется значение по измерению."))
+        facts.facts[name] = value
+        facts.derived.append({"code": name, "kind": "fact", "value": value, "because": because, "source": "schema.facts"})
+    for name, spec in sorted(schema.facts.items()):
+        disease = spec.get("implies_disease")
+        # Установленный диагноз, переданный списком diseases, означает и факт анамнеза.
+        if disease and disease in facts.diseases and name not in facts.facts:
+            facts.facts[name] = True
+            facts.derived.append({"code": name, "kind": "fact", "value": True,
+                                  "because": [f"установленный диагноз: {kb.title(disease)}"], "source": "schema.facts"})
+            continue
+        if disease and facts.facts.get(name) is True and disease not in facts.diseases:
+            facts.diseases.add(disease)
+            facts.derived.append({"code": disease, "kind": "disease", "value": True,
+                                  "because": [spec.get("label", name)], "source": "schema.facts"})
+    return warnings
 
 
 _LIST_KEYS = ("symptoms", "features", "denied_symptoms", "denied_features", "diseases")
@@ -197,6 +244,10 @@ def parse_case(data: Any, kb: KnowledgeBase) -> ParsedCase:
             err("BAD_VALUE", f"Факт «{schema.facts[name].get('label', name)}» должен быть true или false.")
             continue
         facts.facts[name] = value
+
+    # --- факты, выводимые из измерений, и ранее установленные диагнозы (словарь схемы)
+    for issue_code, message in derive_facts(facts, kb):
+        warn(issue_code, message)
 
     # --- ограничения согласованности из схемы (input_constraints)
     for message in check_input_constraints(facts, schema):

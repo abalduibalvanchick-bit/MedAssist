@@ -1,0 +1,12 @@
+id: TYP-32
+group: typical
+title: Сахарный диабет у беременной — противопоказания сахароснижающих, направление
+# Профиль беременных; предупреждение и срочное направление (RULE-PHARM-011).
+patient:
+  age: 32
+  facts: {known_diabetes: true, pregnant: true}
+expect:
+  status: ok
+  profiles: [GLB-PROFILE-002]
+  rules_fired: [RULE-PHARM-011]
+  warnings_from: [RULE-PHARM-011]

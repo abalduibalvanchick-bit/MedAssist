@@ -1,0 +1,14 @@
+id: TYP-38
+group: typical
+title: Кашель с лихорадкой более трёх суток при нормальных показателях — рентгенография
+# Гипотеза пневмонии (вес 2), рентгенография для подтверждения.
+patient:
+  age: 35
+  symptoms: [DIAG-SYMPTOM-008]
+  features: [fever.prolonged]
+  params: {rr: 18, sbp: 120, dbp: 75, spo2: 97}
+expect:
+  status: ok
+  hypotheses_top: DIAG-DISEASE-003
+  exams: [DIAG-EXAM-004]
+  rules_fired: [RULE-DIAG-022]

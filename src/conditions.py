@@ -102,6 +102,9 @@ class PatientFacts:
     denied_features: set[str] = field(default_factory=set)
     # Закрытый мир: всё, что не перечислено, считается отсутствующим.
     closed_world: bool = False
+    # Что выведено из входных данных по словарю схемы (derived_from, implies_disease):
+    # [{"code", "kind": "fact" | "disease", "value", "because": [...], "source"}].
+    derived: list[dict] = field(default_factory=list)
 
     def has_symptom(self, symptom_id: str) -> Truth:
         if symptom_id in self.symptoms:
@@ -262,7 +265,10 @@ def validate_condition(
             add(f"Неизвестный факт {value}")
     elif atom == "known":
         if value not in schema.parameters and value not in schema.facts:
-            add(f"known ссылается на неизвестный параметр или факт {value}")
+            if isinstance(value, str) and schema.id_pattern.match(value):
+                _check_id(value, ("exam",), known_ids, schema, add)
+            else:
+                add(f"known ссылается на неизвестный параметр, факт или обследование {value}")
     elif atom == "feature":
         if not isinstance(value, str) or "." not in value:
             add(f"Код признака должен иметь вид <symptom>.<feature>: {value!r}")
@@ -355,7 +361,12 @@ def collect_references(node: Any, schema: Schema | None = None, refs: ConditionR
         return refs
     value = node[atom]
     if atom == "known":
-        (refs.params if value in schema.parameters else refs.facts).add(str(value))
+        if value in schema.parameters:
+            refs.params.add(str(value))
+        elif value in schema.facts:
+            refs.facts.add(str(value))
+        else:
+            refs.card_ids.add(str(value))
     elif atom == "param":
         refs.params.add(str(value))
     elif atom == "fact":
@@ -426,7 +437,7 @@ def evaluate(
     value = node[atom]
 
     if atom == "known":
-        known = value in facts.params or value in facts.facts
+        known = value in facts.params or value in facts.facts or value in facts.exam_results
         return record(Truth.TRUE if known else Truth.FALSE, f"{value} {'сообщено' if known else 'не сообщено'}")
     if atom == "symptom":
         return record(facts.has_symptom(value))
@@ -520,7 +531,8 @@ def describe(node: Any, schema: Schema | None = None, labels: dict[str, str] | N
     if atom == "fact":
         return schema.facts.get(value, {}).get("label", value)
     if atom == "known":
-        label = schema.parameters.get(value, schema.facts.get(value, {})).get("label", value)
+        spec = schema.parameters.get(value) or schema.facts.get(value)
+        label = spec.get("label", value) if spec else name(value)
         return f"известно: {label}"
     if atom == "scale":
         return f"{name(value)} {node['op']} {node['value']}"

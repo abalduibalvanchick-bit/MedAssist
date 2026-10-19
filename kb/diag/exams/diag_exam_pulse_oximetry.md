@@ -46,6 +46,8 @@ results:
   indicates:
   - DIAG-EMERGENCY-003
 turnaround: немедленно
+measures:
+- spo2
 sources:
 - British Thoracic Society Guideline for oxygen use in healthcare and emergency settings. Thorax. 2017;72(Suppl 1).
 - Клинические рекомендации «Внебольничная пневмония у взрослых». Минздрав РФ, 2024.

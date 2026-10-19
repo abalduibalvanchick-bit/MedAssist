@@ -1,0 +1,13 @@
+id: BND-09
+group: boundary
+title: Лихорадка при ШКГ 13 — угнетение сознания выводится из шкалы Глазго
+# Факт спутанности не сообщён, но ШКГ 13 < 15: лихорадка с нарушением сознания —
+# экстренно (сепсис, нейроинфекция), RULE-PROT-003.
+patient:
+  age: 40
+  symptoms: [DIAG-SYMPTOM-004]
+  params: {gcs: 13}
+expect:
+  status: ok
+  urgency: emergency
+  rules_fired: [RULE-PROT-003]

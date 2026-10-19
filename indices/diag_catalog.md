@@ -42,7 +42,7 @@
 | `DIAG-EXAM-017` | Пикфлоуметрия (пиковая скорость выдоха) | `exam` | `urgent` | `approved` | [kb/diag/exams/diag_exam_peak_flow.md](kb/diag/exams/diag_exam_peak_flow.md) |
 | `DIAG-EXAM-018` | Компьютерная томография головного мозга | `exam` | `emergency` | `approved` | [kb/diag/exams/diag_exam_ct_head.md](kb/diag/exams/diag_exam_ct_head.md) |
 | `DIAG-REDFLAG-001` | Гипертонический криз осложнённый | `redflag` | `emergency` | `approved` | [kb/diag/red_flags/diag_redflag_hypertensive_crisis.md](kb/diag/red_flags/diag_redflag_hypertensive_crisis.md) |
-| `DIAG-REDFLAG-002` | Внезапная сильнейшая головная боль | `redflag` | `emergency` | `approved` | [kb/diag/red_flags/diag_redflag_thunderclap_headache.md](kb/diag/red_flags/diag_redflag_thunderclap_headache.md) |
+| `DIAG-REDFLAG-002` | Опасная головная боль (громоподобная, с менингеальными знаками, очаговым дефицитом или нарушением сознания) | `redflag` | `emergency` | `approved` | [kb/diag/red_flags/diag_redflag_thunderclap_headache.md](kb/diag/red_flags/diag_redflag_thunderclap_headache.md) |
 | `DIAG-REDFLAG-003` | Выраженная одышка и цианоз | `redflag` | `emergency` | `approved` | [kb/diag/red_flags/diag_redflag_severe_dyspnea_cyanosis.md](kb/diag/red_flags/diag_redflag_severe_dyspnea_cyanosis.md) |
 | `DIAG-REDFLAG-004` | Диабетический кетоацидоз (ДКА) | `redflag` | `emergency` | `approved` | [kb/diag/red_flags/diag_redflag_dka.md](kb/diag/red_flags/diag_redflag_dka.md) |
 | `DIAG-REDFLAG-005` | Нестабильная стенокардия / высокий риск острого коронарного синдрома (ОКС) | `redflag` | `emergency` | `approved` | [kb/diag/red_flags/diag_redflag_unstable_angina.md](kb/diag/red_flags/diag_redflag_unstable_angina.md) |

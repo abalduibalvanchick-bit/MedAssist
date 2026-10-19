@@ -46,6 +46,8 @@ results:
   indicates:
   - DIAG-EMERGENCY-004
 turnaround: 1 час; глюкометр — немедленно
+measures:
+- glucose
 sources:
 - 'World Health Organization. Classification of diabetes mellitus. Geneva: WHO, 2019.'
 - American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).

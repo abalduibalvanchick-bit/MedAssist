@@ -7,7 +7,7 @@
 | ID | Название | Категория | Срочность | Статус | Связей | Файл |
 |---|---|---|---|---|---|---|
 | `DIAG-REDFLAG-001` | Гипертонический криз осложнённый | `redflag` | `emergency` | `approved` | 4 | [diag_redflag_hypertensive_crisis.md](diag_redflag_hypertensive_crisis.md) |
-| `DIAG-REDFLAG-002` | Внезапная сильнейшая головная боль | `redflag` | `emergency` | `approved` | 4 | [diag_redflag_thunderclap_headache.md](diag_redflag_thunderclap_headache.md) |
+| `DIAG-REDFLAG-002` | Опасная головная боль (громоподобная, с менингеальными знаками, очаговым дефицитом или нарушением сознания) | `redflag` | `emergency` | `approved` | 4 | [diag_redflag_thunderclap_headache.md](diag_redflag_thunderclap_headache.md) |
 | `DIAG-REDFLAG-003` | Выраженная одышка и цианоз | `redflag` | `emergency` | `approved` | 5 | [diag_redflag_severe_dyspnea_cyanosis.md](diag_redflag_severe_dyspnea_cyanosis.md) |
 | `DIAG-REDFLAG-004` | Диабетический кетоацидоз (ДКА) | `redflag` | `emergency` | `approved` | 6 | [diag_redflag_dka.md](diag_redflag_dka.md) |
 | `DIAG-REDFLAG-005` | Нестабильная стенокардия / высокий риск острого коронарного синдрома (ОКС) | `redflag` | `emergency` | `approved` | 4 | [diag_redflag_unstable_angina.md](diag_redflag_unstable_angina.md) |

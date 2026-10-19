@@ -1,0 +1,13 @@
+id: TYP-39
+group: typical
+title: Головокружение при вставании у пожилого гипертоника — ортостатическая гипотензия
+# Предупреждение: проба с измерением АД лёжа и стоя, пересмотр терапии, риск падений.
+patient:
+  age: 74
+  features: [dizziness.orthostatic]
+  facts: {known_hypertension: true}
+expect:
+  status: ok
+  profiles: [GLB-PROFILE-001]
+  rules_fired: [RULE-DIAG-042]
+  warnings_from: [RULE-DIAG-042]

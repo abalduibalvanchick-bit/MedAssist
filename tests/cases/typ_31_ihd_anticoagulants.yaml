@@ -1,0 +1,15 @@
+id: TYP-31
+group: typical
+title: Стабильная стенокардия у пациента на антикоагулянтах — риск кровотечения
+# Предупреждение о сочетании антиагрегантов с антикоагулянтами (RULE-PHARM-006).
+patient:
+  age: 72
+  features: [chest_pain.pressing, chest_pain.exertional, chest_pain.relieved_by_rest]
+  denied_features: [chest_pain.at_rest, chest_pain.new_onset, chest_pain.nitrate_unresponsive]
+  params: {sbp: 135, dbp: 80}
+  facts: {known_ihd: true, on_anticoagulants: true}
+expect:
+  status: ok
+  working_diagnoses: [DIAG-DISEASE-002]
+  rules_fired: [RULE-PHARM-006]
+  warnings_from: [RULE-PHARM-006]

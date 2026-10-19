@@ -1,0 +1,13 @@
+id: TYP-27
+group: typical
+title: Односторонний отёк голени после операции — подозрение на тромбоз глубоких вен
+# Срочно; предупреждение: ТГВ вне модели, при одышке или боли в груди — экстренно.
+patient:
+  age: 50
+  features: [edema.unilateral_leg]
+  facts: {recent_surgery: true}
+expect:
+  status: ok
+  urgency: urgent
+  rules_fired: [RULE-DIAG-035]
+  warnings_from: [RULE-DIAG-035]

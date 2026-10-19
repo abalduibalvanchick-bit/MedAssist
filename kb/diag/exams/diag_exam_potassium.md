@@ -38,6 +38,8 @@ results:
 - value: hyperkalemia
   label: более 5,5 ммоль/л
 turnaround: 1 час
+measures:
+- potassium
 sources:
 - Palmer B.F., Clegg D.J. Physiology and pathophysiology of potassium homeostasis. Adv Physiol Educ. 2016;40:480–490.
 - Mancia G. et al. 2023 ESH Guidelines for the management of arterial hypertension. J Hypertens. 2023;41:1874–2071.

@@ -43,6 +43,8 @@ results:
   indicates:
   - DIAG-EMERGENCY-005
 turnaround: немедленно
+measures:
+- pef_percent
 sources:
 - Global Initiative for Asthma. Global Strategy for Asthma Management and Prevention, 2025 update.
 - Клинические рекомендации «Бронхиальная астма». Минздрав РФ, 2024.

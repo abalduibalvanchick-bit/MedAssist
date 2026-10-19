@@ -43,7 +43,7 @@ def describe_atom(node: dict[str, Any], facts: PatientFacts, kb: "KnowledgeBase"
     if atom == "feature":
         return kb.label("feature", value)
     if atom == "known":
-        kind = "param" if value in schema.parameters else "fact"
+        kind = "param" if value in schema.parameters else "fact" if value in schema.facts else "card"
         return f"сообщено: {kb.label(kind, value)}"
     if atom == "scale":
         actual = facts.scales.get(value, "не вычислена")
@@ -76,8 +76,9 @@ def justify(node: Any, facts: PatientFacts, kb: "KnowledgeBase") -> list[str]:
     if "not" in node:
         inner = node["not"]
         if isinstance(inner, dict) and "known" in inner:
-            kind = "param" if inner["known"] in schema.parameters else "fact"
-            return [f"не сообщено: {kb.label(kind, inner['known'])}"]
+            code = inner["known"]
+            kind = "param" if code in schema.parameters else "fact" if code in schema.facts else "card"
+            return [f"не сообщено: {kb.label(kind, code)}"]
         parts = justify_false(inner, facts, kb)
         return [f"нет: {p}" for p in parts] or ["условие-исключение не выполнено"]
     return [describe_atom(node, facts, kb)]
@@ -102,7 +103,7 @@ def justify_false(node: Any, facts: PatientFacts, kb: "KnowledgeBase") -> list[s
     return [describe_atom(node, facts, kb)]
 
 
-_KIND_TITLES = {"profile": "Профиль", "scale": "Шкала", "redflag": "Красный флаг",
+_KIND_TITLES = {"input": "Из входных данных", "profile": "Профиль", "scale": "Шкала", "redflag": "Красный флаг",
                 "emergency": "Неотложное состояние", "rule": "Правило"}
 
 

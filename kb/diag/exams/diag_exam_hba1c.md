@@ -38,6 +38,8 @@ results:
   indicates:
   - DIAG-DISEASE-006
 turnaround: 1–2 дня
+measures:
+- hba1c
 sources:
 - American Diabetes Association Professional Practice Committee. Standards of Care in Diabetes — 2025. Diabetes Care. 2025;48(Suppl 1).
 - 'World Health Organization. Classification of diabetes mellitus. Geneva: WHO, 2019.'

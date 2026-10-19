@@ -1,0 +1,14 @@
+id: TYP-23
+group: typical
+title: Пневмония с САД 85 — гипотензия, возможный септический шок
+# Факт гипотензии не сообщён, но выводится из САД 85 (< 90): лихорадка с гипотензией —
+# экстренно (RULE-PROT-001); пневмония остаётся рабочим диагнозом.
+patient:
+  age: 70
+  features: [cough.productive, fever.chills]
+  params: {sbp: 85, dbp: 50, rr: 24, spo2: 93}
+expect:
+  status: ok
+  urgency: emergency
+  working_diagnoses: [DIAG-DISEASE-003]
+  rules_fired: [RULE-PROT-001]

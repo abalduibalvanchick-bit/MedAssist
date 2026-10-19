@@ -1,0 +1,12 @@
+id: TYP-35
+group: typical
+title: Боль в эпигастрии у пациента 70 лет — исключить нижний инфаркт миокарда
+# Гипотеза ОКС, ЭКГ для исключения; срочно (не экстренно — данных за ОКС пока нет).
+patient:
+  age: 70
+  features: [abdominal_pain.epigastric]
+expect:
+  status: ok
+  urgency: urgent
+  exams: [DIAG-EXAM-002]
+  rules_fired: [RULE-DIAG-020]

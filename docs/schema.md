@@ -65,6 +65,7 @@
 | `results` | `list[object]` | да | Контролируемые значения результата, на которые ссылается атом exam_result |
 | `contraindications` | `list[condition]` | нет |  |
 | `turnaround` | `string` | нет | Ориентировочное время получения результата |
+| `measures` | `list[parameter]` | нет | Параметры пациента, которые даёт обследование; если значение уже сообщено, обследование считается выполненным |
 
 Структура элемента `results`:
 
@@ -463,7 +464,7 @@
 
 ## Правила (kb/rules/*.yaml)
 Обязательные поля: `id`, `domain`, `title`, `if`, `then`, `source_cards`, `explanation`.
-Необязательные: `priority`, `evidence_level`, `status`, `tags`, `notes`.
+Необязательные: `priority`, `evidence_level`, `status`, `tags`, `notes`, `phase`.
 
 | Действие | Цель / значение | Доп. параметры | Описание |
 |---|---|---|---|

@@ -67,6 +67,7 @@
       - {profile: GLB-PROFILE-001}
       - {symptom: DIAG-SYMPTOM-003}
   then:
+    - set_urgency: urgent
     - assert_hypothesis: {target: DIAG-EMERGENCY-001, weight: 1}
     - recommend_exam: {target: DIAG-EXAM-002, role: excludes}
   source_cards: [GLB-PROFILE-001, DIAG-EMERGENCY-001, DIAG-EXAM-002]

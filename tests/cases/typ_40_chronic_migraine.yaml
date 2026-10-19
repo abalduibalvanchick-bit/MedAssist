@@ -1,0 +1,12 @@
+id: TYP-40
+group: typical
+title: Мигрень 18 дней в месяц — хроническая мигрень, направление к неврологу
+# 18 ≥ 15 дней — хроническая мигрень: срочное направление и протокол (RULE-PROT-005).
+patient:
+  age: 34
+  params: {migraine_days_per_month: 18}
+  facts: {known_migraine: true}
+expect:
+  status: ok
+  protocols: [PROT-PROTOCOL-006]
+  rules_fired: [RULE-PROT-005]

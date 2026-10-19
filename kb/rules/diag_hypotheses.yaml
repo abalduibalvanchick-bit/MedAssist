@@ -149,17 +149,20 @@
 
 - id: RULE-DIAG-009
   domain: diag
-  title: Мигрень с аурой требует исключения ТИА
+  title: Аура перед головной болью — мигрень с аурой, исключить ТИА
   priority: 60
   if:
     all:
       - {symptom: DIAG-SYMPTOM-001}
-      - {feature: headache.aura}
+      - any:
+          - {feature: headache.aura}
+          - {feature: visual_disturbance.aura}
+      - not: {feature: visual_disturbance.sudden_loss}
   then:
     - assert_hypothesis: {target: DIAG-DISEASE-005, weight: 2}
     - recommend_exam: {target: DIAG-EXAM-009, role: excludes}
-  source_cards: [DIAG-DISEASE-005, DIAG-EXAM-009, DIAG-EMERGENCY-002]
-  explanation: Аура характерна для мигрени, но впервые возникшие очаговые симптомы требуют исключения транзиторной ишемической атаки.
+  source_cards: [DIAG-DISEASE-005, DIAG-SYMPTOM-015, DIAG-EXAM-009, DIAG-EMERGENCY-002]
+  explanation: Постепенно развивающаяся обратимая аура (зрительная или сенсорная) перед головной болью характерна для мигрени (ICHD-3); внезапная потеря зрения должна быть исключена, а впервые возникшие очаговые симптомы требуют исключения транзиторной ишемической атаки.
 
 - id: RULE-DIAG-010
   domain: diag
@@ -324,6 +327,7 @@
           - {fact: known_diabetes}
           - {param: age, op: ">=", value: 65}
   then:
+    - set_urgency: urgent
     - assert_hypothesis: {target: DIAG-EMERGENCY-001, weight: 1}
     - recommend_exam: {target: DIAG-EXAM-002, role: excludes}
   source_cards: [DIAG-SYMPTOM-005, DIAG-EMERGENCY-001, DIAG-EXAM-002]

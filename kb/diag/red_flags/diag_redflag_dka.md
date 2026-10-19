@@ -52,7 +52,6 @@ triggers:
     - all:
       - symptom: DIAG-SYMPTOM-005
       - feature: abdominal_pain.vomiting
-    - fact: confusion
     - exam_result: DIAG-EXAM-014
       value: high
     - feature: nausea_vomiting.repeated
