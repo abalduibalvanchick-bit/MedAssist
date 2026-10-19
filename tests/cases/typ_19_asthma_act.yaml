@@ -1,0 +1,12 @@
+id: TYP-19
+group: typical
+title: Бронхиальная астма, ACT 14 баллов — астма не контролируется
+# Расчёт: 3 + 3 + 2 + 3 + 3 = 14 (5–15 — uncontrolled).
+patient:
+  age: 29
+  diseases: [DIAG-DISEASE-004]
+  params: {act_q1: 3, act_q2: 3, act_q3: 2, act_q4: 3, act_q5: 3, spo2: 97}
+  facts: {known_asthma: true}
+expect:
+  status: ok
+  scales: {PROT-SCALE-005: {value: 14, category: uncontrolled}}

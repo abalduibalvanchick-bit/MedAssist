@@ -46,11 +46,13 @@ parameters:
     points: 0
     label: менее 140
   - when:
-      param: sbp
-      op: between
-      value:
-      - 140
-      - 159
+      all:
+      - param: sbp
+        op: '>='
+        value: 140
+      - param: sbp
+        op: <
+        value: 160
     points: 1
     label: 140–159
   - when:
@@ -82,9 +84,7 @@ parameters:
     label: да
   - when:
       not:
-        any:
-        - disease: DIAG-DISEASE-006
-        - fact: known_diabetes
+        fact: known_diabetes
     points: 0
     label: нет
 - code: age

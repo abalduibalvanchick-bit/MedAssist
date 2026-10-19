@@ -1,0 +1,17 @@
+id: TYP-17
+group: typical
+title: Сахарный диабет 2 типа 8 лет, СКФ 50 — шкала риска осложнений 10 баллов
+# Расчёт: возраст 60 → 1; длительность 8 лет → 1; ИМТ 31 → 2; HbA1c 8,5 → 2; САД 135 → 1;
+# не курит → 0; альбуминурия → 2; СКФ 50 → 1; ССС-событий нет → 0; итого 10 (high).
+patient:
+  age: 60
+  diseases: [DIAG-DISEASE-006]
+  params: {diabetes_duration_years: 8, bmi: 31, hba1c: 8.5, sbp: 135, dbp: 85,
+           microalbuminuria: true, egfr: 50}
+  facts: {smoker: false, prior_cv_event: false}
+expect:
+  status: ok
+  urgency: routine
+  profiles: [GLB-PROFILE-003]
+  working_diagnoses: [DIAG-DISEASE-006]
+  scales: {PROT-SCALE-002: {value: 10, category: high}}

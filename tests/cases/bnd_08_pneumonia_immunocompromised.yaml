@@ -1,0 +1,16 @@
+id: BND-08
+group: boundary
+title: Пневмония у иммунокомпрометированного пациента при CURB-65 = 0
+# CURB-65: спутанности нет, мочевина 6, ЧДД 22, АД 120/75, возраст 45 → 0 (mild);
+# тяжесть по шкале низкая, но профиль иммунодефицита должен быть распознан.
+patient:
+  age: 45
+  features: [cough.productive, fever.chills]
+  params: {rr: 22, sbp: 120, dbp: 75, urea: 6, spo2: 94}
+  facts: {immunocompromised: true, confusion: false}
+expect:
+  status: ok
+  urgency: urgent
+  profiles: [GLB-PROFILE-005]
+  working_diagnoses: [DIAG-DISEASE-003]
+  scales: {PROT-SCALE-004: {value: 0, category: mild}}

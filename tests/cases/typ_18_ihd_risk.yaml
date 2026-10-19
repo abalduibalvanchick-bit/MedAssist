@@ -1,0 +1,16 @@
+id: TYP-18
+group: typical
+title: ИБС, стенокардия III ФК после инфаркта, ФВ 40 % — шкала риска 6 баллов
+# Расчёт: CCS III → 2; ИМ в анамнезе → 1; СН нет → 0; диабет → 1; ФВ 40 % → 2;
+# тропонин отрицательный → 0; рефрактерности нет → 0; итого 6 (high).
+patient:
+  age: 66
+  diseases: [DIAG-DISEASE-002]
+  features: [chest_pain.pressing, chest_pain.exertional, chest_pain.relieved_by_rest]
+  denied_features: [chest_pain.at_rest, chest_pain.new_onset, chest_pain.nitrate_unresponsive]
+  params: {ccs_class: 3, lvef: 40, troponin_positive: false, sbp: 130, dbp: 80}
+  facts: {prior_mi: true, heart_failure: false, known_diabetes: true, refractory_angina: false}
+expect:
+  status: ok
+  working_diagnoses: [DIAG-DISEASE-002]
+  scales: {PROT-SCALE-003: {value: 6, category: high}}

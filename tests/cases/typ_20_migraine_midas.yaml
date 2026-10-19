@@ -1,0 +1,11 @@
+id: TYP-20
+group: typical
+title: Мигрень, MIDAS 25 баллов — тяжёлая степень
+# Расчёт: 5 + 6 + 4 + 6 + 4 = 25 (21–40 — severe).
+patient:
+  age: 31
+  diseases: [DIAG-DISEASE-005]
+  params: {midas_q1: 5, midas_q2: 6, midas_q3: 4, midas_q4: 6, midas_q5: 4}
+expect:
+  status: ok
+  scales: {PROT-SCALE-006: {value: 25, category: severe}}

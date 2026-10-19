@@ -78,9 +78,7 @@ parameters:
     points: 1
   - when:
       not:
-        any:
-        - disease: DIAG-DISEASE-006
-        - fact: known_diabetes
+        fact: known_diabetes
     points: 0
 - code: lvef
   label: ФВ ЛЖ менее 45 %

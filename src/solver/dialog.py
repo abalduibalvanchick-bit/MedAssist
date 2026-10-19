@@ -17,6 +17,7 @@
 from __future__ import annotations
 
 import copy
+import math
 from dataclasses import dataclass, field
 from typing import Any, Callable
 
@@ -77,6 +78,8 @@ def _to_number(value: Any) -> float | int | None:
     try:
         number = float(str(value).strip().replace(",", "."))
     except ValueError:
+        return None
+    if not math.isfinite(number):
         return None
     return int(number) if number.is_integer() else number
 

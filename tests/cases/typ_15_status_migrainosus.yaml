@@ -1,0 +1,14 @@
+id: TYP-15
+group: typical
+title: Приступ мигрени длится более 72 часов — мигренозный статус
+patient:
+  age: 35
+  features: [headache.unilateral, headache.pulsating, headache.over_72h]
+  denied_features: [headache.sudden_onset, headache.worst_ever, headache.meningism]
+  denied_symptoms: [DIAG-SYMPTOM-010]
+  params: {sbp: 125, dbp: 80}
+  facts: {known_migraine: true}
+expect:
+  status: ok
+  urgency: emergency
+  emergencies: [DIAG-EMERGENCY-006]

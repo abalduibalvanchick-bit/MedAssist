@@ -1,0 +1,15 @@
+id: TYP-16
+group: typical
+title: Гипертензия у курящего 62 лет без диабета — шкала риска 4 балла, высокий риск
+# Расчёт: САД 165 → 2; курение → 1; диабета нет → 0; возраст ≥ 60 → 1; итого 4 (high).
+patient:
+  age: 62
+  symptoms: [DIAG-SYMPTOM-001]
+  denied_features: [headache.sudden_onset, headache.worst_ever]
+  params: {sbp: 165, dbp: 95}
+  facts: {smoker: true, known_diabetes: false, known_hypertension: true}
+expect:
+  status: ok
+  urgency: routine
+  hypotheses_top: DIAG-DISEASE-001
+  scales: {PROT-SCALE-001: {value: 4, category: high}}

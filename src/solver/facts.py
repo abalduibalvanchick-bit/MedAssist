@@ -23,6 +23,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -148,12 +149,13 @@ def parse_case(data: Any, kb: KnowledgeBase) -> ParsedCase:
         facts.diseases.add(did)
 
     # --- параметры
-    params = dict(data.get("params") or {})
+    raw_params = data.get("params") or {}
+    if not isinstance(raw_params, dict):
+        err("BAD_INPUT", "Поле «params» должно быть словарём вида {код: значение}.")
+        raw_params = {}
+    params = dict(raw_params)
     if data.get("age") is not None:
         params.setdefault("age", data["age"])
-    if not isinstance(params, dict):
-        err("BAD_INPUT", "Поле «params» должно быть словарём.")
-        params = {}
     for name, value in sorted(params.items()):
         spec = schema.parameters.get(name)
         if spec is None:
@@ -172,6 +174,9 @@ def parse_case(data: Any, kb: KnowledgeBase) -> ParsedCase:
             number = float(value)
         except (TypeError, ValueError):
             err("BAD_VALUE", f"Параметр «{spec.get('label', name)}» должен быть числом, получено {value!r}.")
+            continue
+        if not math.isfinite(number):
+            err("BAD_VALUE", f"Параметр «{spec.get('label', name)}» должен быть конечным числом, получено {value!r}.")
             continue
         lo, hi = spec.get("min"), spec.get("max")
         if (lo is not None and number < lo) or (hi is not None and number > hi):

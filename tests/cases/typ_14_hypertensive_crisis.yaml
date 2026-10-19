@@ -1,0 +1,12 @@
+id: TYP-14
+group: typical
+title: АД 210/120 с затуманиванием зрения — осложнённый гипертонический криз
+patient:
+  age: 58
+  symptoms: [DIAG-SYMPTOM-001]
+  features: [visual_disturbance.blurred]
+  params: {sbp: 210, dbp: 120, hr: 88}
+expect:
+  status: ok
+  urgency: emergency
+  red_flags: [DIAG-REDFLAG-001]

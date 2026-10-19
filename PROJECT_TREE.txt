@@ -367,6 +367,7 @@ medassist/
             bnd_05_meningism.yaml
             bnd_06_pef_severe.yaml
             bnd_07_pneumonia_no_urea.yaml
+            bnd_08_pneumonia_immunocompromised.yaml
             neg_01_child.yaml
             neg_02_contradiction.yaml
             neg_03_unknown_codes.yaml
@@ -386,6 +387,13 @@ medassist/
             typ_11_vertigo_stroke.yaml
             typ_12_migraine_aura.yaml
             typ_13_diabetes_vomiting.yaml
+            typ_14_hypertensive_crisis.yaml
+            typ_15_status_migrainosus.yaml
+            typ_16_hypertension_risk.yaml
+            typ_17_diabetes_risk.yaml
+            typ_18_ihd_risk.yaml
+            typ_19_asthma_act.yaml
+            typ_20_migraine_midas.yaml
         expected_results/
             .gitkeep
         scenarios/
@@ -402,12 +410,15 @@ medassist/
         test_pharm.py
         test_pharmacology.py
         test_protocols.py
+        test_reachability.py
         test_repository.py
+        test_robustness.py
         test_search.py
         test_solver.py
         test_stage3.py
         test_validator.py
         test_validator_v2.py
+        witness.py
     .gitignore
     CHANGELOG.md
     PROJECT_TREE.txt

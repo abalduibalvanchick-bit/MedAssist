@@ -43,11 +43,13 @@ parameters:
       value: 55
     points: 0
   - when:
-      param: age
-      op: between
-      value:
-      - 55
-      - 64
+      all:
+      - param: age
+        op: '>='
+        value: 55
+      - param: age
+        op: <
+        value: 65
     points: 1
   - when:
       param: age
@@ -129,11 +131,13 @@ parameters:
       value: 130
     points: 0
   - when:
-      param: sbp
-      op: between
-      value:
-      - 130
-      - 139
+      all:
+      - param: sbp
+        op: '>='
+        value: 130
+      - param: sbp
+        op: <
+        value: 140
     points: 1
   - when:
       param: sbp
