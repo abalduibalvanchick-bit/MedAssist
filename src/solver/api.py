@@ -29,7 +29,7 @@ from .engine import URGENCY_LABELS, URGENCY_ORDER, InferenceEngine
 from .explain import render_explanation
 from .facts import parse_case
 from .knowledge import KnowledgeBase, load_default_kb
-from .questions import build_questions
+from .questions import build_questions, detail_questions
 
 ROLES = ("professional", "nursing", "student", "patient")
 _ROLE_ORDER = {"confirms": 0, "excludes": 1, "stratifies": 2, "supports": 3, "monitors": 4}
@@ -120,6 +120,8 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
         status = "refused"
     elif not concluded:
         status = "need_more_data"
+        if not questions:
+            questions = detail_questions(memory, kb)
     else:
         status = "ok"
 

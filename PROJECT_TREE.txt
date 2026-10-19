@@ -427,6 +427,7 @@ medassist/
         solver_cases.py
         test_conditions.py
         test_dialog.py
+        test_invariants.py
         test_linker.py
         test_log.md
         test_migration.py

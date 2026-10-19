@@ -79,6 +79,23 @@ def _partially_met(condition: dict[str, Any], memory: "Conclusions", kb: "Knowle
     return any(evaluate(atom, memory.facts, kb.schema) is Truth.TRUE for atom in _anchor_atoms(condition))
 
 
+def detail_questions(memory: "Conclusions", kb: "KnowledgeBase") -> list[dict[str, Any]]:
+    """Уточнение жалоб: признаки сообщённых симптомов из их карточек (поле features).
+
+    Используется, когда данных недостаточно ни для одного вывода, а других вопросов нет:
+    решатель не должен отвечать «нужны данные», ничего не спросив (требование Ф6).
+    """
+    questions = []
+    for sid in sorted(memory.facts.symptoms):
+        card = kb.get(sid)
+        codes = [str(f.get("code")) for f in (card.metadata.get("features") or []) if isinstance(f, dict)] if card else []
+        inputs = [describe_input(code, kb, "feature") for code in codes]
+        inputs = [i for i in inputs if i is not None and not is_known(i, memory.facts)]
+        if inputs:
+            questions.append(_question("symptom_details", sid, f"Уточните характер жалобы «{card.title}».", inputs))
+    return questions
+
+
 def build_questions(memory: "Conclusions", kb: "KnowledgeBase") -> list[dict[str, Any]]:
     questions: list[dict[str, Any]] = []
     seen_texts: set[str] = set()
