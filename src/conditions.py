@@ -142,6 +142,11 @@ _COMPARISONS: dict[str, Callable[[float, Any], bool]] = {
 }
 
 
+def compare(left: float, op: str, right: Any) -> bool:
+    """Сравнение по оператору языка условий (используется и вне условий)."""
+    return _COMPARISONS[op](left, right)
+
+
 def _atom_kind(node: dict[str, Any], schema: Schema) -> str | None:
     """Возвращает тип атома или None, если узел не атом."""
     for atom in schema.condition_atoms:

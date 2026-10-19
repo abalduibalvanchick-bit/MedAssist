@@ -20,6 +20,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from src.conditions import describe  # noqa: E402
 from src.schema import load_schema  # noqa: E402
 
 DOCS = ROOT / "docs"
@@ -45,7 +46,7 @@ def gen_metadata_schema(schema) -> str:
         "id": "Уникальный идентификатор `DOMAIN-CATEGORY-NNN`",
         "schema_version": "Версия схемы карточки (2)",
         "title": "Название карточки",
-        "domain": "Код домена: " + ", ".join(code(d) for d in schema.domain_codes),
+        "domain": "Код домена: " + ", ".join(code(d) for d in schema.domains),
         "category": "Код категории (см. ниже)",
         "body_system": "Системы организма (список, enum body_system)",
         "tags": "Теги для поиска",
@@ -185,6 +186,21 @@ def gen_schema_full(schema) -> str:
     lines.append(table(["Действие", "Цель / значение", "Доп. параметры", "Описание"],
                        [[code(k), code(v.get("target", v.get("value", ""))), ", ".join(code(e) for e in (v.get("extra") or {})), v.get("doc", "")]
                         for k, v in schema.rule_actions.items()]))
+    lines.append("\n## Ограничения входных данных (input_constraints)\n")
+    lines.append("Невозможные сочетания данных о пациенте. Проверяются при разборе задачи; нарушение — ошибка "
+                 "`CONTRADICTION`. Ограничение с неизвестными значениями не считается нарушенным.\n\n")
+    rows = []
+    for item in schema.input_constraints:
+        if "compare" in item:
+            c = item["compare"]
+            rule = f"требуется {c['left']} {c['op']} {c['right']}"
+        else:
+            rule = "запрещено: " + describe(item["forbid"], schema)
+        rows.append([code(item.get("id", "")), rule, item.get("message", "")])
+    lines.append(table(["ID", "Ограничение", "Сообщение"], rows))
+    lines.append("\n## Параметры решателя (solver)\n")
+    lines.append("Настройки алгоритма вывода, а не медицинские знания.\n\n")
+    lines.append(table(["Параметр", "Значение"], [[code(k), code(v)] for k, v in schema.solver_settings.items()]))
     return "".join(lines)
 
 

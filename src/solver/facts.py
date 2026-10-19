@@ -14,7 +14,10 @@
       exam_results: {DIAG-EXAM-002: st_elevation}
 
 Модуль проверяет коды по базе знаний, значения по диапазонам схемы и
-противоречия между сообщёнными данными. Ошибки не приводят к падению:
+противоречия между сообщёнными данными. Логические противоречия
+(симптом и есть, и отрицается) проверяются здесь; содержательные
+(невозможные сочетания значений) задаются в схеме, раздел input_constraints.
+Ошибки не приводят к падению:
 они возвращаются списком, а решатель решает, можно ли продолжать.
 """
 
@@ -23,7 +26,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
-from ..conditions import PatientFacts
+from ..conditions import PatientFacts, Truth, compare, evaluate
 from .knowledge import KnowledgeBase
 
 
@@ -42,6 +45,32 @@ class ParsedCase:
     @property
     def has_errors(self) -> bool:
         return any(i.severity == "error" for i in self.issues)
+
+
+def check_input_constraints(facts: PatientFacts, schema) -> list[str]:
+    """Проверяет ограничения input_constraints схемы. Возвращает сообщения о нарушениях.
+
+    Ограничение проверяется только тогда, когда сообщены все нужные данные:
+    неизвестное значение не считается нарушением (трёхзначная логика).
+    """
+    messages: list[str] = []
+    for item in schema.input_constraints:
+        violated = False
+        if "compare" in item:
+            spec = item["compare"]
+            left, right = facts.params.get(spec["left"]), facts.params.get(spec["right"])
+            if isinstance(left, (int, float)) and isinstance(right, (int, float)) \
+                    and not isinstance(left, bool) and not isinstance(right, bool):
+                violated = not compare(float(left), spec["op"], float(right))
+        elif "forbid" in item:
+            violated = evaluate(item["forbid"], facts, schema) is Truth.TRUE
+        if violated:
+            values = {k: (f"{v:g}" if isinstance(v, float) else v) for k, v in facts.params.items()}
+            try:
+                messages.append(str(item["message"]).format(**values))
+            except (KeyError, IndexError, ValueError):
+                messages.append(str(item["message"]))
+    return messages
 
 
 _LIST_KEYS = ("symptoms", "features", "denied_symptoms", "denied_features", "diseases")
@@ -150,10 +179,6 @@ def parse_case(data: Any, kb: KnowledgeBase) -> ParsedCase:
             continue
         facts.params[name] = int(number) if number.is_integer() else number
 
-    sbp, dbp = facts.params.get("sbp"), facts.params.get("dbp")
-    if isinstance(sbp, (int, float)) and isinstance(dbp, (int, float)) and sbp <= dbp:
-        err("CONTRADICTION", f"Систолическое АД ({sbp}) не может быть ниже или равно диастолическому ({dbp}).")
-
     # --- факты
     raw_facts = data.get("facts") or {}
     if not isinstance(raw_facts, dict):
@@ -167,8 +192,10 @@ def parse_case(data: Any, kb: KnowledgeBase) -> ParsedCase:
             err("BAD_VALUE", f"Факт «{schema.facts[name].get('label', name)}» должен быть true или false.")
             continue
         facts.facts[name] = value
-    if facts.facts.get("pregnant") and isinstance(facts.params.get("age"), (int, float)) and facts.params["age"] < 10:
-        err("CONTRADICTION", "Беременность указана для пациента младше 10 лет.")
+
+    # --- ограничения согласованности из схемы (input_constraints)
+    for message in check_input_constraints(facts, schema):
+        err("CONTRADICTION", message)
 
     # --- результаты обследований
     raw_exams = data.get("exam_results") or {}

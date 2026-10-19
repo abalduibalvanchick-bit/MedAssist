@@ -155,8 +155,18 @@ class KnowledgeBaseValidator:
         self._validate_relation_symmetry(report)
         self._validate_machine_refs_in_graph(report)
         report.total_rules = self._validate_rules(report)
+        self._validate_input_constraints(report)
         self._collect_stats(report)
         return report
+
+    def _validate_input_constraints(self, report: ValidationReport) -> None:
+        """Условия forbid в разделе input_constraints схемы — на корректность языка условий."""
+        for item in self.schema.input_constraints:
+            if "forbid" not in item:
+                continue
+            for issue in self._condition_issues(item["forbid"], f"input_constraints.{item.get('id')}.forbid"):
+                self._add(report, None, "ERROR", "CONSTRAINT_BAD_CONDITION", f"{issue.path}: {issue.message}",
+                          file_path=str(self.schema.path), card_id=str(item.get("id")))
 
     def save_report(self, output_path: Path) -> ValidationReport:
         report = self.validate()

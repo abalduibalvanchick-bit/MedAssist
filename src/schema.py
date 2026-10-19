@@ -241,10 +241,39 @@ class Schema:
     def rule_default_priority(self) -> int:
         return int(self.raw["rules"].get("default_priority", 50))
 
+    # --- решатель -----------------------------------------------------------
+    @property
+    def solver_settings(self) -> dict[str, Any]:
+        return dict(self.raw.get("solver", {}) or {})
+
+    def solver_setting(self, name: str, default: Any) -> Any:
+        return self.solver_settings.get(name, default)
+
+    @property
+    def input_constraints(self) -> list[dict[str, Any]]:
+        return list(self.raw.get("input_constraints", []) or [])
+
     # --- самопроверка -------------------------------------------------------
     def self_check(self) -> list[str]:
         """Проверяет внутреннюю согласованность схемы. Возвращает список проблем."""
         problems: list[str] = []
+        seen_constraints: set[str] = set()
+        for item in self.input_constraints:
+            cid = str(item.get("id", "<no id>"))
+            if cid in seen_constraints:
+                problems.append(f"Ограничение входных данных {cid} объявлено дважды")
+            seen_constraints.add(cid)
+            if ("compare" in item) == ("forbid" in item):
+                problems.append(f"Ограничение {cid}: нужно ровно одно из полей compare / forbid")
+            if not item.get("message"):
+                problems.append(f"Ограничение {cid}: отсутствует message")
+            compare = item.get("compare")
+            if isinstance(compare, dict):
+                for side in ("left", "right"):
+                    if compare.get(side) not in self.raw.get("parameters", {}):
+                        problems.append(f"Ограничение {cid}: неизвестный параметр {compare.get(side)}")
+                if compare.get("op") not in self.raw["condition_language"]["operators"]:
+                    problems.append(f"Ограничение {cid}: неизвестный оператор {compare.get('op')}")
         cats = self.categories
         for name, info in cats.items():
             if info.domain not in self.domains:

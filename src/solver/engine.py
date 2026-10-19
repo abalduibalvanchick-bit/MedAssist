@@ -26,10 +26,11 @@ from .explain import justify
 from .knowledge import KnowledgeBase, Rule
 from .scales import ScaleResult, compute_scale
 
+# Значения по умолчанию на случай, если в схеме нет раздела solver. Рабочие
+# значения задаются в kb/_schema/schema.yaml (solver.working_diagnosis_score —
+# суммарный вес гипотезы-заболевания, начиная с которого она становится рабочим
+# диагнозом и доступна условиям {disease: ...}; solver.max_iterations).
 MAX_ITERATIONS = 20
-# Суммарный вес гипотезы-заболевания, начиная с которого она считается рабочим
-# диагнозом и становится доступна условиям {disease: ...}. Параметр решателя,
-# а не медицинское знание: веса задаются в базе знаний (правила, presentation).
 WORKING_DIAGNOSIS_SCORE = 3
 URGENCY_ORDER = ["elective", "routine", "urgent", "emergency"]
 URGENCY_LABELS = {"elective": "отложенная", "routine": "плановая", "urgent": "срочная", "emergency": "экстренная"}
@@ -70,6 +71,10 @@ class Conclusions:
     exams: dict[str, dict[str, Any]] = field(default_factory=dict)
     routes: list[dict[str, str]] = field(default_factory=list)
     protocols: list[dict[str, str]] = field(default_factory=list)
+    # Карточки маршрутизации, к которым передал управление красный флаг или
+    # неотложное состояние (поле action). Их таблицы решений исполняет модуль
+    # маршрутизации; в список протоколов они не попадают.
+    routing_refs: list[dict[str, str]] = field(default_factory=list)
     warnings: list[dict[str, str]] = field(default_factory=list)
     clarifications: list[dict[str, str]] = field(default_factory=list)
     refusal: dict[str, str] | None = None
@@ -79,12 +84,14 @@ class Conclusions:
 
 
 class InferenceEngine:
-    def __init__(self, kb: KnowledgeBase, *, working_diagnosis_score: int = WORKING_DIAGNOSIS_SCORE,
-                 max_iterations: int = MAX_ITERATIONS) -> None:
+    def __init__(self, kb: KnowledgeBase, *, working_diagnosis_score: int | None = None,
+                 max_iterations: int | None = None) -> None:
         self.kb = kb
         self.schema = kb.schema
-        self.working_diagnosis_score = working_diagnosis_score
-        self.max_iterations = max_iterations
+        self.working_diagnosis_score = int(working_diagnosis_score if working_diagnosis_score is not None
+                                           else self.schema.solver_setting("working_diagnosis_score", WORKING_DIAGNOSIS_SCORE))
+        self.max_iterations = int(max_iterations if max_iterations is not None
+                                  else self.schema.solver_setting("max_iterations", MAX_ITERATIONS))
 
     # ------------------------------------------------------------------ запуск
     def run(self, facts: PatientFacts) -> Conclusions:
@@ -233,6 +240,12 @@ class InferenceEngine:
             effects.append(f"срочность повышена: {URGENCY_LABELS[level]}")
 
     def _add_protocol(self, memory: Conclusions, card_id: str, source: str, effects: list[str]) -> None:
+        card = self.kb.get(card_id)
+        if card is not None and card.category == "routing":
+            if not any(r["id"] == card_id for r in memory.routing_refs):
+                memory.routing_refs.append({"id": card_id, "source": source})
+                effects.append(f"маршрутизация: {card.title}")
+            return
         if any(p["id"] == card_id for p in memory.protocols):
             return
         memory.protocols.append({"id": card_id, "source": source})
