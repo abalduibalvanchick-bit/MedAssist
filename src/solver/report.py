@@ -41,7 +41,11 @@ def format_solution(solution: dict[str, Any], *, show_trace: bool = True) -> str
     section("Профили пациента", [p["title"] for p in solution.get("profiles") or []])
     section("Красные флаги", [f"{r['title']}{ref(r['id'])}" for r in solution.get("red_flags") or []])
     section("Неотложные состояния", [f"{e['title']}{ref(e['id'])}" for e in solution.get("emergencies") or []])
-    section("Гипотезы", [f"{h['title']} — вес {h['score']} ({', '.join(h['sources'])})" for h in solution.get("hypotheses") or []])
+    for h in solution.get("hypotheses", []):
+        priority = " (приоритет по срочности)" if h.get("time_critical_priority") else ""
+        add(f"Гипотеза: {h['title']} — вес правил {h['score']}, оценка {h.get('rank_score', h['score'])}{priority}")
+        for argument in h.get("arguments", []):
+            add(f"  {argument['contribution']:+g} {argument['title']}")
     section("Рабочие диагнозы", [f"{d['title']}{ref(d['id'])}" for d in solution.get("working_diagnoses") or []])
     section("Шкалы", [f"{s['title']}: " + (f"{s['value']:g} балл(ов), " if s.get("value") is not None else f"{s['range'][0]:g}–{s['range'][1]:g}, ")
                       + f"{s['category_label']}" for s in solution.get("scales") or []])
@@ -62,7 +66,27 @@ def format_solution(solution: dict[str, Any], *, show_trace: bool = True) -> str
             row = "по умолчанию" if d["row"] is None else f"строка {d['row'] + 1}"
             add(f"  - {d['title']}: {d['label']}" + (f", {d['timeframe']}" if d.get("timeframe") else "") + f" ({row})")
             out.extend(f"      · {a}" for a in d.get("actions") or [])
-    section("Дальнейшие действия", [f"{p['title']} [{p['id']}]" for p in solution.get("protocols") or []])
+    for plan in solution.get("protocols", []):
+        add(f"Протокол: {plan['title']}{ref(plan['id'])}")
+        if plan.get("status") in ("conditional", "not_applicable"):
+            add("  " + ("Применимость требует уточнения" if plan["status"] == "conditional" else "Неприменим"))
+            add("  " + plan["entry"]["reason"])
+        for branch in plan.get("branches", []):
+            if branch["truth"] == "true":
+                add(f"  Переход: {branch['explanation']}{ref(branch['then'])}")
+        for step in plan.get("steps", []):
+            label = {"applicable": "применим", "conditional": "уточнить условие", "not_required": "не требуется"}
+            add(f"  {step['action']} — {label[step['status']]}")
+            for item in step["refs"]:
+                if item.get("results"):
+                    add(f"    Известный результат: {item['title']} — {_results(item)}")
+        for target in plan.get("targets", []):
+            status = {"achieved": "достигнут", "not_achieved": "не достигнут", "unknown": "нет данных"}
+            add(f"  {target['label']} — {status[target['status']]}")
+        for phase in plan.get("phases", []):
+            section(phase["window"], phase["steps"])
+    for follow in solution.get("follow_up", []):
+        section(follow["title"], [f"{row['after']}: {row['interval']} — {row['purpose']}" for row in follow["schedule"]])
     section("Предупреждения", [f"{w['text']} [{w['source']}]" for w in solution.get("warnings") or []])
     questions = []
     for q in solution.get("questions") or []:

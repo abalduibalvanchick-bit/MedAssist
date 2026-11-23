@@ -123,3 +123,17 @@ class KnowledgeBase:
 def load_default_kb(kb_root: str | None = None) -> KnowledgeBase:
     """Кэшированная загрузка: база знаний читается один раз за процесс."""
     return KnowledgeBase.load(kb_root)
+
+
+def known_exam_results(kb: KnowledgeBase, exam_id: str, facts) -> list[dict[str, Any]]:
+    """Уже сообщённые результаты обследования: значения параметров из measures и exam_results."""
+    card = kb.get(exam_id)
+    results: list[dict[str, Any]] = []
+    for code in (card.metadata.get("measures") or []) if card else []:
+        if code in facts.params:
+            results.append({"code": code, "label": kb.label("param", code), "value": facts.params[code]})
+    if card is not None and exam_id in facts.exam_results:
+        value = facts.exam_results[exam_id]
+        label = next((str(r.get("label")) for r in card.metadata.get("results") or [] if str(r.get("value")) == value), value)
+        results.append({"code": exam_id, "label": "результат", "value": label})
+    return results

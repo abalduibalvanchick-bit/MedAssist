@@ -491,6 +491,7 @@
 
 | Параметр | Значение |
 |---|---|
+| `presentation_weights` | `{'support': {'very_common': 1, 'common': 0.75, 'uncommon': 0.5, 'rare': 0.25}, 'oppose': {'very_common': 1, 'common': 0.5, 'uncommon': 0, 'rare': 0}}` |
 | `working_diagnosis_score` | `3` |
 | `max_iterations` | `20` |
 | `max_dialog_rounds` | `5` |
