@@ -196,6 +196,15 @@ body[data-role="patient"] {
 .hero p { color: #f0f7f1; margin-top: 9px; }
 .symptom-toggle { margin-top: 7px; }
 .result-preview { margin-top: 9px; padding: 9px 11px; border-radius: 8px; background: var(--view-soft); color: var(--view-ink); }
+.case-outcome { padding: 14px 15px; border: 1px solid currentColor; }
+.case-outcome.incomplete:not(.urgent), .case-outcome.refused { color: #334940; background: #f2f5f2; border-color: #bdcbc1; }
+.case-outcome h3 { font-size: 1.14rem; line-height: 1.35; }
+.case-outcome h3:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.case-outcome .outcome-next { margin-top: 9px; font-weight: 700; }
+.outcome-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr)); gap: 8px; margin: 11px 0 0; }
+.outcome-facts div { padding: 7px 9px; border-radius: 6px; background: #ffffffa8; }
+.outcome-facts dt { font-size: .75rem; }
+.outcome-facts dd { margin: 0; font-weight: 700; overflow-wrap: anywhere; }
 .output > .result-group { padding: 0; margin-top: 11px; border: 1px solid var(--line); border-radius: 9px; }
 .result-group > summary { padding: 9px 11px; color: var(--view-ink); }
 .result-group[open] > summary { border-radius: 8px 8px 0 0; background: var(--view-soft); }
@@ -205,7 +214,7 @@ body[data-role="patient"] {
 .result-group-body > :first-child { margin-top: 6px; border-top: 0; }
 .questions-group form { padding-bottom: 11px; }
 .questions-group > .edit-case { margin-top: 8px; margin-bottom: 11px; }
-.questions-group form:has(details) .primary { margin-top: 9px; }
+.question-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
 .knowledge-summary { padding: 15px 23px; color: var(--view-ink); }
 .knowledge-summary span { margin-left: 9px; color: var(--muted); font-size: .8rem; font-weight: 400; }
 @media (max-width: 760px) {

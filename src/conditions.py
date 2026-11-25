@@ -488,18 +488,16 @@ def evaluate(
 
 
 def missing_inputs(node: Any, facts: PatientFacts, schema: Schema | None = None) -> ConditionRefs:
-    """Возвращает ссылки атомов, оценка которых дала UNKNOWN — что нужно уточнить у пользователя."""
+    """Возвращает неизвестные атомы, которые ещё могут изменить значение условия."""
     schema = schema or load_schema()
     trace: list[EvalTrace] = []
     evaluate(node, facts, schema, trace=trace)
     missing = ConditionRefs()
+    resolved = [entry.path + "." for entry in trace if entry.result is not Truth.UNKNOWN]
     for entry in trace:
-        if entry.result is not Truth.UNKNOWN:
-            continue
-        atom = _atom_kind(entry.node, schema)
-        if atom is None:
-            continue
-        collect_references(entry.node, schema, missing)
+        if (entry.result is Truth.UNKNOWN and _atom_kind(entry.node, schema)
+                and not any(entry.path.startswith(prefix) for prefix in resolved)):
+            collect_references(entry.node, schema, missing)
     return missing
 
 

@@ -6,7 +6,7 @@ import json
 
 import pytest
 
-from src.solver import load_default_kb, solve
+from src.solver import ROLES, load_default_kb, solve
 from src.solver.engine import InferenceEngine
 from src.solver.facts import parse_case
 from tests.solver_cases import check_case, load_cases
@@ -29,6 +29,20 @@ def test_case(case, kb):
 def test_case_groups_are_represented():
     groups = {c["group"] for c in CASES}
     assert groups == {"typical", "boundary", "negative"}
+
+
+@pytest.mark.parametrize("role", ROLES)
+def test_every_case_has_an_outcome_with_action_or_route(kb, role):
+    seen = set()
+    for case in CASES:
+        solution = solve({"patient": case.get("patient") or {}}, role=role, kb=kb)
+        outcome = solution["outcome"]
+        assert outcome["title"]
+        assert outcome["next_step"] or solution["routing"]["label"]
+        if outcome["kind"] == "incomplete":
+            assert outcome["urgency"] is None and solution["routing"]["route"] is None
+        seen.add(outcome["kind"])
+    assert {"emergency", "preliminary", "assessed", "incomplete", "invalid", "refused"} <= seen
 
 
 def test_determinism(kb):

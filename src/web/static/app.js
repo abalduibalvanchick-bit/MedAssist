@@ -21,9 +21,9 @@ const views = {
   },
   nursing: {
     title: "Измерения и наблюдение",
-    intro: "Начните с измерений. В результате сначала появятся обследования, шаги протокола и наблюдение.",
+    intro: "Начните с измерений. В результате сначала появятся срочность, маршрут и тревожные признаки.",
     measurements: "Показатели для наблюдения", symptoms: "Наблюдаемые симптомы",
-    primary: ["sbp", "dbp", "hr", "rr", "spo2", "temperature"],
+    primary: ["age", "sbp", "dbp", "hr", "rr", "spo2", "temperature", "glucose"],
     action: "Разобрать случай", result: "Срочность, обследования и план наблюдения.",
     reference: "Задайте вопрос по доступным карточкам и памяткам. Полная база доступна в режиме специалиста.",
     sections: [["care", "Обследования и наблюдение"], ["diagnosis", "Диагностическая оценка"],
@@ -41,10 +41,10 @@ const views = {
   },
   patient: {
     title: "Жалобы и срочность",
-    intro: "Выберите симптомы и добавьте известные измерения. В результате будут показаны срочность, маршрут и доступные памятки.",
-    measurements: "Основные измерения", symptoms: "Что беспокоит",
-    primary: ["age", "temperature"],
-    action: "Посмотреть оценку", result: "Срочность, куда обратиться и что можно уточнить.",
+    intro: "Выберите, что беспокоит, и внесите известные измерения. Неизвестные значения можно оставить пустыми.",
+    measurements: "Что уже измерили", symptoms: "Что беспокоит",
+    primary: ["age", "temperature", "sbp", "dbp", "hr", "spo2", "glucose"],
+    action: "Посмотреть оценку", result: "Насколько срочно нужна помощь, куда обратиться и что сделать дальше.",
     reference: "Задайте вопрос по памяткам для пациентов.",
     sections: [["advice", "Памятки для пациента"], ["reasoning", "Что учтено при оценке"]],
   },
@@ -55,6 +55,16 @@ const showAllSymptoms = {professional: false, nursing: false, student: false, pa
 const currentRole = () => document.querySelector('input[name="role"]:checked').value;
 const currentView = () => views[currentRole()];
 const extraKinds = ["param", "fact", "exam_result", "feature"];
+const extraLabels = {symptom: "Жалобы", feature: "Характер жалоб", param: "Измерения",
+  fact: "Самочувствие и анамнез", exam_result: "Известные результаты обследований"};
+const patientLabels = {
+  sbp: "Верхнее давление", dbp: "Нижнее давление", hr: "Пульс", spo2: "Насыщение крови кислородом",
+  glucose: "Глюкоза крови", confusion: "Есть ли спутанность сознания?",
+  "DIAG-SYMPTOM-006": "Повышенная жажда", "DIAG-SYMPTOM-007": "Частое мочеиспускание",
+  "DIAG-SYMPTOM-010": "Внезапное нарушение речи, движений или чувствительности",
+};
+const patientRoutes = {outpatient: "Амбулаторно, через поликлинику", urgent_referral: "К профильному специалисту",
+  hospitalization: "В стационар", emergency: "Скорая медицинская помощь"};
 let catalog;
 let patient = {};
 let extraCodes = [];
@@ -62,6 +72,7 @@ let revision = 0;
 let referenceRevision = 0;
 let selectedExample = "";
 let hasCaseResult = false;
+let questionsFinished = false;
 let knowledgeRevision = 0;
 let knowledgeData;
 const groups = {example: "Учебные примеры", published: "По публикации",
@@ -142,7 +153,7 @@ function setField(field, value) {
 
 function control(field, initial) {
   const input = node(field.type === "number" ? "input" : "select");
-  input.setAttribute("aria-label", field.label);
+  input.setAttribute("aria-label", fieldName(field));
   if (field.type === "number") {
     input.type = "number";
     input.step = "any";
@@ -166,9 +177,14 @@ function readControl(input, field) {
   return input.value;
 }
 
+function fieldName(field) {
+  return (currentRole() === "patient" && patientLabels[field.code]) || field.label;
+}
+
 function edit() {
   revision += 1;
   hasCaseResult = false;
+  questionsFinished = false;
   selectedExample = "";
   byId("scenario-info").hidden = true;
   syncRawCase();
@@ -177,9 +193,11 @@ function edit() {
 }
 
 function fieldLabel(field, callback, initial) {
-  const label = node("label", field.label);
+  const name = fieldName(field);
+  const label = node("label", field.unit ? `${name}, ${field.unit}` : name);
   const input = control(field, initial);
-  if (callback) input.addEventListener("change", () => callback(readControl(input, field)));
+  if (callback) input.addEventListener(field.type === "number" ? "input" : "change",
+    () => callback(readControl(input, field)));
   label.append(input);
   return [label, input];
 }
@@ -208,7 +226,7 @@ function renderSymptoms() {
   toggle.textContent = expanded ? "Свернуть список" : `Все симптомы (${catalog.fields.symptom.length})`;
   for (const field of catalog.fields.symptom) {
     if (!expanded && fieldValue(field) == null && !symptomOn(field) && !commonSymptoms.includes(field.code)) continue;
-    const button = node("button", field.label, "chip");
+    const button = node("button", fieldName(field), "chip");
     button.type = "button";
     button.dataset.code = field.code;
     const value = fieldValue(field);
@@ -236,7 +254,7 @@ function renderSymptoms() {
   for (const code of active) {
     const available = catalog.fields.feature.filter((field) => field.symptom === code && fieldValue(field) == null);
     if (!available.length) continue;
-    const label = node("label", catalog.fields.symptom.find((field) => field.code === code).label);
+    const label = node("label", fieldName(catalog.fields.symptom.find((field) => field.code === code)));
     const select = node("select");
     select.setAttribute("aria-label", "Добавить признак для " + label.textContent);
     select.add(new Option("Добавить признак", ""));
@@ -283,14 +301,21 @@ function renderExtra() {
       extraCodes = extraCodes.filter((id) => id !== code);
       edit(); renderSymptoms(); renderExtra();
     });
-    row.append(node("span", field.label), input, remove);
+    row.append(node("span", field.unit ? `${fieldName(field)}, ${field.unit}` : fieldName(field)), input, remove);
     root.append(row);
   }
   const select = node("select");
-  select.setAttribute("aria-label", "Добавить параметр, факт или обследование");
-  select.add(new Option("Добавить параметр, факт или обследование", ""));
-  for (const field of fieldChoices.filter((item) => !codes.has(item.code))) {
-    select.add(new Option(field.label, field.code));
+  const description = currentRole() === "patient"
+    ? "Добавить жалобу, измерение или результат" : "Добавить параметр, факт или обследование";
+  select.setAttribute("aria-label", description);
+  select.add(new Option(description, ""));
+  for (const [kind, title] of Object.entries(extraLabels)) {
+    const group = node("optgroup");
+    group.label = title;
+    for (const field of fieldChoices.filter((item) => item.kind === kind && !codes.has(item.code))) {
+      group.append(new Option(fieldName(field), field.code));
+    }
+    if (group.children.length) select.append(group);
   }
   select.addEventListener("change", () => {
     if (!select.value) return;
@@ -378,24 +403,45 @@ function addList(root, title, texts, collapsible = false) {
   root.append(section);
 }
 
-function renderQuestions(root, questions = [], needsData = false) {
+function renderQuestions(root, data) {
+  const {questions = [], outcome} = data.solution;
+  const role = currentRole();
+  const emergency = outcome.kind === "emergency";
+  if (role === "patient" && emergency) return;
+  const needsData = outcome.kind === "incomplete";
   if (!questions.length && !needsData) return;
   const section = node("details", null, "result-group questions-group");
-  section.open = needsData || currentRole() === "nursing" || currentRole() === "patient";
-  section.append(node("summary", "Что можно уточнить"));
+  section.open = !emergency && (needsData || outcome.provisional || role === "nursing" || role === "patient");
+  section.append(node("summary", emergency ? "Уточнения для последующего разбора" : "Что можно уточнить"));
+  const triage = (question) => ["safety_check", "routing"].includes(question.kind);
+  const ordered = role === "patient" || role === "nursing"
+    ? [...questions.filter(triage), ...questions.filter((question) => !triage(question))] : questions;
   const fields = new Map();
-  for (const question of questions) {
+  for (const question of ordered) {
     for (const field of question.inputs || []) {
       if ((field.type !== "choice" || field.options?.length) && !fields.has(field.code)) {
         fields.set(field.code, field);
       }
     }
   }
-  const texts = [...new Set(questions.map((question) => question.text))];
+  if (questionsFinished && fields.size) {
+    section.open = true;
+    const resume = node("button", "Вернуться к вопросам", "secondary edit-case");
+    resume.type = "button";
+    resume.addEventListener("click", () => {
+      questionsFinished = false;
+      renderSolution(data);
+      root.querySelector(".questions-group form input, .questions-group form select")?.focus();
+    });
+    section.append(node("p", "Оценка показана по введённым данным. Пропущенные ответы остаются неизвестными."), resume);
+    root.append(section);
+    return;
+  }
+  const texts = [...new Set(ordered.map((question) => question.text))];
   const shown = texts.slice(0, 4);
   const notes = node("ul");
   for (const text of shown) notes.append(node("li", text));
-  if (!shown.length) notes.append(node("li", "Для вывода нужны дополнительные данные. Можно дополнить описание в форме."));
+  if (!shown.length) notes.append(node("li", "Можно внести другие известные жалобы, измерения или результаты обследований."));
   section.append(notes);
   if (texts.length > shown.length) {
     addList(section, "Все формулировки уточнений", texts.slice(shown.length), true);
@@ -416,21 +462,36 @@ function renderQuestions(root, questions = [], needsData = false) {
     if (rest.children.length) form.append(more);
     const apply = node("button", "Пересчитать с ответами", "primary");
     apply.type = "submit";
-    form.append(apply);
+    const finish = node("button", "Завершить уточнения", "secondary");
+    finish.type = "button";
+    const actions = node("div", null, "question-actions");
+    actions.append(apply, finish);
+    form.append(actions);
     const message = node("div", null, "message error");
     message.hidden = true;
     message.setAttribute("role", "alert");
     form.append(message);
+    const readAnswers = () => Object.fromEntries(controls
+        .map(([field, input]) => [field.code, readControl(input, field)]).filter(([, value]) => value != null));
     form.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const answers = Object.fromEntries(controls
-        .map(([field, input]) => [field.code, readControl(input, field)]).filter(([, value]) => value != null));
+      const answers = readAnswers();
       message.hidden = Boolean(Object.keys(answers).length);
       if (!message.hidden) {
         message.textContent = "Заполните хотя бы одно уточнение.";
         return;
       }
       await solveCase(answers, apply, message);
+    });
+    finish.addEventListener("click", async () => {
+      const answers = readAnswers();
+      if (Object.keys(answers).length) {
+        await solveCase(answers, finish, message, true, true);
+      } else {
+        questionsFinished = true;
+        renderSolution(data);
+        root.querySelector(".case-outcome h3").focus();
+      }
     });
     section.append(form);
   } else if (needsData) {
@@ -454,23 +515,50 @@ function subsection(title) {
   return group;
 }
 
+function renderOutcome(root, result, role) {
+  const {outcome, routing} = result;
+  const tone = outcome.kind === "invalid" ? "error"
+    : outcome.provisional || result.urgency?.level === "urgent" ? "urgent" : "";
+  const block = node("div", null, `case-outcome message ${outcome.kind} ${tone}`);
+  const title = node("h3", outcome.title);
+  title.tabIndex = -1;
+  block.append(title);
+  if (outcome.summary) block.append(node("p", outcome.summary));
+  const route = role === "patient" ? patientRoutes[routing?.route] || routing?.label : routing?.label;
+  const facts = [
+    ["Срочность", outcome.urgency || (route && outcome.provisional ? "Уточняется" : null)],
+    [outcome.provisional ? "Предварительный маршрут" : role === "patient" ? "Куда обратиться" : "Маршрут", route],
+    [outcome.provisional ? "Предварительный срок" : "Когда", route ? routing.timeframe || "Пока не определён" : null],
+  ].filter(([, value]) => value);
+  if (facts.length) {
+    const list = node("dl", null, "outcome-facts");
+    for (const [label, value] of facts) {
+      const row = node("div");
+      row.append(node("dt", label), node("dd", value));
+      list.append(row);
+    }
+    block.append(list);
+  }
+  if (outcome.next_step) block.append(node("p", outcome.next_step, "outcome-next"));
+  root.append(block);
+}
+
 function renderSolution(data) {
   const result = data.solution;
   const root = byId("result-content");
   const role = currentRole();
   root.className = "output";
   root.replaceChildren();
-  const labels = {ok: "Случай разобран", need_more_data: "Нужны уточнения", invalid: "Проверьте данные",
-    refused: "Вне области применимости"};
-  const level = result.urgency?.level;
   const routing = result.routing;
-  const caption = result.status === "ok" && (result.urgency?.reasons?.length || routing?.label)
-    ? labels[result.status] + " · срочность: " + result.urgency.label : labels[result.status];
-  root.append(node("div", caption, "message " + (result.status === "invalid" ? "error" : (level || ""))));
-  if (result.refusal?.text) root.append(node("p", result.refusal.text));
+  renderOutcome(root, result, role);
   addList(root, "Замечания к данным", (result.input_issues || []).concat(data.answer_issues || []).map((item) => item.message));
-  if (routing?.label) addList(root, role === "patient" ? "Куда обратиться" : "Маршрут", [[routing.label, routing.timeframe,
-    routing.provisional ? "предварительно" : ""].filter(Boolean).join(" · ")]);
+  const disclaimers = result.disclaimer?.filter((text) => text !== result.outcome.next_step);
+  if (result.status === "invalid" || result.status === "refused") {
+    addList(root, "Справочная информация", disclaimers, true);
+    return;
+  }
+  addList(root, role === "patient" ? "Выявленные тревожные признаки" : "Тревожные признаки и неотложные состояния",
+    [...(result.red_flags || []), ...(role === "patient" ? [] : result.emergencies || [])].map((item) => item.title));
 
   if (role === "professional" && result.hypotheses?.length) {
     const preview = node("p", "Первая гипотеза · " + result.hypotheses[0].title, "result-preview");
@@ -483,7 +571,7 @@ function renderSolution(data) {
   if (role === "student" && result.trace?.length) {
     root.append(node("p", "Шагов вывода · " + result.trace.length, "result-preview"));
   }
-  renderQuestions(root, result.questions, result.status === "need_more_data");
+  renderQuestions(root, data);
 
   const groups = {};
   for (const [key, title] of currentView().sections) groups[key] = subsection(title);
@@ -514,18 +602,28 @@ function renderSolution(data) {
 
   const care = panel("care");
   if (care) {
-    addList(care, "Обследования", result.exams?.map((item) => item.title), role !== "nursing");
-    addList(care, "Выполненные обследования", result.completed_exams?.map((item) => item.title), true);
+    const examRoles = {confirms: "подтверждение", excludes: "исключение", supports: "поддержка гипотезы",
+      stratifies: "оценка тяжести", monitors: "наблюдение"};
+    const exams = result.exams?.map((item) =>
+      [item.title, item.roles.map((value) => examRoles[value] || value).join(", ")].filter(Boolean).join(" · "));
+    addList(care, "Обследования", exams, role !== "nursing");
+    addList(care, "Выполненные обследования", result.completed_exams?.map((item) =>
+      [item.title, ...item.results.map((value) => `${value.label} — ${value.value}`)].join(" · ")), true);
     addList(care, "Обследования после стабилизации", result.deferred_exams?.map((item) => item.title), true);
-    addList(care, "Протоколы", result.protocols?.flatMap((item) => [
-      item.title, ...(item.steps || []).map((step) => step.action),
-      ...(item.phases || []).flatMap((phase) => phase.steps),
-    ]), true);
+    const conditions = {conditional: "нужно уточнить применимость", not_required: "не требуется",
+      not_applicable: "не применяется"};
+    for (const item of result.protocols || []) {
+      addList(care, item.title, [
+        conditions[item.status],
+        ...(item.steps || []).map((step) => [step.action, conditions[step.status]].filter(Boolean).join(" · ")),
+        ...(item.phases || []).flatMap((phase) => phase.steps.map((step) => `${phase.window} · ${step}`)),
+      ].filter(Boolean), true);
+    }
     addList(care, "Наблюдение", result.follow_up?.flatMap((item) => [
       item.title, ...(item.schedule || []).map((row) => [row.after, row.interval, row.purpose].filter(Boolean).join(" · ")),
     ]), role !== "nursing");
     addList(care, "Основания маршрутизации", routing?.decisions?.map((item) =>
-      [item.title, item.label, item.timeframe].filter(Boolean).join(" · ")), true);
+      [item.title, item.label, item.timeframe, item.explanation, ...item.actions].filter(Boolean).join(" · ")), true);
   }
 
   const therapy = panel("therapy");
@@ -542,12 +640,24 @@ function renderSolution(data) {
   }
 
   const advice = panel("advice");
-  if (advice) addList(advice, "Когда обратиться за помощью", result.advice?.flatMap((item) => item.seek_help_when));
+  if (advice) addList(advice, "Когда нужна срочная помощь", [...new Set(
+    (result.advice || []).flatMap((item) => item.seek_help_when))]);
 
   const reasoning = panel("reasoning");
-  addList(reasoning, "Основания оценки", result.urgency?.reasons?.map((item) => item.reason));
-  addList(reasoning, role === "patient" ? "Тревожные признаки" : "Красные флаги", result.red_flags?.map((item) => item.title));
-  addList(reasoning, "Неотложные состояния", result.emergencies?.map((item) => item.title));
+  if (role === "patient") {
+    const symptoms = catalog.fields.symptom.filter((field) => fieldValue(field) != null || symptomOn(field));
+    const details = [...catalog.fields.feature, ...catalog.fields.fact].filter((field) => fieldValue(field) != null);
+    const measurements = catalog.fields.param.filter((field) => fieldValue(field) != null);
+    const showValue = (value) => typeof value === "boolean" ? (value ? "да" : "нет") : value;
+    addList(reasoning, "Жалобы и ответы", symptoms.map((field) =>
+      fieldName(field) + (fieldValue(field) === false ? " — нет" : " — да")));
+    addList(reasoning, "Уточнения по жалобам", details.map((field) =>
+      `${fieldName(field)} — ${showValue(fieldValue(field))}`));
+    addList(reasoning, "Введённые значения", measurements.map((field) =>
+      [`${fieldName(field)} — ${showValue(fieldValue(field))}`, field.unit].filter(Boolean).join(" ")));
+  } else {
+    addList(reasoning, "Основания оценки", result.urgency?.reasons?.map((item) => item.reason));
+  }
   if (result.explanation) {
     const details = node("details");
     details.open = role === "student";
@@ -557,14 +667,15 @@ function renderSolution(data) {
     reasoning.append(details);
   }
   const available = Object.values(groups).filter((group) => group.lastElementChild.children.length);
-  if (available.length) available[0].open = true;
+  if (available.length && (role !== "patient" || advice?.children.length)) available[0].open = true;
   root.append(...available);
-  addList(root, "Справочная информация", result.disclaimer, true);
+  addList(root, "Справочная информация", disclaimers, true);
 }
 
-async function solveCase(answers, button, inlineError, focusResult = true) {
+async function solveCase(answers, button, inlineError, focusResult = true, finishQuestions = false) {
   const stamp = ++revision;
   showError("case-error");
+  if (inlineError) inlineError.hidden = true;
   button.disabled = true;
   try {
     const data = await request("/api/solve", {patient, answers, role: currentRole()});
@@ -578,11 +689,19 @@ async function solveCase(answers, button, inlineError, focusResult = true) {
       patient = data.patient;
       syncForm();
     }
+    if (finishQuestions) questionsFinished = true;
     hasCaseResult = true;
     renderSolution(data);
-    if (focusResult && matchMedia("(max-width: 760px)").matches && !inlineError) byId("case-results").focus();
+    if (focusResult) {
+      byId("case-results").querySelector(".case-outcome h3").focus();
+    }
   } catch (error) {
-    if (stamp === revision) showError("case-error", error.message);
+    if (stamp === revision) {
+      if (inlineError) {
+        inlineError.textContent = error.message;
+        inlineError.hidden = false;
+      } else showError("case-error", error.message);
+    }
   } finally {
     button.disabled = false;
   }
@@ -597,6 +716,7 @@ async function loadExample(example) {
     patient = data.request.patient || data.request;
     selectedExample = data.title;
     hasCaseResult = false;
+    questionsFinished = false;
     const info = byId("scenario-info");
     info.replaceChildren(node("strong", data.title));
     if (data.note) info.append(node("p", data.note));
@@ -721,6 +841,7 @@ renderViewLabels();
 
 byId("case-form").addEventListener("submit", (event) => {
   event.preventDefault();
+  questionsFinished = false;
   if (catalog) solveCase({}, byId("solve-button"));
 });
 

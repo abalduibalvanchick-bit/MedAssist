@@ -157,6 +157,33 @@ def test_fully_described_fatigue_asks_for_missing_related_symptoms(kb):
     assert not pending_inputs(solution)
 
 
+def test_patient_polyuria_dialog_always_has_visible_outcome(kb):
+    case = {"patient": {
+        "age": 20, "symptoms": ["DIAG-SYMPTOM-011"],
+        "features": ["fatigue.sudden_severe", "fatigue.exertional"],
+        "denied_features": ["fatigue.progressive"],
+    }}
+    case, _ = apply_answers(case, {"DIAG-SYMPTOM-007": True}, kb)
+    pending = solve(case, role="patient", kb=kb)
+    assert pending["outcome"]["provisional"]
+    assert [field["code"] for field in pending_inputs(pending)] == ["glucose"]
+    assert all("ГГС" not in question["text"] for question in pending["questions"])
+
+    low, _ = apply_answers(case, {"glucose": 5}, kb)
+    result = solve(low, role="patient", kb=kb)
+    assert result["outcome"]["kind"] == "incomplete"
+    assert result["outcome"]["urgency"] is None and not result["outcome"]["provisional"]
+    assert result["outcome"]["summary"] and result["outcome"]["next_step"]
+    assert not result["questions"] and not result["routing"]["route"]
+    assert "working_diagnoses" not in result
+
+    high, _ = apply_answers(case, {"glucose": 35}, kb)
+    result = solve(high, role="patient", kb=kb)
+    assert result["outcome"]["kind"] == "emergency"
+    assert result["outcome"]["urgency"] == "экстренная"
+    assert "103" in result["outcome"]["next_step"] and result["routing"]["timeframe"] == "немедленно"
+
+
 def test_dialog_can_escalate_urgency(kb):
     # Боль в груди без подробностей; ответ «боль в покое» должен дать экстренную срочность.
     request = {"patient": {"age": 62, "symptoms": ["DIAG-SYMPTOM-002"]}}

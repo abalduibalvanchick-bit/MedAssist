@@ -172,6 +172,17 @@ def test_missing_inputs_lists_only_unknown_atoms():
     assert missing.card_ids == set()
 
 
+def test_missing_inputs_skip_unknown_leaves_of_resolved_alternatives():
+    facts = PatientFacts(symptoms={"DIAG-SYMPTOM-007"})
+    condition = {"all": [
+        {"param": "glucose", "op": ">=", "value": 33.3},
+        {"any": [{"fact": "confusion"}, {"symptom": "DIAG-SYMPTOM-007"}]},
+    ]}
+    missing = missing_inputs(condition, facts, schema)
+    assert missing.params == {"glucose"}
+    assert missing.facts == set()
+
+
 # -------------------------------------------------------------- ссылки
 def test_collect_references():
     cond = {"any": [

@@ -20,18 +20,23 @@ def format_solution(solution: dict[str, Any], *, show_trace: bool = True) -> str
     def ref(item_id: str) -> str:
         return "" if lay else f" [{item_id}]"
 
-    add(f"Статус: {_STATUS.get(solution.get('status'), solution.get('status'))}")
+    outcome = solution.get("outcome") or {}
+    add(outcome.get("title") or f"Статус: {_STATUS.get(solution.get('status'), solution.get('status'))}")
+    for key in ("summary", "next_step"):
+        if outcome.get(key):
+            add(outcome[key])
     for issue in solution.get("input_issues") or []:
         add(f"  [{issue['severity']}] {issue['message']}")
     if solution.get("status") == "invalid":
         return "\n".join(out)
-    if solution.get("refusal"):
+    if solution.get("refusal") and not outcome:
         add(f"Отказ ({solution['refusal']['source']}): {solution['refusal']['text']}")
     urgency = solution.get("urgency") or {}
-    if urgency:
+    if urgency and (not outcome or outcome.get("urgency")):
         add(f"Срочность: {urgency.get('label', urgency.get('level'))}")
-        for reason in urgency.get("reasons") or []:
-            add(f"  основание: {reason['reason']}{ref(reason['source'])}")
+        if not lay:
+            for reason in urgency.get("reasons") or []:
+                add(f"  основание: {reason['reason']}{ref(reason['source'])}")
 
     def section(title: str, items: list[str]) -> None:
         if items:
@@ -40,7 +45,8 @@ def format_solution(solution: dict[str, Any], *, show_trace: bool = True) -> str
 
     section("Профили пациента", [p["title"] for p in solution.get("profiles") or []])
     section("Красные флаги", [f"{r['title']}{ref(r['id'])}" for r in solution.get("red_flags") or []])
-    section("Неотложные состояния", [f"{e['title']}{ref(e['id'])}" for e in solution.get("emergencies") or []])
+    if not lay:
+        section("Неотложные состояния", [f"{e['title']}{ref(e['id'])}" for e in solution.get("emergencies") or []])
     for h in solution.get("hypotheses", []):
         priority = " (приоритет по срочности)" if h.get("time_critical_priority") else ""
         add(f"Гипотеза: {h['title']} — вес правил {h['score']}, оценка {h.get('rank_score', h['score'])}{priority}")
@@ -68,7 +74,7 @@ def format_solution(solution: dict[str, Any], *, show_trace: bool = True) -> str
     routing = solution.get("routing") or {}
     if routing.get("route"):
         head = routing["label"] + (f", {routing['timeframe']}" if routing.get("timeframe") else "")
-        if routing.get("provisional"):
+        if routing.get("provisional") or outcome.get("provisional"):
             head += " (предварительно: более тяжёлый маршрут не исключён, см. вопросы)"
         add(f"Маршрут: {head}" + ("" if lay else f" [{', '.join(routing.get('sources') or [])}]"))
         for d in routing.get("decisions") or []:
@@ -114,12 +120,14 @@ def format_solution(solution: dict[str, Any], *, show_trace: bool = True) -> str
         questions.append(q["text"] + (f" ({'; '.join(q['ask'])})" if q.get("ask") else ""))
     section("Уточняющие вопросы", questions)
     for item in solution.get("advice") or []:
-        section(f"Когда срочно обратиться к врачу ({item['title']})", item["seek_help_when"])
+        section("Когда срочно обратиться к врачу" if lay else f"Когда срочно обратиться к врачу ({item['title']})",
+                item["seek_help_when"])
     if show_trace and solution.get("explanation"):
         add("Ход вывода:")
         out.extend("  " + line for line in solution["explanation"].splitlines())
     for text in solution.get("disclaimer") or []:
-        add(f"! {text}")
+        if text != outcome.get("next_step"):
+            add(f"! {text}")
     stats = solution.get("stats") or {}
     if stats and not lay:
         add(f"Итераций: {stats.get('iterations', '-')}, сработало правил: {stats.get('rules_fired', '-')} из "

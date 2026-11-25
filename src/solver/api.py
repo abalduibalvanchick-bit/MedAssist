@@ -10,6 +10,7 @@
 Поля решения:
 
     status          ok | need_more_data | refused | invalid
+    outcome         видимый итог, ограничения оценки и следующий шаг
     urgency         срочность и её основания
     profiles, red_flags, emergencies, scales, hypotheses, working_diagnoses
     exams, deferred_exams, completed_exams, routing, routes, protocols, follow_up, warnings, questions
@@ -30,6 +31,7 @@ from .engine import URGENCY_LABELS, InferenceEngine
 from .explain import render_explanation
 from .facts import parse_case
 from .knowledge import KnowledgeBase, known_exam_results, load_default_kb
+from .outcome import summarize_outcome
 from .questions import build_questions, fallback_questions, rank_questions
 from .protocols import execute_protocols
 from .ranking import rank_hypotheses
@@ -81,15 +83,17 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
     kb = kb or load_default_kb()          # загрузка базы не входит в замер времени решения
     started = time.perf_counter()
     if role not in ROLES:
-        return {"status": "invalid", "input_issues": [{"severity": "error", "code": "BAD_ROLE",
+        solution = {"status": "invalid", "input_issues": [{"severity": "error", "code": "BAD_ROLE",
                 "message": f"Неизвестная роль «{role}»; допустимо: {', '.join(ROLES)}."}]}
+        return {**solution, "outcome": summarize_outcome(solution)}
 
     parsed = parse_case(request, kb)
     issues = [{"severity": i.severity, "code": i.code, "message": i.message} for i in parsed.issues]
     if parsed.has_errors:
-        return {"status": "invalid", "role": role, "input_issues": issues,
-                "disclaimer": _disclaimers(kb, role, "routine"),
-                "stats": {"time_ms": round((time.perf_counter() - started) * 1000, 2)}}
+        solution = {"status": "invalid", "role": role, "input_issues": issues,
+                    "disclaimer": _disclaimers(kb, role, "routine"),
+                    "stats": {"time_ms": round((time.perf_counter() - started) * 1000, 2)}}
+        return {**solution, "outcome": summarize_outcome(solution)}
 
     engine = InferenceEngine(kb)
     memory = engine.run(parsed.facts)
@@ -119,6 +123,12 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
 
     if memory.refusal is None:
         questions = rank_questions(questions, memory, kb, include_hypotheses=professional)
+    if role == "patient":
+        for question in questions:
+            if question["kind"] in ("safety_check", "routing"):
+                question["text"] = "Эти сведения помогут уточнить, насколько срочно нужна помощь."
+            elif question["kind"] in ("clarification", "scale") and question["inputs"]:
+                question["text"] = "Внесите известные вам значения."
 
     # Обследования: сначала подтверждающие и исключающие, затем оценка тяжести и прочие.
     # В экстренной ситуации обследования только из плановых правил (phase: planned)
@@ -178,11 +188,18 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
                   "time_ms": round((time.perf_counter() - started) * 1000, 2)},
     }
 
+    emergency_message = ""
+    if memory.urgency == "emergency":
+        emergency_message = next((str(card.metadata["text"]) for card in kb.category("disclaimer")
+                                  if card.urgency == "emergency" and card.metadata.get("text")), "")
+    solution["outcome"] = summarize_outcome(solution, emergency_message)
     if role == "patient":
         # Пациенту — куда и когда обращаться, без служебных таблиц решений.
         solution["routing"] = {k: solution["routing"][k] for k in ("route", "label", "timeframe", "provisional")}
         # Памятки — только по рабочим диагнозам: слабые гипотезы пациенту не показываются.
         solution["advice"] = _patient_advice(kb, memory.working_diagnoses)
-        for key in ("hypotheses", "differential", "therapy", "exams", "deferred_exams", "completed_exams", "warnings", "scales", "fired_rules", "trace", "explanation", "protocols", "follow_up"):
+        for key in ("working_diagnoses", "hypotheses", "differential", "therapy", "exams", "deferred_exams",
+                    "completed_exams", "warnings", "scales", "fired_rules", "trace", "explanation", "protocols",
+                    "follow_up", "routes"):
             solution.pop(key, None)
     return solution
