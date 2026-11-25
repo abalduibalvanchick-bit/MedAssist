@@ -8,7 +8,52 @@ const node = (tag, text, className) => {
   return item;
 };
 
-const primaryCodes = ["age", "temperature", "spo2", "sbp", "dbp", "hr"];
+const views = {
+  professional: {
+    title: "Разбор случая",
+    intro: "Введите данные или загрузите учебный случай, чтобы увидеть оценку и её основания.",
+    measurements: "Основные измерения", symptoms: "Симптомы",
+    primary: ["age", "temperature", "spo2", "sbp", "dbp", "hr"],
+    action: "Разобрать случай", result: "Срочность, гипотезы и подробности решения.",
+    reference: "Задайте вопрос по всей базе знаний. Ниже доступны карточки, правила и демонстрации.",
+    sections: [["diagnosis", "Диагностика"], ["care", "Протоколы и наблюдение"],
+      ["therapy", "Терапия и безопасность"], ["reasoning", "Обоснование"]],
+  },
+  nursing: {
+    title: "Измерения и наблюдение",
+    intro: "Начните с измерений. В результате сначала появятся обследования, шаги протокола и наблюдение.",
+    measurements: "Показатели для наблюдения", symptoms: "Наблюдаемые симптомы",
+    primary: ["sbp", "dbp", "hr", "rr", "spo2", "temperature"],
+    action: "Разобрать случай", result: "Срочность, обследования и план наблюдения.",
+    reference: "Задайте вопрос по доступным карточкам и памяткам. Полная база доступна в режиме специалиста.",
+    sections: [["care", "Обследования и наблюдение"], ["diagnosis", "Диагностическая оценка"],
+      ["therapy", "Терапия и безопасность"], ["reasoning", "Обоснование"]],
+  },
+  student: {
+    title: "Учебный разбор",
+    intro: "Загрузите сценарий и проследите, какие факты запустили правила и как появились гипотезы.",
+    measurements: "Измерения в сценарии", symptoms: "Признаки учебного случая",
+    primary: ["age", "temperature", "spo2", "sbp", "dbp", "hr"],
+    action: "Запустить учебный разбор", result: "Ход вывода и разбор гипотез по шагам.",
+    reference: "Задайте вопрос по доступным карточкам и памяткам. Правила всего справочника доступны в режиме специалиста.",
+    sections: [["reasoning", "Как решатель пришёл к выводу"], ["diagnosis", "Гипотезы и шкалы"],
+      ["care", "Протоколы и наблюдение"], ["therapy", "Терапия и безопасность"]],
+  },
+  patient: {
+    title: "Жалобы и срочность",
+    intro: "Выберите симптомы и добавьте известные измерения. В результате будут показаны срочность, маршрут и доступные памятки.",
+    measurements: "Основные измерения", symptoms: "Что беспокоит",
+    primary: ["age", "temperature"],
+    action: "Посмотреть оценку", result: "Срочность, куда обратиться и что можно уточнить.",
+    reference: "Задайте вопрос по памяткам для пациентов.",
+    sections: [["advice", "Памятки для пациента"], ["reasoning", "Что учтено при оценке"]],
+  },
+};
+const commonSymptoms = ["DIAG-SYMPTOM-002", "DIAG-SYMPTOM-001", "DIAG-SYMPTOM-008",
+  "DIAG-SYMPTOM-004", "DIAG-SYMPTOM-003", "DIAG-SYMPTOM-005", "DIAG-SYMPTOM-014"];
+const showAllSymptoms = {professional: false, nursing: false, student: false, patient: false};
+const currentRole = () => document.querySelector('input[name="role"]:checked').value;
+const currentView = () => views[currentRole()];
 const extraKinds = ["param", "fact", "exam_result", "feature"];
 let catalog;
 let patient = {};
@@ -16,6 +61,7 @@ let extraCodes = [];
 let revision = 0;
 let referenceRevision = 0;
 let selectedExample = "";
+let hasCaseResult = false;
 let knowledgeRevision = 0;
 let knowledgeData;
 const groups = {example: "Учебные примеры", published: "По публикации",
@@ -122,6 +168,7 @@ function readControl(input, field) {
 
 function edit() {
   revision += 1;
+  hasCaseResult = false;
   selectedExample = "";
   byId("scenario-info").hidden = true;
   syncRawCase();
@@ -138,7 +185,7 @@ function fieldLabel(field, callback, initial) {
 }
 
 function renderPrimary() {
-  const controls = primaryCodes.map((code) => {
+  const controls = currentView().primary.map((code) => {
     const field = catalog.fields.param.find((item) => item.code === code);
     return fieldLabel(field, (value) => { setField(field, value); edit(); }, fieldValue(field))[0];
   });
@@ -153,7 +200,14 @@ function renderSymptoms() {
   const container = byId("symptoms");
   const focusCode = document.activeElement?.dataset.code;
   container.replaceChildren();
+  const role = currentRole();
+  const expanded = showAllSymptoms[role];
+  const toggle = byId("toggle-symptoms");
+  toggle.hidden = catalog.fields.symptom.length <= commonSymptoms.length;
+  toggle.setAttribute("aria-expanded", String(expanded));
+  toggle.textContent = expanded ? "Свернуть список" : `Все симптомы (${catalog.fields.symptom.length})`;
   for (const field of catalog.fields.symptom) {
+    if (!expanded && fieldValue(field) == null && !symptomOn(field) && !commonSymptoms.includes(field.code)) continue;
     const button = node("button", field.label, "chip");
     button.type = "button";
     button.dataset.code = field.code;
@@ -199,6 +253,7 @@ function renderSymptoms() {
 }
 
 function renderExtra() {
+  const primaryCodes = currentView().primary;
   const root = byId("extra-controls");
   root.replaceChildren();
   const fieldChoices = extraKinds.flatMap((kind) => catalog.fields[kind])
@@ -325,8 +380,9 @@ function addList(root, title, texts, collapsible = false) {
 
 function renderQuestions(root, questions) {
   if (!questions?.length) return;
-  const section = node("section");
-  section.append(node("h3", "Что можно уточнить"));
+  const section = node("details", null, "result-group questions-group");
+  section.open = currentRole() === "nursing" || currentRole() === "patient";
+  section.append(node("summary", "Что можно уточнить"));
   const fields = new Map();
   for (const question of questions) {
     for (const field of question.inputs || []) {
@@ -337,6 +393,9 @@ function renderQuestions(root, questions) {
   const notes = node("ul");
   for (const question of shown) notes.append(node("li", question.text));
   section.append(notes);
+  if (questions.length > shown.length) {
+    addList(section, "Все формулировки уточнений", questions.slice(shown.length).map((item) => item.text), true);
+  }
   if (fields.size) {
     const form = node("form");
     const grid = node("div", null, "question-grid");
@@ -375,72 +434,126 @@ function renderQuestions(root, questions) {
   root.append(section);
 }
 
+function subsection(title) {
+  const group = node("details", null, "result-group");
+  group.append(node("summary", title), node("div", null, "result-group-body"));
+  return group;
+}
+
 function renderSolution(data) {
   const result = data.solution;
   const root = byId("result-content");
+  const role = currentRole();
   root.className = "output";
   root.replaceChildren();
   const labels = {ok: "Случай разобран", need_more_data: "Нужны уточнения", invalid: "Проверьте данные",
     refused: "Вне области применимости"};
   const level = result.urgency?.level;
   const routing = result.routing;
-  const caption = result.status === "ok" && result.urgency?.reasons?.length
+  const caption = result.status === "ok" && (result.urgency?.reasons?.length || routing?.label)
     ? labels[result.status] + " · срочность: " + result.urgency.label : labels[result.status];
   root.append(node("div", caption, "message " + (result.status === "invalid" ? "error" : (level || ""))));
-  if (selectedExample) root.append(node("p", "Учебный пример · " + selectedExample));
   if (result.refusal?.text) root.append(node("p", result.refusal.text));
   addList(root, "Замечания к данным", (result.input_issues || []).concat(data.answer_issues || []).map((item) => item.message));
-  if (routing?.label) addList(root, "Маршрут", [[routing.label, routing.timeframe,
+  if (routing?.label) addList(root, role === "patient" ? "Куда обратиться" : "Маршрут", [[routing.label, routing.timeframe,
     routing.provisional ? "предварительно" : ""].filter(Boolean).join(" · ")]);
-  addList(root, "Основания оценки", result.urgency?.reasons?.map((item) => item.reason));
-  addList(root, "Красные флаги", result.red_flags?.map((item) => item.title));
-  addList(root, "Неотложные состояния", result.emergencies?.map((item) => item.title));
-  addList(root, "Профили", result.profiles?.map((item) => item.title), true);
+
+  if (role === "professional" && result.hypotheses?.length) {
+    const preview = node("p", "Первая гипотеза · " + result.hypotheses[0].title, "result-preview");
+    root.append(preview);
+  }
+  if (role === "nursing" && result.exams?.length) {
+    const preview = node("p", "Предложено обследований · " + result.exams.length, "result-preview");
+    root.append(preview);
+  }
+  if (role === "student" && result.trace?.length) {
+    root.append(node("p", "Шагов вывода · " + result.trace.length, "result-preview"));
+  }
   renderQuestions(root, result.questions);
-  addList(root, "Гипотезы", result.hypotheses?.map((item) => {
-    const argumentsText = item.arguments.map((argument) =>
-      (argument.contribution > 0 ? "+" : "−") + " " + argument.title).join(", ");
-    return item.title + (argumentsText ? " · " + argumentsText : "");
-  }), true);
-  for (const table of result.differential || []) {
-    addList(root, table.title, table.branches.map((branch) => {
-      const exam = branch.key_exam;
-      return [branch.title + " — " + branch.label,
-        branch.for.length ? "за: " + branch.for.join(", ") : "",
-        branch.against.length ? "против: " + branch.against.join(", ") : "",
-        exam?.recommended ? (exam.completed ? "уже выполнено: " : "ключевое обследование: ") + exam.title : "",
-      ].filter(Boolean).join(" · ");
+
+  const groups = {};
+  for (const [key, title] of currentView().sections) groups[key] = subsection(title);
+  const panel = (key) => groups[key]?.lastElementChild;
+  const diagnosis = panel("diagnosis");
+  if (diagnosis) {
+    addList(diagnosis, "Профили", result.profiles?.map((item) => item.title), true);
+    addList(diagnosis, "Рабочие диагнозы", result.working_diagnoses?.map((item) => item.title), true);
+    addList(diagnosis, "Гипотезы", result.hypotheses?.map((item) => {
+      const argumentsText = item.arguments.map((argument) =>
+        (argument.contribution > 0 ? "+" : "−") + " " + argument.title).join(", ");
+      const rank = item.rank_score ?? item.score;
+      return item.title + " · " + rank + " балл." + (argumentsText ? " · " + argumentsText : "");
     }), true);
+    for (const table of result.differential || []) {
+      addList(diagnosis, table.title, table.branches.map((branch) => {
+        const exam = branch.key_exam;
+        return [branch.title + " — " + branch.label,
+          branch.for.length ? "за: " + branch.for.join(", ") : "",
+          branch.against.length ? "против: " + branch.against.join(", ") : "",
+          exam?.recommended ? (exam.completed ? "уже выполнено: " : "ключевое обследование: ") + exam.title : "",
+        ].filter(Boolean).join(" · ");
+      }), true);
+    }
+    addList(diagnosis, "Шкалы", result.scales?.map((item) =>
+      `${item.title} · ${item.value ?? item.range.join("–")} · ${item.category_label}`), true);
   }
-  addList(root, "Шкалы", result.scales?.map((item) => `${item.title} · ${item.value ?? item.range.join("–")} · ${item.category_label}`), true);
-  addList(root, "Обследования", result.exams?.map((item) => item.title), true);
-  addList(root, "Выполненные обследования", result.completed_exams?.map((item) => item.title), true);
-  addList(root, "Обследования после стабилизации", result.deferred_exams?.map((item) => item.title), true);
-  addList(root, "Протоколы", result.protocols?.flatMap((item) => [item.title, ...(item.steps || []).map((step) => step.action), ...(item.phases || []).flatMap((phase) => phase.steps)]), true);
-  addList(root, "Наблюдение", result.follow_up?.flatMap((item) => [item.title, ...(item.schedule || []).map((row) => [row.after, row.interval, row.purpose].filter(Boolean).join(" · "))]), true);
-  for (const regimen of result.therapy?.regimens || []) {
-    addList(root, regimen.title, regimen.lines.flatMap((line) => line.options.map((option) =>
-      [`Линия ${line.line} · ${option.title} — ${option.label}`, option.note,
-        ...option.reasons.map((reason) => reason.text + " [" + reason.source + "]"), ...option.dose_notes.map((reason) => reason.text + " [" + reason.source + "]")]
-        .filter(Boolean).join(" · "))), true);
+
+  const care = panel("care");
+  if (care) {
+    addList(care, "Обследования", result.exams?.map((item) => item.title), role !== "nursing");
+    addList(care, "Выполненные обследования", result.completed_exams?.map((item) => item.title), true);
+    addList(care, "Обследования после стабилизации", result.deferred_exams?.map((item) => item.title), true);
+    addList(care, "Протоколы", result.protocols?.flatMap((item) => [
+      item.title, ...(item.steps || []).map((step) => step.action),
+      ...(item.phases || []).flatMap((phase) => phase.steps),
+    ]), true);
+    addList(care, "Наблюдение", result.follow_up?.flatMap((item) => [
+      item.title, ...(item.schedule || []).map((row) => [row.after, row.interval, row.purpose].filter(Boolean).join(" · ")),
+    ]), role !== "nursing");
+    addList(care, "Основания маршрутизации", routing?.decisions?.map((item) =>
+      [item.title, item.label, item.timeframe].filter(Boolean).join(" · ")), true);
   }
-  addList(root, "Взаимодействия", result.therapy?.interactions?.map((item) => item.title + " · " + item.text), true);
-  addList(root, "Предупреждения", result.warnings?.map((item) => item.text), true);
-  addList(root, "Памятки", result.advice?.flatMap((item) => item.seek_help_when), true);
+
+  const therapy = panel("therapy");
+  if (therapy) {
+    for (const regimen of result.therapy?.regimens || []) {
+      addList(therapy, regimen.title, regimen.lines.flatMap((line) => line.options.map((option) =>
+        [`Линия ${line.line} · ${option.title} — ${option.label}`, option.note,
+          ...option.reasons.map((reason) => reason.text + " [" + reason.source + "]"),
+          ...option.dose_notes.map((reason) => reason.text + " [" + reason.source + "]"),
+        ].filter(Boolean).join(" · "))), true);
+    }
+    addList(therapy, "Взаимодействия", result.therapy?.interactions?.map((item) => item.title + " · " + item.text), true);
+    addList(therapy, "Предупреждения", result.warnings?.map((item) => item.text), true);
+  }
+
+  const advice = panel("advice");
+  if (advice) addList(advice, "Когда обратиться за помощью", result.advice?.flatMap((item) => item.seek_help_when));
+
+  const reasoning = panel("reasoning");
+  addList(reasoning, "Основания оценки", result.urgency?.reasons?.map((item) => item.reason));
+  addList(reasoning, role === "patient" ? "Тревожные признаки" : "Красные флаги", result.red_flags?.map((item) => item.title));
+  addList(reasoning, "Неотложные состояния", result.emergencies?.map((item) => item.title));
   if (result.explanation) {
     const details = node("details");
-    details.append(node("summary", "Ход вывода"), node("pre", result.explanation));
-    root.append(details);
+    details.open = role === "student";
+    const trace = node("pre", result.explanation, "result-trace");
+    trace.tabIndex = 0;
+    details.append(node("summary", "Ход вывода"), trace);
+    reasoning.append(details);
   }
+  const available = Object.values(groups).filter((group) => group.lastElementChild.children.length);
+  if (available.length) available[0].open = true;
+  root.append(...available);
   addList(root, "Справочная информация", result.disclaimer, true);
 }
 
-async function solveCase(answers, button, inlineError) {
+async function solveCase(answers, button, inlineError, focusResult = true) {
   const stamp = ++revision;
   showError("case-error");
   button.disabled = true;
   try {
-    const data = await request("/api/solve", {patient, answers, role: byId("role").value});
+    const data = await request("/api/solve", {patient, answers, role: currentRole()});
     if (stamp !== revision) return;
     if (inlineError && data.solution.status === "invalid") {
       inlineError.textContent = data.solution.input_issues.map((item) => item.message).join(" ");
@@ -451,8 +564,9 @@ async function solveCase(answers, button, inlineError) {
       patient = data.patient;
       syncForm();
     }
+    hasCaseResult = true;
     renderSolution(data);
-    if (matchMedia("(max-width: 760px)").matches && !inlineError) byId("case-results").focus();
+    if (focusResult && matchMedia("(max-width: 760px)").matches && !inlineError) byId("case-results").focus();
   } catch (error) {
     if (stamp === revision) showError("case-error", error.message);
   } finally {
@@ -468,10 +582,7 @@ async function loadExample(example) {
     if (stamp !== revision) return;
     patient = data.request.patient || data.request;
     selectedExample = data.title;
-    if (data.role && data.role !== byId("role").value) {
-      byId("role").value = data.role;
-      updateRoleViews();
-    }
+    hasCaseResult = false;
     const info = byId("scenario-info");
     info.replaceChildren(node("strong", data.title));
     if (data.note) info.append(node("p", data.note));
@@ -544,7 +655,7 @@ byId("reference-form").addEventListener("submit", async (event) => {
   button.disabled = true;
   button.setAttribute("aria-busy", "true");
   try {
-    const result = await request("/api/reference", {question: byId("question").value, role: byId("role").value});
+    const result = await request("/api/reference", {question: byId("question").value, role: currentRole()});
     if (stamp === referenceRevision) renderReference(result);
   } catch (error) {
     if (stamp === referenceRevision) showError("reference-error", error.message);
@@ -554,17 +665,45 @@ byId("reference-form").addEventListener("submit", async (event) => {
   }
 });
 
+function renderViewLabels() {
+  const view = currentView();
+  const role = currentRole();
+  document.body.dataset.role = role;
+  byId("case-title").textContent = view.title;
+  byId("case-intro").textContent = view.intro;
+  byId("primary-title").textContent = view.measurements;
+  byId("symptom-title").textContent = view.symptoms;
+  byId("solve-label").textContent = view.action;
+  byId("result-hint").textContent = view.result;
+  byId("reference-intro").textContent = view.reference;
+  const symptoms = byId("symptom-section");
+  const measurements = byId("primary-section");
+  if (role === "patient") measurements.before(symptoms);
+  else symptoms.before(measurements);
+  byId("examples").hidden = role === "patient";
+}
+
 function updateRoleViews() {
+  const repeat = hasCaseResult;
   revision += 1;
   referenceRevision += 1;
+  renderViewLabels();
+  if (catalog) syncForm();
   emptyResult("result-content", caseEmpty);
   emptyResult("answer", referenceEmpty);
   showError("case-error");
   showError("reference-error");
   loadKnowledge();
+  if (repeat && catalog) solveCase({}, byId("solve-button"), null, false);
 }
 
-byId("role").addEventListener("change", updateRoleViews);
+byId("role-chooser").addEventListener("change", updateRoleViews);
+byId("toggle-symptoms").addEventListener("click", () => {
+  const role = currentRole();
+  showAllSymptoms[role] = !showAllSymptoms[role];
+  if (catalog) renderSymptoms();
+});
+renderViewLabels();
 
 byId("case-form").addEventListener("submit", (event) => {
   event.preventDefault();
@@ -605,7 +744,7 @@ showView();
 
 function knowledgePath(collection, id = "") {
   return "/api/" + collection + (id ? "/" + encodeURIComponent(id) : "") +
-    "?role=" + encodeURIComponent(byId("role").value);
+    "?role=" + encodeURIComponent(currentRole());
 }
 
 function renderKnowledgeList() {
@@ -664,6 +803,7 @@ function appendKnowledgeText(root, content, title) {
 async function openKnowledge(collection, id) {
   if (!id) return;
   const stamp = ++knowledgeRevision;
+  byId("knowledge-browser").open = true;
   const root = byId("knowledge-content");
   root.replaceChildren(node("p", "Загрузка…"));
   try {
