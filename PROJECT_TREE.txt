@@ -1,4 +1,4 @@
-medassist/
+medassist-completion/
     assets/
         diagrams/
             .gitkeep
@@ -8,6 +8,7 @@ medassist/
         sources.md
     docs/
         conditions.md
+        demo.md
         link_types.md
         metadata_schema.md
         migration_v1_to_v2.md
@@ -335,6 +336,7 @@ medassist/
             __init__.py
             api.py
             dialog.py
+            differential.py
             engine.py
             explain.py
             facts.py
@@ -346,6 +348,17 @@ medassist/
             report.py
             routing.py
             scales.py
+            therapy.py
+        web/
+            static/
+                OpenSans-Bold.woff2
+                OpenSans-LICENSE.txt
+                OpenSans-Regular.woff2
+                app.js
+                index.html
+                style.css
+            __init__.py
+            __main__.py
         __init__.py
         card_writer.py
         cli.py
@@ -357,6 +370,7 @@ medassist/
         markdown_parser.py
         models.py
         pharmacology.py
+        reference.py
         repository.py
         scenarios.py
         schema.py
@@ -434,6 +448,7 @@ medassist/
         __init__.py
         conftest.py
         solver_cases.py
+        test_completion.py
         test_conditions.py
         test_dialog.py
         test_invariants.py

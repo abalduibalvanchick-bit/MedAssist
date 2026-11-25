@@ -121,7 +121,7 @@ def derive_facts(facts: PatientFacts, kb: KnowledgeBase) -> list[tuple[str, str]
     return warnings
 
 
-_LIST_KEYS = ("symptoms", "features", "denied_symptoms", "denied_features", "diseases")
+_LIST_KEYS = ("symptoms", "features", "denied_symptoms", "denied_features", "diseases", "medications")
 _KNOWN_KEYS = set(_LIST_KEYS) | {"age", "params", "facts", "exam_results", "sex", "note"}
 
 
@@ -194,6 +194,13 @@ def parse_case(data: Any, kb: KnowledgeBase) -> ParsedCase:
             err("UNKNOWN_DISEASE", f"Диагноз {did} отсутствует в базе знаний.")
             continue
         facts.diseases.add(did)
+
+    for cid in sorted(lists["medications"]):
+        card = kb.get(cid)
+        if card is None or card.category not in ("drug", "drugclass"):
+            err("UNKNOWN_MEDICATION", f"Препарат или группа {cid} отсутствует в базе знаний.")
+            continue
+        facts.medications.add(cid)
 
     # --- параметры
     raw_params = data.get("params") or {}

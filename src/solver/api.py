@@ -1,7 +1,7 @@
 """Интерфейс решателя задач MedAssist.
 
-Единственная точка входа для консоли, тестов и будущего пользовательского
-интерфейса (6 семестр):
+Единственная точка входа для консоли, тестов и пользовательского
+интерфейса:
 
     from src.solver import solve
     solution = solve({"patient": {...}}, role="professional")
@@ -25,14 +25,16 @@ from __future__ import annotations
 import time
 from typing import Any
 
+from .differential import assess_differential
 from .engine import URGENCY_LABELS, InferenceEngine
 from .explain import render_explanation
 from .facts import parse_case
 from .knowledge import KnowledgeBase, known_exam_results, load_default_kb
-from .questions import build_questions, detail_questions
+from .questions import build_questions, detail_questions, rank_questions
 from .protocols import execute_protocols
 from .ranking import rank_hypotheses
 from .routing import routing_to_dict, select_routes
+from .therapy import assess_therapy
 
 ROLES = ("professional", "nursing", "student", "patient")
 _ROLE_ORDER = {"confirms": 0, "excludes": 1, "stratifies": 2, "supports": 3, "monitors": 4}
@@ -93,19 +95,19 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
     memory = engine.run(parsed.facts)
     routing = select_routes(memory, kb)          # T1: после неподвижной точки, до вопросов
     questions = build_questions(memory, kb) if memory.refusal is None else []
-    if routing.questions:                        # вопросы маршрутизации — перед вопросами шкал
-        cut = next((i for i, q in enumerate(questions) if q["kind"] == "scale"), len(questions))
-        questions[cut:cut] = routing.questions
-
+    questions.extend(routing.questions)
     hypotheses = rank_hypotheses(memory, kb)
-    protocols, protocol_questions = execute_protocols(memory, routing, kb) if role != "patient" else ([], [])
-    questions.extend(protocol_questions)
+    professional = role != "patient" and memory.refusal is None
+    protocols, protocol_questions = execute_protocols(memory, routing, kb) if professional else ([], [])
+    differential, differential_questions = assess_differential(memory, kb) if professional else ([], [])
+    therapy, therapy_questions = assess_therapy(memory, kb) if professional else ({}, [])
+    questions.extend(protocol_questions + differential_questions + therapy_questions)
     # Решение получено, если сделан хотя бы один вывод: распознано состояние, есть гипотеза,
     # маршрут, протокол, установленный диагноз, предупреждение или знание повысило срочность.
     raised = any(src["level"] in ("urgent", "emergency") for src in memory.urgency_sources)
     concluded = bool(memory.facts.red_flags or memory.facts.emergencies or hypotheses
                      or memory.routes or memory.protocols or memory.routing_refs or memory.facts.diseases
-                     or memory.warnings or raised)
+                     or memory.warnings or therapy.get("interactions") or raised)
     if memory.refusal is not None:
         status = "refused"
     elif not concluded:
@@ -114,6 +116,9 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
             questions = detail_questions(memory, kb)
     else:
         status = "ok"
+
+    if memory.refusal is None:
+        questions = rank_questions(questions, memory, kb, include_hypotheses=professional)
 
     # Обследования: сначала подтверждающие и исключающие, затем оценка тяжести и прочие.
     # В экстренной ситуации обследования только из плановых правил (phase: planned)
@@ -144,6 +149,8 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
         "emergencies": [_card_ref(kb, e) for e in sorted(memory.facts.emergencies)],
         "working_diagnoses": [_card_ref(kb, d) for d in memory.working_diagnoses],
         "hypotheses": hypotheses,
+        "differential": differential,
+        "therapy": therapy,
         "scales": [
             {"id": sid, "title": r.title, "value": r.value, "range": [r.low, r.high], "category": r.category,
              "category_label": r.category_label, "action": r.action,
@@ -176,6 +183,6 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
         solution["routing"] = {k: solution["routing"][k] for k in ("route", "label", "timeframe", "provisional")}
         # Памятки — только по рабочим диагнозам: слабые гипотезы пациенту не показываются.
         solution["advice"] = _patient_advice(kb, memory.working_diagnoses)
-        for key in ("hypotheses", "exams", "deferred_exams", "completed_exams", "warnings", "scales", "fired_rules", "trace", "explanation", "protocols", "follow_up"):
+        for key in ("hypotheses", "differential", "therapy", "exams", "deferred_exams", "completed_exams", "warnings", "scales", "fired_rules", "trace", "explanation", "protocols", "follow_up"):
             solution.pop(key, None)
     return solution

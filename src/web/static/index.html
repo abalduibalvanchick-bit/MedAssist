@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f6f3">
+  <title>MedAssist — учебный медицинский ассистент</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="top-inner">
+      <a class="brand" href="#case" aria-label="MedAssist, разбор случая"><span class="brand-mark" aria-hidden="true">✚</span> MedAssist</a>
+      <nav aria-label="Разделы">
+        <a href="#case" class="nav-link active" data-view="case"><span aria-hidden="true">▤</span> Разбор случая</a>
+        <a href="#reference" class="nav-link" data-view="reference"><span aria-hidden="true">⌕</span> Справочник</a>
+      </nav>
+      <label class="role-label"><span>Режим просмотра</span>
+        <select id="role" aria-label="Режим просмотра">
+          <option value="professional">Специалист</option>
+          <option value="nursing">Медперсонал</option>
+          <option value="student">Студент</option>
+          <option value="patient">Пациент</option>
+        </select>
+      </label>
+    </div>
+  </header>
+
+  <main>
+    <div class="notice"><span aria-hidden="true">ⓘ</span> Учебный прототип. Используйте только вымышленные или обезличенные данные.</div>
+    <div id="app-error" class="message error" role="alert" hidden></div>
+
+    <section id="case-view">
+      <div class="hero">
+        <div>
+          <h1>Разбор случая</h1>
+          <p>Укажите симптомы и измерения. Решатель покажет, как данные повлияли на оценку и какие сведения стоит уточнить.</p>
+        </div>
+        <div class="hero-mark" aria-hidden="true"><i></i><i></i><i></i><span>✚</span></div>
+      </div>
+
+      <div class="workspace">
+        <form id="case-form" class="panel">
+          <div class="panel-head"><div><h2>Данные пациента</h2><p>Заполните известные значения или загрузите учебный пример.</p></div><button type="button" id="clear" class="text-btn">Очистить</button></div>
+          <div class="examples" id="examples" aria-label="Учебные примеры"></div>
+          <div class="form-body">
+            <section class="form-section">
+              <h3>Основные измерения</h3>
+              <div class="grid" id="primary-fields"></div>
+            </section>
+            <section class="form-section">
+              <h3>Симптомы</h3>
+              <div class="chips" id="symptoms" aria-label="Выберите симптомы"></div>
+              <div class="grid selected-features" id="features"></div>
+            </section>
+            <details class="extra">
+              <summary>Дополнительные данные</summary>
+              <div class="extras-body">
+                <label>Установленный диагноз <select id="diseases"><option value="">Не указан</option></select></label>
+                <label>Принимаемые препараты и группы
+                  <select id="medications" multiple size="4"></select>
+                </label>
+                <div id="extra-controls"></div>
+              </div>
+            </details>
+            <div id="case-error" class="message error" role="alert" hidden></div>
+          </div>
+          <div class="panel-foot">
+            <button type="submit" class="primary" id="solve-button">Разобрать случай <span aria-hidden="true">→</span></button>
+          </div>
+        </form>
+
+        <section class="panel result" id="case-results" aria-labelledby="result-title" tabindex="-1">
+          <div class="panel-head"><div><h2 id="result-title">Результат</h2><p>Оценка, уточнения и объяснение вывода.</p></div></div>
+          <div id="result-content" class="empty" aria-live="polite">
+            <div class="empty-glyph" aria-hidden="true">▤</div>
+            <h3>Случай ещё не разобран</h3>
+            <p>Заполните данные или выберите пример, затем запустите разбор.</p>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="reference-view" hidden>
+      <div class="hero reference-hero"><div><h1>Справочник</h1><p>Задайте вопрос по базе знаний. В ответе будут указаны карточки и разделы, на которые он опирается.</p></div><div class="hero-mark" aria-hidden="true"><i></i><i></i><i></i><span>⌕</span></div></div>
+      <div class="reference-layout">
+        <form class="panel reference-form" id="reference-form">
+          <div class="panel-head"><div><h2>Вопрос к базе знаний</h2><p>Можно указать шкалу, термин или протокол.</p></div></div>
+          <div class="form-body">
+            <label class="sr" for="question">Вопрос</label>
+            <textarea id="question" rows="3" minlength="3" maxlength="500" required placeholder="Например, из чего состоит шкала CURB-65?"></textarea>
+            <div id="suggestions" class="examples"></div>
+            <div id="reference-error" class="message error" role="alert" hidden></div>
+          </div>
+          <div class="panel-foot"><button class="primary" id="search-button">Найти в базе <span aria-hidden="true">→</span></button></div>
+        </form>
+        <section class="panel" aria-labelledby="answer-title">
+          <div class="panel-head"><div><h2 id="answer-title">Ответ и источники</h2></div></div>
+          <div id="answer" class="empty" aria-live="polite"><div class="empty-glyph" aria-hidden="true">⌕</div><h3>Задайте вопрос</h3><p>Здесь появятся ответ и фрагменты базы знаний.</p></div>
+        </section>
+      </div>
+    </section>
+
+    <footer><span>MedAssist · учебный проект</span><span id="stats"></span></footer>
+  </main>
+</body>
+</html>

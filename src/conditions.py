@@ -97,6 +97,7 @@ class PatientFacts:
     scales: dict[str, float] = field(default_factory=dict)
     scale_categories: dict[str, str] = field(default_factory=dict)
     exam_results: dict[str, str] = field(default_factory=dict)
+    medications: set[str] = field(default_factory=set)
     # Явно отрицаемые элементы (пациент сообщил, что симптома нет).
     denied_symptoms: set[str] = field(default_factory=set)
     denied_features: set[str] = field(default_factory=set)

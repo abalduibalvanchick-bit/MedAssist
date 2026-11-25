@@ -188,19 +188,39 @@ def run_cli(argv: list[str] | None = None) -> None:
     parser.add_argument("--validate", action="store_true", help="Проверить базу знаний и выйти")
     parser.add_argument("--write-validation-report", action="store_true", help="Записать отчёт в indices/validation_report.md")
     parser.add_argument("--search", help="Найти карточки по запросу")
+    parser.add_argument("--ask", help="Справочный вопрос по базе знаний")
     parser.add_argument("--show", help="Показать карточку по ID")
     parser.add_argument("--related", help="Показать связанные документы по ID")
     parser.add_argument("--scenario", choices=["chest_pain", "headache", "dyspnea", "hypertension_protocol", "hypertension_therapy", "pharm_drug", "drug_interaction", "validation", "all"], help="Запустить сценарий")
 
     parser.add_argument("--solve", metavar="FILE", help="Решить задачу для пациента из YAML/JSON-файла")
     parser.add_argument("--role", default="professional", help="Роль пользователя: professional, nursing, student, patient")
-    parser.add_argument("--json", action="store_true", help="Вывести решение в JSON")
+    parser.add_argument("--json", action="store_true", help="Вывести ответ в JSON")
     parser.add_argument("--no-trace", action="store_true", help="Не показывать ход вывода")
     parser.add_argument("--dialog", action="store_true", help="Вместе с --solve: уточняющий диалог в консоли")
 
     args = parser.parse_args(argv)
     if args.solve:
         run_solver(args)
+        return
+    if args.ask is not None:
+        import json
+
+        from .reference import answer_reference
+        from .solver import ROLES
+
+        if args.role not in ROLES:
+            parser.error("неизвестная роль пользователя")
+        result = answer_reference(args.ask, args.role, kb_root=str(Path(args.kb_root)))
+        if args.json:
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+        elif result["status"] == "not_found":
+            print("В базе знаний не найдено достаточных сведений.")
+        else:
+            for item in result["answer"]:
+                print(f"{item['text']} [{item['source']}]")
+            for source in result["sources"]:
+                print(f"[{source['n']}] {source['title']} — {source['section']} ({source['id']})")
         return
     repository = build_repository(Path(args.kb_root))
     search_engine = SearchEngine(repository)

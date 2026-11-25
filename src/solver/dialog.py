@@ -178,7 +178,8 @@ def run_dialog(request: dict[str, Any], ask: Callable[[dict[str, Any]], Any], *,
         solution = result.solution
         if solution.get("status") in ("invalid", "refused"):
             break
-        items = pending_inputs(solution, asked)
+        limit = int(kb.schema.solver_setting("max_questions", 10))
+        items = pending_inputs(solution, asked)[:limit]
         if not items:
             break
         answers: dict[str, Any] = {}

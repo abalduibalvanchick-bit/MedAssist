@@ -803,6 +803,9 @@ solver:
   working_diagnosis_score: 3
   max_iterations: 20
   max_dialog_rounds: 5
+  max_questions: 10
+  question_dependency_depth: 3
+  question_weights: {emergency: 8, urgent: 4, routing: 2, scale: 2, protocol: 2, therapy: 2, clarification: 2, hypothesis: 1}
   # Маршрутизация (модуль routing): тяжесть маршрутов по возрастанию, минимальная
   # срочность, которую задаёт маршрут, маршрут, который следует из срочности,
   # и подписи маршрутов для вывода пользователю. Срочность однозначно следует только

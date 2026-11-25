@@ -47,6 +47,15 @@ def format_solution(solution: dict[str, Any], *, show_trace: bool = True) -> str
         for argument in h.get("arguments", []):
             add(f"  {argument['contribution']:+g} {argument['title']}")
     section("Рабочие диагнозы", [f"{d['title']}{ref(d['id'])}" for d in solution.get("working_diagnoses") or []])
+    for table in solution.get("differential", []):
+        section(table["title"], [
+            f"{branch['title']} — {branch['label']}"
+            + (f". За: {', '.join(branch['for'])}" if branch["for"] else "")
+            + (f". Против: {', '.join(branch['against'])}" if branch["against"] else "")
+            + (f". Ключевое обследование: {branch['key_exam']['title']}"
+               if branch["key_exam"] and branch["key_exam"]["recommended"] and not branch["key_exam"]["completed"] else "")
+            for branch in table["branches"]
+        ])
     section("Шкалы", [f"{s['title']}: " + (f"{s['value']:g} балл(ов), " if s.get("value") is not None else f"{s['range'][0]:g}–{s['range'][1]:g}, ")
                       + f"{s['category_label']}" for s in solution.get("scales") or []])
     section("Обследования", [f"{e['title']} — {', '.join(_ROLES.get(r, r) for r in e['roles'])}" for e in solution.get("exams") or []])
@@ -87,6 +96,18 @@ def format_solution(solution: dict[str, Any], *, show_trace: bool = True) -> str
             section(phase["window"], phase["steps"])
     for follow in solution.get("follow_up", []):
         section(follow["title"], [f"{row['after']}: {row['interval']} — {row['purpose']}" for row in follow["schedule"]])
+    therapy = solution.get("therapy") or {}
+    for regime in therapy.get("regimens", []):
+        add(f"Схема терапии: {regime['title']}{ref(regime['id'])}")
+        for line in regime["lines"]:
+            section(f"Линия {line['line']}", [
+                f"{option['title']} — {option['label']}"
+                + "".join(f". {item['text']}{ref(item['source'])}"
+                          for item in option["reasons"] + option["dose_notes"])
+                for option in line["options"]
+            ])
+    section("Взаимодействия", [f"{item['title']}: {item['text']}{ref(item['source'])}"
+                              for item in therapy.get("interactions", [])])
     section("Предупреждения", [f"{w['text']} [{w['source']}]" for w in solution.get("warnings") or []])
     questions = []
     for q in solution.get("questions") or []:

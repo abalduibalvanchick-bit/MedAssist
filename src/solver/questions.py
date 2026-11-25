@@ -9,8 +9,7 @@
 3. шкалы, относящиеся к рабочим диагнозам, которые не удалось
    вычислить из-за нехватки данных.
 
-Ранжирование вопросов по информативности — задача диагностического модуля;
-здесь порядок задаётся категорией источника и срочностью карточки.
+Функция rank_questions назначает приоритет по влиянию недостающих данных.
 
 Каждый вопрос содержит:
     text    формулировку для человека;
@@ -24,6 +23,7 @@
 
 from __future__ import annotations
 
+from collections import defaultdict
 from typing import TYPE_CHECKING, Any
 
 from ..conditions import Truth, evaluate, missing_inputs
@@ -139,3 +139,45 @@ def build_questions(memory: "Conclusions", kb: "KnowledgeBase") -> list[dict[str
         inputs = [i for i in (describe_input(code, kb) for code in sorted(result.missing)) if i is not None]
         questions.append(_question("scale", scale_id, f"Для расчёта шкалы «{card.title}» не хватает данных.", inputs))
     return questions
+
+
+def rank_questions(questions, memory, kb, *, include_hypotheses=True):
+    """Распределяет важность вывода между недостающими полями и суммирует вклады."""
+    weights = kb.schema.solver_setting("question_weights", {})
+    if include_hypotheses and memory.urgency != "emergency":
+        for hypothesis in sorted(memory.hypotheses.values(), key=lambda h: (-h.score, h.target))[:3]:
+            card = kb.get(hypothesis.target)
+            inputs = {}
+            for entry in card.metadata.get("presentation", []):
+                item = describe_input(entry["symptom"], kb, "symptom")
+                if item and not is_known(item, memory.facts):
+                    inputs[item["code"]] = item
+            if inputs:
+                questions.append(_question("hypothesis", card.id,
+                                           f"Уточните признаки для сопоставления с гипотезой «{card.title}».",
+                                           list(inputs.values())))
+
+    def weight(question):
+        kind = question["kind"]
+        if kind in ("differential", "safety_check"):
+            urgency = question.get("urgency") or kb.card_urgency(question["source"])
+            return weights.get(urgency, 1)
+        return weights.get(kind, 1)
+
+    scores = defaultdict(float)
+    evaluated = []
+    for question in questions:
+        codes = {item["code"] for item in question["inputs"]}
+        importance = weight(question)
+        for code in codes:
+            scores[code] += importance / len(codes)
+        evaluated.append((question, codes, importance))
+
+    ranked = []
+    for question, codes, importance in evaluated:
+        inputs = sorted(question["inputs"], key=lambda item: (-scores[item["code"]], item["code"]))
+        ranked.append({**question, "inputs": inputs, "ask": [label_of(item) for item in inputs],
+                       "priority": round(max((scores[code] for code in codes), default=importance), 4)})
+    ranked.sort(key=lambda q: (-q["priority"], q["inputs"][0]["code"] if q["inputs"] else "",
+                              q["source"], q["kind"]))
+    return ranked

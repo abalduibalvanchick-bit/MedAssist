@@ -495,6 +495,9 @@
 | `working_diagnosis_score` | `3` |
 | `max_iterations` | `20` |
 | `max_dialog_rounds` | `5` |
+| `max_questions` | `10` |
+| `question_dependency_depth` | `3` |
+| `question_weights` | `{'emergency': 8, 'urgent': 4, 'routing': 2, 'scale': 2, 'protocol': 2, 'therapy': 2, 'clarification': 2, 'hypothesis': 1}` |
 | `route_severity` | `['outpatient', 'urgent_referral', 'hospitalization', 'emergency']` |
 | `route_urgency` | `{'emergency': 'emergency'}` |
 | `urgency_route` | `{'emergency': 'emergency'}` |
