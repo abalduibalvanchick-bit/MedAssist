@@ -16,6 +16,11 @@ let extraCodes = [];
 let revision = 0;
 let referenceRevision = 0;
 let selectedExample = "";
+let knowledgeRevision = 0;
+let knowledgeData;
+const groups = {example: "Учебные примеры", published: "По публикации",
+  typical: "Типовые", boundary: "Граничные", negative: "Проверки ошибок"};
+const domains = {diag: "Диагностика", pharm: "Фармакология", prot: "Протоколы", glb: "Общие знания"};
 const caseEmpty = byId("result-content").cloneNode(true);
 const referenceEmpty = byId("answer").cloneNode(true);
 
@@ -53,9 +58,13 @@ function showView() {
   }
 }
 
+function asList(value) {
+  return Array.isArray(value) ? value : typeof value === "string" ? [value] : [];
+}
+
 function boolValue(yes, no, code) {
-  if ((yes || []).includes(code)) return true;
-  if ((no || []).includes(code)) return false;
+  if (asList(yes).includes(code)) return true;
+  if (asList(no).includes(code)) return false;
   return null;
 }
 
@@ -73,8 +82,8 @@ function setField(field, value) {
   if (kind === "symptom" || kind === "feature") {
     const yes = kind === "symptom" ? "symptoms" : "features";
     const no = "denied_" + yes;
-    patient[yes] = (patient[yes] || []).filter((item) => item !== code);
-    patient[no] = (patient[no] || []).filter((item) => item !== code);
+    patient[yes] = asList(patient[yes]).filter((item) => item !== code);
+    patient[no] = asList(patient[no]).filter((item) => item !== code);
     if (value != null) patient[value ? yes : no].push(code);
   } else {
     const group = {param: "params", fact: "facts", exam_result: "exam_results"}[kind];
@@ -114,6 +123,8 @@ function readControl(input, field) {
 function edit() {
   revision += 1;
   selectedExample = "";
+  byId("scenario-info").hidden = true;
+  syncRawCase();
   showError("case-error");
   emptyResult("result-content", caseEmpty);
 }
@@ -197,7 +208,9 @@ function renderExtra() {
   const allExtras = extraKinds.flatMap((kind) => catalog.fields[kind]).concat(catalog.fields.symptom);
   const codes = new Set([...extraCodes, ...allExtras
     .filter((field) => !primaryCodes.includes(field.code) &&
-      (field.kind === "symptom" ? fieldValue(field) === false : field.kind !== "feature" && fieldValue(field) != null))
+      (field.kind === "symptom" ? fieldValue(field) === false :
+        field.kind === "feature" ? fieldValue(field) === false &&
+          !symptomOn(catalog.fields.symptom.find((symptom) => symptom.code === field.symptom)) : fieldValue(field) != null))
     .map((field) => field.code)]);
   for (const code of codes) {
     const field = allExtras.find((item) => item.code === code);
@@ -237,9 +250,67 @@ function syncForm(openDetails = false) {
   renderPrimary();
   renderSymptoms();
   renderExtra();
-  byId("diseases").value = patient.diseases?.[0] || "";
-  for (const option of byId("medications").options) option.selected = (patient.medications || []).includes(option.value);
+  renderDiseases();
+  for (const option of byId("medications").options) option.selected = asList(patient.medications).includes(option.value);
+  syncRawCase();
   if (openDetails) document.querySelector(".extra").open = true;
+}
+
+function syncRawCase() {
+  const raw = byId("raw-case");
+  raw.hidden = !selectedExample && !Object.keys(patient).length;
+  byId("raw-json").textContent = JSON.stringify(patient, null, 2);
+}
+
+function renderDiseases() {
+  const selected = asList(patient.diseases);
+  const choices = byId("diseases");
+  for (const option of choices.options) option.disabled = selected.includes(option.value);
+  choices.value = "";
+  const container = byId("selected-diseases");
+  container.replaceChildren();
+  for (const code of selected) {
+    const name = catalog.diseases.find((item) => item.id === code)?.title || code;
+    const remove = node("button", name + " ×", "chip");
+    remove.type = "button";
+    remove.setAttribute("aria-label", "Убрать диагноз: " + name);
+    remove.addEventListener("click", () => {
+      patient.diseases = selected.filter((item) => item !== code);
+      edit();
+      renderDiseases();
+      choices.focus();
+    });
+    container.append(remove);
+  }
+}
+
+function filterText(value) {
+  return value.toLowerCase().replaceAll("ё", "е").trim();
+}
+
+function renderScenarioList() {
+  if (!catalog) return;
+  const group = byId("scenario-group").value;
+  const query = filterText(byId("scenario-search").value);
+  const list = byId("scenario-list");
+  const selected = list.value;
+  list.replaceChildren();
+  for (const [kind, heading] of Object.entries(groups)) {
+    if (group && kind !== group) continue;
+    const cases = catalog.examples.filter((entry) => entry.group === kind &&
+      filterText([entry.title, entry.code || "", entry.id].join(" ")).includes(query));
+    if (!cases.length) continue;
+    const section = node("optgroup");
+    section.label = heading;
+    for (const entry of cases) section.append(new Option(
+      entry.code ? entry.code + " · " + entry.title : entry.title, entry.id));
+    list.append(section);
+  }
+  const count = list.options.length;
+  list.value = selected;
+  if (!list.value && count) list.selectedIndex = 0;
+  byId("load-scenario").disabled = !count;
+  byId("scenario-count").textContent = count ? `${count} из ${catalog.examples.length}` : "Сценарии не найдены";
 }
 
 function addList(root, title, texts, collapsible = false) {
@@ -397,9 +468,25 @@ async function loadExample(example) {
     if (stamp !== revision) return;
     patient = data.request.patient || data.request;
     selectedExample = data.title;
+    if (data.role && data.role !== byId("role").value) {
+      byId("role").value = data.role;
+      updateRoleViews();
+    }
+    const info = byId("scenario-info");
+    info.replaceChildren(node("strong", data.title));
+    if (data.note) info.append(node("p", data.note));
+    if (data.source) {
+      const link = node("a", "Открыть публикацию после проверки");
+      link.href = data.source;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      info.append(link);
+    }
+    info.hidden = false;
     extraCodes = [];
     emptyResult("result-content", caseEmpty);
-    syncForm(false);
+    syncForm(Boolean(patient.diseases?.length || patient.medications?.length ||
+      Object.keys(patient.exam_results || {}).length));
   } catch (error) {
     if (stamp === revision) showError("case-error", error.message);
   }
@@ -439,6 +526,10 @@ function renderReference(result) {
     item.tabIndex = -1;
     item.append(node("strong", `[${source.n}] ${source.title}`),
       node("small", source.id + " · " + source.section), node("p", source.excerpt));
+    const fullCard = node("button", "Открыть карточку", "text-btn");
+    fullCard.type = "button";
+    fullCard.addEventListener("click", () => openKnowledge("knowledge", source.id));
+    item.append(fullCard);
     list.append(item);
   }
   section.append(list);
@@ -463,14 +554,17 @@ byId("reference-form").addEventListener("submit", async (event) => {
   }
 });
 
-byId("role").addEventListener("change", () => {
+function updateRoleViews() {
   revision += 1;
   referenceRevision += 1;
   emptyResult("result-content", caseEmpty);
   emptyResult("answer", referenceEmpty);
   showError("case-error");
   showError("reference-error");
-});
+  loadKnowledge();
+}
+
+byId("role").addEventListener("change", updateRoleViews);
 
 byId("case-form").addEventListener("submit", (event) => {
   event.preventDefault();
@@ -485,9 +579,10 @@ byId("clear").addEventListener("click", () => {
 });
 
 byId("diseases").addEventListener("change", (event) => {
-  patient.diseases = event.target.value ? [event.target.value, ...(patient.diseases || []).slice(1)
-    .filter((code) => code !== event.target.value)] : [];
+  if (!event.target.value) return;
+  patient.diseases = [...new Set([...asList(patient.diseases), event.target.value])];
   edit();
+  renderDiseases();
 });
 
 byId("medications").addEventListener("change", (event) => {
@@ -508,9 +603,130 @@ for (const text of ["Из чего состоит шкала CURB-65?", "Что 
 window.addEventListener("hashchange", showView);
 showView();
 
+function knowledgePath(collection, id = "") {
+  return "/api/" + collection + (id ? "/" + encodeURIComponent(id) : "") +
+    "?role=" + encodeURIComponent(byId("role").value);
+}
+
+function renderKnowledgeList() {
+  if (!knowledgeData) return;
+  const list = byId("knowledge-list");
+  const selected = list.value;
+  const query = filterText(byId("knowledge-search").value);
+  const domain = byId("knowledge-domain").value;
+  list.replaceChildren();
+  for (const card of knowledgeData.cards) {
+    if (domain && card.domain !== domain) continue;
+    if (!filterText([card.id, card.title, card.category, ...card.tags].join(" ")).includes(query)) continue;
+    list.append(new Option(card.title + " · " + card.id, card.id));
+  }
+  list.value = selected;
+  if (!list.value && list.options.length) list.selectedIndex = 0;
+  byId("open-card").disabled = !list.value;
+  byId("knowledge-count").textContent = `Найдено ${list.options.length} из ${knowledgeData.cards.length}`;
+}
+
+async function loadKnowledge() {
+  const stamp = ++knowledgeRevision;
+  knowledgeData = undefined;
+  byId("knowledge-content").replaceChildren(node("p", "Выберите карточку для просмотра."));
+  byId("knowledge-list").replaceChildren();
+  byId("open-card").disabled = true;
+  byId("knowledge-demos").hidden = true;
+  byId("knowledge-rules").hidden = true;
+  try {
+    const data = await request(knowledgePath("knowledge"));
+    if (stamp !== knowledgeRevision) return;
+    knowledgeData = data;
+    renderKnowledgeList();
+    const select = byId("knowledge-demo");
+    select.replaceChildren(...Object.entries(data.demos).map(([id, label]) => new Option(label, id)));
+    byId("knowledge-demos").hidden = !select.options.length;
+    const rules = byId("knowledge-rule");
+    rules.replaceChildren(...data.rules.map((rule) => new Option(rule.id + " · " + rule.title, rule.id)));
+    byId("knowledge-rules").hidden = !rules.options.length;
+  } catch (error) {
+    if (stamp === knowledgeRevision) byId("knowledge-content").textContent = error.message;
+  }
+}
+
+function appendKnowledgeText(root, content, title) {
+  // Показываем заголовки и исходный текст карточки без вставки HTML.
+  for (const block of content.trim().split(/\n\s*\n/)) {
+    const lines = block.trim().split("\n");
+    const heading = lines[0].match(/^#{1,6}\s+(.+)$/);
+    if (heading && heading[1] !== title) root.append(node("h4", heading[1]));
+    const body = (heading ? lines.slice(1) : lines).join("\n").replace(/\*\*/g, "").trim();
+    if (body) root.append(node("p", body, "knowledge-text"));
+  }
+}
+
+async function openKnowledge(collection, id) {
+  if (!id) return;
+  const stamp = ++knowledgeRevision;
+  const root = byId("knowledge-content");
+  root.replaceChildren(node("p", "Загрузка…"));
+  try {
+    const card = await request(knowledgePath(collection, id));
+    if (stamp !== knowledgeRevision) return;
+    root.replaceChildren(node("h3", card.title));
+    if (card.id) root.append(node("p", card.id, "knowledge-id"));
+    if (card.content) appendKnowledgeText(root, card.content, card.title);
+    if (card.metadata) {
+      const formal = node("details");
+      formal.append(node("summary", "Машиночитаемые данные"),
+        node("pre", JSON.stringify(card.metadata, null, 2), "knowledge-formal"));
+      root.append(formal);
+    }
+    addList(root, "Источники", card.sources);
+    if (card.related?.length) {
+      const section = node("section");
+      section.append(node("h4", "Связанные карточки"));
+      const list = node("ul");
+      for (const ref of card.related) {
+        const item = node("li");
+        const button = node("button", ref.title + " · " + ref.id, "text-btn");
+        button.type = "button";
+        button.addEventListener("click", () => openKnowledge("knowledge", ref.id));
+        item.append(button);
+        list.append(item);
+      }
+      section.append(list);
+      root.append(section);
+    }
+    root.focus();
+  } catch (error) {
+    if (stamp === knowledgeRevision) root.textContent = error.message;
+  }
+}
+
+byId("scenario-group").addEventListener("change", renderScenarioList);
+byId("scenario-search").addEventListener("input", renderScenarioList);
+byId("load-scenario").addEventListener("click", () => {
+  const id = byId("scenario-list").value;
+  if (id) loadExample({id});
+});
+byId("scenario-list").addEventListener("dblclick", () => byId("load-scenario").click());
+
+byId("knowledge-domain").add(new Option("Все разделы", ""));
+for (const [id, label] of Object.entries(domains)) byId("knowledge-domain").add(new Option(label, id));
+byId("knowledge-domain").addEventListener("change", renderKnowledgeList);
+byId("knowledge-search").addEventListener("input", renderKnowledgeList);
+byId("open-card").addEventListener("click", () => openKnowledge("knowledge", byId("knowledge-list").value));
+byId("knowledge-list").addEventListener("dblclick", () => byId("open-card").click());
+byId("open-rule").addEventListener("click", () => openKnowledge("knowledge-rules", byId("knowledge-rule").value));
+byId("open-demo").addEventListener("click", () => openKnowledge("knowledge-demos", byId("knowledge-demo").value));
+loadKnowledge();
+
 request("/api/catalog").then((data) => {
   catalog = data;
-  for (const example of data.examples) {
+  byId("scenario-title").textContent = `Все сценарии (${data.examples.length})`;
+  byId("scenario-group").add(new Option("Все группы", ""));
+  for (const [id, label] of Object.entries(groups)) byId("scenario-group").add(new Option(label, id));
+  renderScenarioList();
+  for (const id of data.quick_examples) {
+    const example = data.examples.find((entry) => entry.id === id);
+    if (!example) continue;
     const button = node("button", example.title);
     button.type = "button";
     button.addEventListener("click", () => loadExample(example));

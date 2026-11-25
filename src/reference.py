@@ -97,10 +97,14 @@ def _sections(kb):
     return tuple(result)
 
 
+def can_read_card(access, role):
+    return role == "professional" or access in (role, "patient")
+
+
 @lru_cache(maxsize=4)
 def _index(kb_root, role):
     sections = tuple(s for s in _sections(load_default_kb(kb_root))
-                     if role == "professional" or s.access in (role, "patient"))
+                     if can_read_card(s.access, role))
     frequencies = Counter(term for section in sections for term in section.counts)
     average = sum(section.counts.total() for section in sections) / max(len(sections), 1)
     return sections, frequencies, average

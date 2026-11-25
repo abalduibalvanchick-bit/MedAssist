@@ -11,23 +11,19 @@ from functools import lru_cache, partial
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import urlsplit
+from urllib.parse import parse_qs, urlsplit
 
-import yaml
-
-from ..reference import answer_reference, ollama_generator
+from ..reference import answer_reference, can_read_card, ollama_generator
 from ..solver import ROLES, apply_answers, load_default_kb, solve
 from ..solver.inputs import describe_input
+from ..repository import KnowledgeRepository
+from ..scenarios import ScenarioRunner
+from .scenarios import QUICK_EXAMPLES, scenario_list, scenarios
 
 STATIC = Path(__file__).resolve().parent / "static"
-EXAMPLES = STATIC.parents[2] / "examples"
 FILES = {"/": "index.html", "/app.js": "app.js", "/style.css": "style.css",
          "/OpenSans-Regular.woff2": "OpenSans-Regular.woff2", "/OpenSans-Bold.woff2": "OpenSans-Bold.woff2"}
 MAX_BODY = 65536
-DEMO_NAMES = {
-    "pneumonia": "Кашель и лихорадка", "pneumonia_no_urea": "Кашель и неполные данные",
-    "chest_pain_acs": "Боль в груди", "migraine": "Головная боль",
-}
 CASE_MAPS = ("params", "facts", "exam_results")
 
 
@@ -46,10 +42,26 @@ def catalog():
         "fields": fields,
         "diseases": [{"id": c.id, "title": c.title} for c in kb.category("disease") + kb.category("emergency")],
         "medications": [{"id": c.id, "title": c.title} for c in kb.category("drug") + kb.category("drugclass")],
-        "examples": [{"id": ident, "title": name} for ident, name in DEMO_NAMES.items()
-                     if (EXAMPLES / f"{ident}.yaml").is_file()],
+        "examples": scenario_list(),
+        "quick_examples": QUICK_EXAMPLES,
         "counts": {"cards": len(kb.cards), "rules": len(kb.rules)},
     }
+
+
+@lru_cache(maxsize=4)
+def knowledge_catalog(role):
+    kb = load_default_kb()
+    return [
+        {"id": card.id, "title": card.title, "domain": card.domain,
+         "category": kb.schema.categories[card.category].title, "tags": card.tags}
+        for card in sorted(kb.cards.values(), key=lambda item: (item.title.casefold(), item.id))
+        if can_read_card(card.metadata.get("access_level", "professional"), role)
+    ]
+
+
+@lru_cache(maxsize=1)
+def scenario_runner():
+    return ScenarioRunner(KnowledgeRepository().load())
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -82,11 +94,42 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/catalog":
             return self._json(catalog())
         match = re.fullmatch(r"/api/examples/([a-z0-9_]+)", path)
-        if match and match[1] in DEMO_NAMES:
-            file = EXAMPLES / f"{match[1]}.yaml"
-            if file.is_file():
-                content = yaml.safe_load(file.read_text(encoding="utf-8"))
-                return self._json({"title": DEMO_NAMES[match[1]], "request": content})
+        if match and (case := scenarios().get(match[1])):
+            return self._json(case)
+
+        role = parse_qs(urlsplit(self.path).query).get("role", ["professional"])[0]
+        if path == "/api/knowledge" or path.startswith(("/api/knowledge/", "/api/knowledge-demos/", "/api/knowledge-rules/")):
+            if role not in ROLES:
+                return self._json({"error": "Неизвестный режим просмотра."}, HTTPStatus.BAD_REQUEST)
+            if path == "/api/knowledge":
+                professional = role == "professional"
+                rules = [{"id": rule.id, "title": rule.title} for rule in load_default_kb().rules] if professional else []
+                return self._json({"cards": knowledge_catalog(role), "rules": rules,
+                                   "demos": ScenarioRunner.TITLES if professional else {}})
+            rule_match = re.fullmatch(r"/api/knowledge-rules/([A-Z0-9_-]+)", path)
+            if rule_match and role == "professional":
+                rule = next((item for item in load_default_kb().rules if item.id == rule_match[1]), None)
+                if rule:
+                    return self._json({"id": rule.id, "title": rule.title, "content": rule.explanation,
+                                       "metadata": {"if": rule.condition, "then": rule.actions,
+                                                    "source_cards": rule.source_cards, "priority": rule.priority,
+                                                    "phase": rule.phase, "file": rule.source_file}})
+            demo = re.fullmatch(r"/api/knowledge-demos/([a-z_]+)", path)
+            if demo and role == "professional" and demo[1] in ScenarioRunner.TITLES:
+                return self._json({"title": ScenarioRunner.TITLES[demo[1]], "content": scenario_runner().run(demo[1])})
+            match = re.fullmatch(r"/api/knowledge/([A-Z0-9_-]+)", path)
+            if match:
+                kb = load_default_kb()
+                card = kb.get(match[1])
+                if card and can_read_card(card.metadata.get("access_level", "professional"), role):
+                    related = []
+                    for relation in card.relations:
+                        target = kb.get(relation.get("target"))
+                        if target and can_read_card(target.metadata.get("access_level", "professional"), role):
+                            related.append({"id": target.id, "title": target.title, "type": relation["type"]})
+                    return self._json({"id": card.id, "title": card.title, "content": card.content,
+                                       "metadata": card.metadata, "sources": card.metadata.get("sources", []),
+                                       "related": related})
         self._json({"error": "Страница не найдена."}, HTTPStatus.NOT_FOUND)
 
     def do_POST(self):
@@ -103,7 +146,10 @@ class Handler(BaseHTTPRequestHandler):
             status = HTTPStatus.REQUEST_ENTITY_TOO_LARGE if length > MAX_BODY else HTTPStatus.BAD_REQUEST
             return self._json({"error": "Недопустимый размер запроса."}, status)
         try:
-            data = json.loads(self.rfile.read(length))
+            def invalid_constant(value):
+                raise ValueError(f"Недопустимое число: {value}.")
+
+            data = json.loads(self.rfile.read(length), parse_constant=invalid_constant)
             if not isinstance(data, dict):
                 raise ValueError("Ожидается объект JSON.")
             role = data.get("role", "professional")

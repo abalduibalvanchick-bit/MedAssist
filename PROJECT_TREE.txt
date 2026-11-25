@@ -25,6 +25,8 @@ medassist-completion/
         pneumonia.yaml
         pneumonia_elderly.yaml
         pneumonia_no_urea.yaml
+        published_chest_pain.yaml
+        published_chest_pain_ecg.yaml
         stroke.yaml
     indices/
         diag_catalog.md
@@ -359,6 +361,7 @@ medassist-completion/
                 style.css
             __init__.py
             __main__.py
+            scenarios.py
         __init__.py
         card_writer.py
         cli.py

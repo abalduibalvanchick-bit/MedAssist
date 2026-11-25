@@ -1,0 +1,11 @@
+scenario:
+  title: Боль в груди при поступлении · до ЭКГ
+  group: published
+  source: https://pmc.ncbi.nlm.nih.gov/articles/PMC7897420/
+  note: Данные при поступлении из раздела Case presentation. В публикации указана тошнота, для неё используется общее поле формы.
+patient:
+  age: 56
+  symptoms: [DIAG-SYMPTOM-002, DIAG-SYMPTOM-003, DIAG-SYMPTOM-014]
+  features: [chest_pain.pressing, chest_pain.retrosternal, chest_pain.radiation, chest_pain.at_rest]
+  params: {temperature: 36.1, spo2: 99, sbp: 94, dbp: 55, hr: 35, rr: 16, symptom_duration_min: 45}
+  facts: {smoker: true}

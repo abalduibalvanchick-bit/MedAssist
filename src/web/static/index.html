@@ -41,10 +41,21 @@
       </div>
 
       <div class="workspace">
-        <form id="case-form" class="panel">
+        <form id="case-form" class="panel" novalidate>
           <div class="panel-head"><div><h2>Данные пациента</h2><p>Заполните известные значения или загрузите учебный пример.</p></div><button type="button" id="clear" class="text-btn">Очистить</button></div>
           <div class="examples" id="examples" aria-label="Учебные примеры"></div>
           <div class="form-body">
+            <details class="browser-box" id="scenario-browser">
+              <summary id="scenario-title">Все сценарии</summary>
+              <div class="browser-controls">
+                <label>Группа <select id="scenario-group"></select></label>
+                <label>Поиск по названию или номеру <input id="scenario-search" type="search" placeholder="Например, NEG-03"></label>
+              </div>
+              <label class="sr" for="scenario-list">Сценарии</label>
+              <select id="scenario-list" size="5"></select>
+              <div class="browser-actions"><button type="button" class="secondary" id="load-scenario" disabled>Загрузить сценарий</button><span id="scenario-count" aria-live="polite"></span></div>
+            </details>
+            <div id="scenario-info" class="message" hidden></div>
             <section class="form-section">
               <h3>Основные измерения</h3>
               <div class="grid" id="primary-fields"></div>
@@ -57,12 +68,20 @@
             <details class="extra">
               <summary>Дополнительные данные</summary>
               <div class="extras-body">
-                <label>Установленный диагноз <select id="diseases"><option value="">Не указан</option></select></label>
+                <section aria-label="Установленные диагнозы">
+                  <label class="sr" for="diseases">Добавить установленный диагноз</label>
+                  <select id="diseases"><option value="">Добавить установленный диагноз</option></select>
+                  <div class="chips selected-diseases" id="selected-diseases"></div>
+                </section>
                 <label>Принимаемые препараты и группы
                   <select id="medications" multiple size="4"></select>
                 </label>
                 <div id="extra-controls"></div>
               </div>
+            </details>
+            <details class="raw-case" id="raw-case" hidden>
+              <summary>Точные входные данные (JSON)</summary>
+              <pre id="raw-json"></pre>
             </details>
             <div id="case-error" class="message error" role="alert" hidden></div>
           </div>
@@ -100,6 +119,33 @@
           <div id="answer" class="empty" aria-live="polite"><div class="empty-glyph" aria-hidden="true">⌕</div><h3>Задайте вопрос</h3><p>Здесь появятся ответ и фрагменты базы знаний.</p></div>
         </section>
       </div>
+      <section class="panel knowledge" aria-labelledby="knowledge-title">
+        <div class="panel-head"><div><h2 id="knowledge-title">Карточки базы знаний</h2><p id="knowledge-count"></p></div></div>
+        <div class="knowledge-layout">
+          <div class="knowledge-search">
+            <div class="browser-controls">
+              <label>Раздел <select id="knowledge-domain"></select></label>
+              <label>Поиск карточки <input id="knowledge-search" type="search" placeholder="Название или ID"></label>
+            </div>
+            <label class="sr" for="knowledge-list">Карточки</label>
+            <select id="knowledge-list" size="9"></select>
+            <div class="browser-actions"><button type="button" class="secondary" id="open-card" disabled>Открыть карточку</button></div>
+            <div id="knowledge-rules" hidden>
+              <h3>Правила вывода</h3>
+              <label class="sr" for="knowledge-rule">Правило</label>
+              <select id="knowledge-rule"></select>
+              <button type="button" class="secondary" id="open-rule">Открыть правило</button>
+            </div>
+            <div id="knowledge-demos" hidden>
+              <h3>Демонстрации базы знаний</h3>
+              <label class="sr" for="knowledge-demo">Демонстрация</label>
+              <select id="knowledge-demo"></select>
+              <button type="button" class="secondary" id="open-demo">Запустить</button>
+            </div>
+          </div>
+          <div id="knowledge-content" class="knowledge-content" tabindex="-1" aria-live="polite"><p>Выберите карточку для просмотра.</p></div>
+        </div>
+      </section>
     </section>
 
     <footer><span>MedAssist · учебный проект</span><span id="stats"></span></footer>

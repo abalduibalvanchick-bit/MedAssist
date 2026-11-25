@@ -125,3 +125,31 @@ footer { display: flex; justify-content: space-between; gap: 10px; color: var(--
 }
 
 .source:focus { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+.browser-box { margin-bottom: 16px; padding: 9px 11px; background: #f3f8f4; border: 1px solid var(--line); border-radius: 9px; }
+.browser-controls { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 9px; margin: 9px 0; }
+.browser-controls label { display: grid; gap: 4px; font-size: .78rem; color: var(--muted); min-width: 0; }
+.browser-actions { display: flex; align-items: center; gap: 9px; margin-top: 8px; font-size: .77rem; color: var(--muted); }
+.secondary { border: 1px solid #bdd8cb; background: #e7f3eb; color: var(--teal); border-radius: 8px; padding: 5px 9px; font-size: .82rem; font-weight: 650; }
+.secondary:hover { background: #d7ede0; }
+#scenario-info { margin: 0 0 13px; }
+#scenario-info p { margin: 5px 0; }
+.raw-case { margin-top: 13px; }
+.raw-case pre { font-size: .76rem; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 320px; overflow: auto; background: #f6f8f5; border-radius: 7px; padding: 10px; }
+.selected-diseases:not(:empty) { margin-top: 5px; }
+.knowledge { margin-top: 23px; }
+.knowledge-layout { display: grid; grid-template-columns: minmax(0, .81fr) minmax(0, 1.19fr); gap: 16px; padding: 0 23px 22px; }
+.knowledge-content { min-width: 0; min-height: 180px; border: 1px solid var(--line); padding: 13px; border-radius: 9px; overflow-wrap: anywhere; }
+.knowledge-text { white-space: pre-wrap; font-size: .87rem; }
+.knowledge-content h4 { margin: 14px 0 3px; }
+.knowledge-content p + p { margin-top: 7px; }
+.knowledge-id { color: var(--muted); font-size: .8rem; margin-bottom: 6px; }
+.knowledge-content button { white-space: normal; text-align: left; }
+#knowledge-demos, #knowledge-rules { margin-top: 13px; border-top: 1px solid var(--line); padding-top: 8px; }
+#knowledge-demos h3, #knowledge-rules h3 { font-size: .85rem; margin-bottom: 5px; }
+#open-demo, #open-rule { margin-top: 5px; }
+@media (max-width: 760px) {
+  .knowledge-layout { grid-template-columns: minmax(0, 1fr); padding-inline: 15px; }
+}
+
+.knowledge-formal { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .78rem; }

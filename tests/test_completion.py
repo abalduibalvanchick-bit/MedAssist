@@ -4,6 +4,7 @@ import json
 from functools import partial
 from http.server import ThreadingHTTPServer
 from threading import Thread
+from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 import pytest
@@ -11,6 +12,8 @@ import pytest
 from src.reference import answer_reference, search_reference
 from src.solver import load_default_kb, solve
 from src.web.__main__ import Handler
+from src.web.scenarios import ROOT
+from tests.solver_cases import check_case, load_cases
 
 
 @pytest.mark.parametrize("table", load_default_kb().category("difdiag"), ids=lambda card: card.id)
@@ -90,12 +93,59 @@ def test_web_runs_example_and_reference_on_same_server():
                 return json.load(response)
 
         try:
-            assert fetch("/api/catalog")["counts"]["cards"] > 0
+            kb = load_default_kb()
+            overview = fetch("/api/catalog")
+            assert overview["counts"] == {"cards": len(kb.cards), "rules": len(kb.rules)}
+            expected_fields = {
+                "param": set(kb.schema.parameters), "fact": set(kb.schema.facts),
+                "feature": set(kb.feature_owner), "symptom": {card.id for card in kb.category("symptom")},
+                "exam_result": {card.id for card in kb.category("exam") if card.metadata.get("results")},
+            }
+            assert {kind: {item["code"] for item in rows} for kind, rows in overview["fields"].items()} == expected_fields
+            assert {item["id"] for item in overview["diseases"]} == {
+                card.id for kind in ("disease", "emergency") for card in kb.category(kind)
+            }
+            assert {item["id"] for item in overview["medications"]} == {
+                card.id for kind in ("drug", "drugclass") for card in kb.category(kind)
+            }
             demo = fetch("/api/examples/pneumonia_no_urea")["request"]["patient"]
             result = fetch("/api/solve", {"patient": demo, "answers": {"urea": "8"}})
             assert result["patient"]["params"]["urea"] == 8
             assert result["solution"]["explanation"]
             assert fetch("/api/reference", {"question": "Из чего состоит шкала CURB-65?"})["sources"]
+            regression = {case["id"]: case for case in load_cases()}
+            assert {example["code"] for example in overview["examples"] if "code" in example} == regression.keys()
+            assert {example["id"] for example in overview["examples"] if "code" not in example} == {
+                file.stem for file in (ROOT / "examples").glob("*.yaml")
+            }
+            for example in overview["examples"]:
+                case = fetch("/api/examples/" + example["id"])
+                assert "expect" not in case
+                if "code" in case:
+                    spec = regression[case["code"]]
+                    assert case["request"]["patient"] == spec["patient"]
+                    solution = fetch("/api/solve", {**case["request"], "role": case["role"]})["solution"]
+                    assert check_case(spec, solution) == [], spec["id"]
+                else:
+                    assert fetch("/api/solve", case["request"])["solution"]["status"] != "invalid"
+                    if case["group"] == "published":
+                        assert case["source"].startswith("https://pmc.ncbi.nlm.nih.gov/")
+
+            library = fetch("/api/knowledge")
+            assert {card["id"] for card in library["cards"]} == kb.cards.keys()
+            assert {rule["id"] for rule in library["rules"]} == {rule.id for rule in kb.rules}
+            for record in library["cards"]:
+                full = fetch("/api/knowledge/" + record["id"])
+                assert full["metadata"]["id"] == record["id"]
+                assert full["content"] == kb.get(record["id"]).content
+            for record in library["rules"]:
+                assert fetch("/api/knowledge-rules/" + record["id"])["metadata"]["then"]
+            for ident in library["demos"]:
+                assert fetch("/api/knowledge-demos/" + ident)["content"]
+            assert fetch("/api/knowledge?role=patient")["rules"] == []
+            with pytest.raises(HTTPError) as exc:
+                fetch("/api/knowledge/PHARM-DRUG-001?role=patient")
+            assert exc.value.code == 404
         finally:
             server.shutdown()
             thread.join()

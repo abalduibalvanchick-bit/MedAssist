@@ -11,6 +11,17 @@ from .validator import KnowledgeBaseValidator
 class ScenarioRunner:
     """Формирует текстовые демонстрации работы базы знаний."""
 
+    TITLES = {
+        "chest_pain": "Боль в груди",
+        "headache": "Головная боль и высокое АД",
+        "dyspnea": "Одышка",
+        "hypertension_protocol": "Протокол ведения артериальной гипертензии",
+        "hypertension_therapy": "Фармакотерапия артериальной гипертензии",
+        "pharm_drug": "Просмотр лекарственного средства",
+        "drug_interaction": "Лекарственное взаимодействие",
+        "validation": "Проверка базы знаний",
+    }
+
     def __init__(self, repository: KnowledgeRepository) -> None:
         self.repository = repository
         self.search_engine = SearchEngine(repository)
