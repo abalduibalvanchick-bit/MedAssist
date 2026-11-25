@@ -7,7 +7,9 @@
    именно те данные, которых не хватает, чтобы подтвердить или исключить
    опасное состояние (безопасность прежде всего);
 3. шкалы, относящиеся к рабочим диагнозам, которые не удалось
-   вычислить из-за нехватки данных.
+   вычислить из-за нехватки данных;
+4. признаки жалобы и недостающие данные применимых диагностических правил,
+   если результата и более конкретных вопросов ещё нет.
 
 Функция rank_questions назначает приоритет по влиянию недостающих данных.
 
@@ -27,7 +29,7 @@ from collections import defaultdict
 from typing import TYPE_CHECKING, Any
 
 from ..conditions import Truth, evaluate, missing_inputs
-from .inputs import describe_input, inputs_from_refs, is_known, known_atoms, label_of
+from .inputs import describe_input, inputs_from_refs, is_known, known_atoms, label_of, missing_inputs_deep
 
 if TYPE_CHECKING:  # pragma: no cover
     from .engine import Conclusions
@@ -94,6 +96,37 @@ def detail_questions(memory: "Conclusions", kb: "KnowledgeBase") -> list[dict[st
         if inputs:
             questions.append(_question("symptom_details", sid, f"Уточните характер жалобы «{card.title}».", inputs))
     return questions
+
+
+def fallback_questions(memory: "Conclusions", kb: "KnowledgeBase") -> list[dict[str, Any]]:
+    """Уточнить жалобу, затем проверить ещё не полностью оценённые гипотезы."""
+    questions = detail_questions(memory, kb)
+    if questions:
+        return questions
+
+    facts = memory.facts
+    depth = kb.schema.solver_setting("question_dependency_depth", 3)
+    seen = set()
+    for rule in kb.rules:
+        if rule.domain != "diag" or not any("assert_hypothesis" in action for action in rule.actions):
+            continue
+        if evaluate(rule.condition, facts, kb.schema) is not Truth.UNKNOWN:
+            continue
+        if not _partially_met(rule.condition, memory, kb):
+            continue
+        refs = missing_inputs_deep(rule.condition, facts, kb, depth=depth)
+        inputs = [item for item in inputs_from_refs(refs, kb, _ASKABLE_CATEGORIES)
+                  if not is_known(item, facts) and (item["type"] != "choice" or item["options"])]
+        codes = frozenset(item["code"] for item in inputs)
+        if not codes or codes in seen:
+            continue
+        seen.add(codes)
+        questions.append(_question("rule_inputs", rule.id, "Уточните известные сопутствующие признаки или измерения.", inputs))
+
+    return questions or [
+        _question("additional_context", "", "По введённым данным решатель не сформировал вывод и не нашёл конкретных уточнений. "
+                  "Если известны другие симптомы или результаты обследований, добавьте их в форму.", [])
+    ]
 
 
 def build_questions(memory: "Conclusions", kb: "KnowledgeBase") -> list[dict[str, Any]]:

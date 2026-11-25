@@ -130,6 +130,33 @@ def test_dialog_stops_when_nothing_answered(kb):
     assert len(calls) == len(set(calls)), "одно поле не должно спрашиваться дважды"
 
 
+def test_fully_described_fatigue_asks_for_missing_related_symptoms(kb):
+    request = {"patient": {
+        "age": 20,
+        "symptoms": ["DIAG-SYMPTOM-011"],
+        "features": ["fatigue.sudden_severe", "fatigue.exertional"],
+        "denied_features": ["fatigue.progressive"],
+        "params": {"temperature": 36.5},
+        "medications": ["PHARM-DRUG-007"],
+    }}
+    thirst, frequent_urination = "DIAG-SYMPTOM-006", "DIAG-SYMPTOM-007"
+    for role in ("professional", "patient"):
+        solution = solve(request, role=role, kb=kb)
+        assert solution["status"] == "need_more_data"
+        assert {item["code"] for item in pending_inputs(solution)} == {thirst, frequent_urination}
+
+    with_thirst, issues = apply_answers(request, {thirst: True}, kb)
+    assert not issues
+    assert "RULE-DIAG-041" in solve(with_thirst, kb=kb)["fired_rules"]
+
+    with_neither, issues = apply_answers(request, {thirst: False, frequent_urination: False}, kb)
+    assert not issues
+    solution = solve(with_neither, role="patient", kb=kb)
+    assert solution["status"] == "need_more_data"
+    assert [question["kind"] for question in solution["questions"]] == ["additional_context"]
+    assert not pending_inputs(solution)
+
+
 def test_dialog_can_escalate_urgency(kb):
     # Боль в груди без подробностей; ответ «боль в покое» должен дать экстренную срочность.
     request = {"patient": {"age": 62, "symptoms": ["DIAG-SYMPTOM-002"]}}

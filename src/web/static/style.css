@@ -204,6 +204,7 @@ body[data-role="patient"] {
 .result-trace { max-height: 19rem; overflow: auto; }
 .result-group-body > :first-child { margin-top: 6px; border-top: 0; }
 .questions-group form { padding-bottom: 11px; }
+.questions-group > .edit-case { margin-top: 8px; margin-bottom: 11px; }
 .questions-group form:has(details) .primary { margin-top: 9px; }
 .knowledge-summary { padding: 15px 23px; color: var(--view-ink); }
 .knowledge-summary span { margin-left: 9px; color: var(--muted); font-size: .8rem; font-weight: 400; }

@@ -30,7 +30,7 @@ from .engine import URGENCY_LABELS, InferenceEngine
 from .explain import render_explanation
 from .facts import parse_case
 from .knowledge import KnowledgeBase, known_exam_results, load_default_kb
-from .questions import build_questions, detail_questions, rank_questions
+from .questions import build_questions, fallback_questions, rank_questions
 from .protocols import execute_protocols
 from .ranking import rank_hypotheses
 from .routing import routing_to_dict, select_routes
@@ -113,7 +113,7 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
     elif not concluded:
         status = "need_more_data"
         if not questions:
-            questions = detail_questions(memory, kb)
+            questions = fallback_questions(memory, kb)
     else:
         status = "ok"
 

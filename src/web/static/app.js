@@ -378,23 +378,27 @@ function addList(root, title, texts, collapsible = false) {
   root.append(section);
 }
 
-function renderQuestions(root, questions) {
-  if (!questions?.length) return;
+function renderQuestions(root, questions = [], needsData = false) {
+  if (!questions.length && !needsData) return;
   const section = node("details", null, "result-group questions-group");
-  section.open = currentRole() === "nursing" || currentRole() === "patient";
+  section.open = needsData || currentRole() === "nursing" || currentRole() === "patient";
   section.append(node("summary", "Что можно уточнить"));
   const fields = new Map();
   for (const question of questions) {
     for (const field of question.inputs || []) {
-      if (!fields.has(field.code)) fields.set(field.code, field);
+      if ((field.type !== "choice" || field.options?.length) && !fields.has(field.code)) {
+        fields.set(field.code, field);
+      }
     }
   }
-  const shown = questions.slice(0, 4);
+  const texts = [...new Set(questions.map((question) => question.text))];
+  const shown = texts.slice(0, 4);
   const notes = node("ul");
-  for (const question of shown) notes.append(node("li", question.text));
+  for (const text of shown) notes.append(node("li", text));
+  if (!shown.length) notes.append(node("li", "Для вывода нужны дополнительные данные. Можно дополнить описание в форме."));
   section.append(notes);
-  if (questions.length > shown.length) {
-    addList(section, "Все формулировки уточнений", questions.slice(shown.length).map((item) => item.text), true);
+  if (texts.length > shown.length) {
+    addList(section, "Все формулировки уточнений", texts.slice(shown.length), true);
   }
   if (fields.size) {
     const form = node("form");
@@ -404,7 +408,6 @@ function renderQuestions(root, questions) {
     more.append(node("summary", "Другие уточнения"), rest);
     const controls = [];
     for (const field of fields.values()) {
-      if (field.type === "choice" && !field.options?.length) continue;
       const [label, input] = fieldLabel(field);
       (controls.length < 6 ? grid : rest).append(label);
       controls.push([field, input]);
@@ -430,6 +433,17 @@ function renderQuestions(root, questions) {
       await solveCase(answers, apply, message);
     });
     section.append(form);
+  } else if (needsData) {
+    const editCase = node("button", "Дополнить данные", "secondary edit-case");
+    editCase.type = "button";
+    editCase.addEventListener("click", () => {
+      if (!catalog) return;
+      showAllSymptoms[currentRole()] = true;
+      renderSymptoms();
+      document.querySelector(".extra").open = true;
+      byId("symptoms").querySelector("button")?.focus();
+    });
+    section.append(editCase);
   }
   root.append(section);
 }
@@ -469,7 +483,7 @@ function renderSolution(data) {
   if (role === "student" && result.trace?.length) {
     root.append(node("p", "Шагов вывода · " + result.trace.length, "result-preview"));
   }
-  renderQuestions(root, result.questions);
+  renderQuestions(root, result.questions, result.status === "need_more_data");
 
   const groups = {};
   for (const [key, title] of currentView().sections) groups[key] = subsection(title);
