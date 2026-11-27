@@ -123,6 +123,15 @@ def test_web_runs_example_and_reference_on_same_server():
             result = fetch("/api/solve", {"patient": demo, "answers": {"urea": "8"}})
             assert result["patient"]["params"]["urea"] == 8
             assert result["solution"]["explanation"]
+            with_null = {**demo, "exam_results": None}
+            initial = fetch("/api/solve", {"patient": with_null})["solution"]
+            assert any(field["code"] == "urea" for question in initial["questions"] for field in question["inputs"])
+            clarified = fetch("/api/solve", {"patient": with_null, "answers": {"urea": 9}})
+            assert clarified["patient"]["params"]["urea"] == 9
+            assert clarified["answer_issues"] == []
+            with pytest.raises(HTTPError) as invalid_exams:
+                fetch("/api/solve", {"patient": {**demo, "exam_results": []}, "answers": {"urea": 9}})
+            assert invalid_exams.value.code == 400
             assert fetch("/api/reference", {"question": "Из чего состоит шкала CURB-65?"})["sources"]
             decision = result["solution"]["routing"]["decisions"][0]
             assert len(decision["because"]) == 1

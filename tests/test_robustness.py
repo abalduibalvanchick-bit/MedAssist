@@ -99,3 +99,16 @@ def test_clarification_handles_malformed_collections_and_scalar_symptoms():
     updated, issues = apply_answers({"patient": {"denied_symptoms": code}}, {code: True})
     assert not issues and updated["patient"]["denied_symptoms"] == []
     assert updated["patient"]["symptoms"] == [code]
+
+
+def test_clarification_treats_null_collections_as_missing():
+    original = {"patient": {"params": None, "facts": None, "exam_results": None, "symptoms": None}}
+    answers = {"urea": 9, "confusion": False, "DIAG-SYMPTOM-007": True}
+    updated, issues = apply_answers(original, answers, KB)
+    assert not issues
+    assert updated["patient"] == {
+        "params": {"urea": 9},
+        "facts": {"confusion": False},
+        "symptoms": ["DIAG-SYMPTOM-007"],
+    }
+    assert all(value is None for value in original["patient"].values())

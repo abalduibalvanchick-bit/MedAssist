@@ -122,14 +122,19 @@ def apply_answers(request: dict[str, Any], answers: dict[str, Any],
     def issue(code: str, message: str) -> None:
         issues.append({"severity": "warning", "code": code, "message": message})
 
-    for key in ("facts", "params", "exam_results"):
-        if key in patient and not isinstance(patient[key], dict):
+    map_keys = ("facts", "params", "exam_results")
+    list_keys = ("features", "denied_features", "symptoms", "denied_symptoms")
+    for key in map_keys:
+        if patient.get(key) is not None and not isinstance(patient[key], dict):
             issue("BAD_INPUT", f"Поле «{key}» должно быть словарём. Исправьте исходные данные.")
             return new_request, issues
-    for key in ("features", "denied_features", "symptoms", "denied_symptoms"):
-        if key in patient and not isinstance(patient[key], (list, str)):
+    for key in list_keys:
+        if patient.get(key) is not None and not isinstance(patient[key], (list, str)):
             issue("BAD_INPUT", f"Поле «{key}» должно быть списком. Исправьте исходные данные.")
             return new_request, issues
+    for key in map_keys + list_keys:
+        if key in patient and patient[key] is None:
+            del patient[key]
 
     for code, raw in answers.items():
         if raw is None or (isinstance(raw, str) and not raw.strip()):

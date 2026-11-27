@@ -173,7 +173,7 @@ class Handler(BaseHTTPRequestHandler):
             answers = data.get("answers", {})
             if not isinstance(patient, dict) or not isinstance(answers, dict):
                 raise ValueError("Описание и ответы должны быть объектами JSON.")
-            if answers and any(key in patient and not isinstance(patient[key], dict) for key in CASE_MAPS):
+            if answers and any(patient.get(key) is not None and not isinstance(patient[key], dict) for key in CASE_MAPS):
                 raise ValueError("Параметры, факты и результаты обследований должны быть объектами JSON.")
             kb = load_default_kb()
             request = {"patient": patient}
