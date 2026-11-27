@@ -657,12 +657,15 @@ function renderTrace(root, result, role) {
       list.append(entry);
     }
     details.append(list);
+    const raw = node("details");
+    const trace = node("pre", result.explanation, "result-trace");
+    trace.tabIndex = 0;
+    raw.append(node("summary", "Полная текстовая трасса"), trace);
+    details.append(raw);
+  } else {
+    details.open = true;
+    details.append(node("p", result.explanation, "message"));
   }
-  const raw = node("details");
-  const trace = node("pre", result.explanation, "result-trace");
-  trace.tabIndex = 0;
-  raw.append(node("summary", "Полная текстовая трасса"), trace);
-  details.append(raw);
   root.append(details);
 }
 
