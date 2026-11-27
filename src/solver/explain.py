@@ -60,49 +60,64 @@ def describe_atom(node: dict[str, Any], facts: PatientFacts, kb: "KnowledgeBase"
     return f"{prefix}: {kb.title(value)}"
 
 
-def justify(node: Any, facts: PatientFacts, kb: "KnowledgeBase") -> list[str]:
+def remember_atom(node, schema, reads):
+    if reads is None:
+        return
+    kind = next((atom for atom in schema.condition_atoms if atom in node), None)
+    if kind is None:
+        return
+    code = node[kind]
+    if kind == "known":
+        kind = "param" if code in schema.parameters else "fact" if code in schema.facts else "exam_result"
+    reads.append((kind, code))
+
+
+def justify(node: Any, facts: PatientFacts, kb: "KnowledgeBase", *, reads=None) -> list[str]:
     """Минимальный набор описаний фактов, делающих условие истинным."""
     schema = kb.schema
     if not isinstance(node, dict):
         return []
     if "all" in node:
-        return [line for child in node["all"] for line in justify(child, facts, kb)]
+        return [line for child in node["all"] for line in justify(child, facts, kb, reads=reads)]
     if "any" in node:
         for child in node["any"]:
             if evaluate(child, facts, schema) is Truth.TRUE:
-                return justify(child, facts, kb)
+                return justify(child, facts, kb, reads=reads)
         return []
     if "at_least" in node:
         return [line for child in node["at_least"]["of"]
                 if evaluate(child, facts, schema) is Truth.TRUE
-                for line in justify(child, facts, kb)]
+                for line in justify(child, facts, kb, reads=reads)]
     if "not" in node:
         inner = node["not"]
         if isinstance(inner, dict) and "known" in inner:
+            remember_atom(inner, schema, reads)
             code = inner["known"]
             kind = "param" if code in schema.parameters else "fact" if code in schema.facts else "card"
             return [f"не сообщено: {kb.label(kind, code)}"]
-        parts = justify_false(inner, facts, kb)
+        parts = justify_false(inner, facts, kb, reads=reads)
         return [f"нет: {p}" for p in parts] or ["условие-исключение не выполнено"]
+    remember_atom(node, schema, reads)
     return [describe_atom(node, facts, kb)]
 
 
-def justify_false(node: Any, facts: PatientFacts, kb: "KnowledgeBase") -> list[str]:
+def justify_false(node: Any, facts: PatientFacts, kb: "KnowledgeBase", *, reads=None) -> list[str]:
     """Описание фактов, делающих условие ложным (для ветви not)."""
     schema = kb.schema
     if not isinstance(node, dict):
         return []
     if "any" in node:
-        return [line for child in node["any"] for line in justify_false(child, facts, kb)]
+        return [line for child in node["any"] for line in justify_false(child, facts, kb, reads=reads)]
     if "all" in node:
         for child in node["all"]:
             if evaluate(child, facts, schema) is Truth.FALSE:
-                return justify_false(child, facts, kb)
+                return justify_false(child, facts, kb, reads=reads)
         return []
     if "not" in node:
-        return justify(node["not"], facts, kb)
+        return justify(node["not"], facts, kb, reads=reads)
     if "at_least" in node:
-        return [line for child in node["at_least"]["of"] for line in justify_false(child, facts, kb)]
+        return [line for child in node["at_least"]["of"] for line in justify_false(child, facts, kb, reads=reads)]
+    remember_atom(node, schema, reads)
     return [describe_atom(node, facts, kb)]
 
 

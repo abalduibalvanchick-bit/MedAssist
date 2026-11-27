@@ -1,241 +1,274 @@
 "use strict";
 
-function showDecisionMap(result, role) {
+const graphKinds = {
+  param: "Параметр", fact: "Факт", feature: "Признак", symptom: "Симптом", disease: "Диагноз",
+  medication: "Препарат", profile: "Профиль", redflag: "Красный флаг", emergency: "Неотложное состояние",
+  scale: "Шкала", scale_category: "Категория шкалы", exam_result: "Результат обследования",
+  hypothesis: "Гипотеза · вес правил", exam: "Рекомендованное обследование", urgency: "Срочность", protocol: "Протокол",
+  route: "Маршрут из правила", routing_ref: "Таблица маршрутизации", warning: "Предупреждение",
+  clarification: "Уточнение", refusal: "Граница применимости",
+};
+
+function showDecisionMap({nodes, steps, stop}) {
   const dialog = byId("decision-map");
-  const tree = byId("decision-map-tree");
+  const controls = byId("decision-map-controls");
   const panel = byId("decision-map-panel");
-  const tabs = [];
-  const hypotheses = result.hypotheses || [];
-  const routeName = (role === "patient" && patientRoutes[result.routing?.route]) || result.routing?.label;
-
-  function button(label, className) {
-    const control = node("button", label, className);
-    control.type = "button";
-    return control;
-  }
-
-  function addTab(parent, title, caption, render) {
-    const control = button(null, "map-node");
-    control.setAttribute("aria-controls", panel.id);
-    control.append(node("strong", title), node("span", caption));
-    tabs.push(control);
-    control.addEventListener("click", () => {
-      for (const tab of tabs) tab.setAttribute("aria-pressed", String(tab === control));
-      panel.replaceChildren();
-      render(panel);
-    });
-    parent.append(control);
-    return control;
-  }
-
-  function showStep(container, step) {
-    const record = node("section", null, "map-evidence");
-    record.append(node("h5", step.title), node("small", step.source));
-    addList(record, "На каких данных", step.because);
-    addList(record, "Что получилось", step.effects);
-    container.append(record);
-  }
-
-  function traceFor(container, sources) {
-    for (const step of result.trace || []) {
-      if (sources.has(step.source)) showStep(container, step);
+  const factPanel = byId("decision-map-fact");
+  const consumers = new Map();
+  for (const step of steps) {
+    for (const id of step.inputs) {
+      if (!consumers.has(id)) consumers.set(id, []);
+      consumers.get(id).push(step);
     }
   }
 
-  function showInputs(container) {
-    container.append(node("h4", "Данные случая"));
-    const labels = {
-      symptom: "Симптомы", feature: "Признаки симптомов", param: "Измерения и параметры",
-      fact: "Сведения о пациенте", exam_result: "Результаты обследований",
-    };
-    for (const [kind, title] of Object.entries(labels)) {
-      const values = catalog.fields[kind].flatMap((field) => {
-        const value = fieldValue(field) ?? (kind === "symptom" && symptomOn(field) ? true : null);
-        return value == null ? [] : [`${fieldName(field)} — ${formatValue(field, value)}`];
-      });
-      addList(container, title, values);
-    }
-    for (const [key, title] of [["diseases", "Ранее установленные диагнозы"], ["medications", "Принимаемые препараты"]]) {
-      addList(container, title, asList(patient[key]).map((id) => catalog[key].find((item) => item.id === id)?.title || id));
-    }
-    if (container.children.length === 1) container.append(node("p", "Данные ещё не введены."));
+  function action(text, className, fn) {
+    const button = node("button", text, className);
+    button.type = "button";
+    button.addEventListener("click", fn);
+    return button;
   }
 
-  function showHypotheses(container) {
-    container.append(node("h4", "Сравнение гипотез"));
-    if (!hypotheses.length) {
-      container.append(node("p", "Решатель пока не выдвинул гипотезу по этим данным."));
-      return;
-    }
-    const scores = hypotheses.map((item) => item.rank_score ?? item.score);
-    const extent = Math.max(1, ...scores.map(Math.abs));
-    const hasNegative = scores.some((score) => score < 0);
-    const format = new Intl.NumberFormat("ru-RU", {maximumFractionDigits: 4});
-    container.append(node("p", hypotheses.length === 1
-      ? "В этом разборе одна гипотеза. На полосе показана её оценка в баллах."
-      : "Все полосы используют общую шкалу. Порядок гипотез задан решателем с учётом приоритета опасных состояний."));
-    const list = node("ul", null, "map-scores");
-    const details = node("div", null, "map-selection");
-    details.setAttribute("aria-live", "polite");
-    details.id = "decision-map-hypothesis";
-    const controls = hypotheses.map((item, index) => {
-      const score = scores[index];
-      const row = node("li");
-      const control = button(null, "map-score");
-      control.setAttribute("aria-controls", details.id);
-      const label = node("span", null, "map-score-label");
-      label.append(node("strong", item.title), node("span", format.format(score) + " балл."));
-      if (index === 0) label.append(node("small", "Первая в списке"));
-      if (item.time_critical_priority) label.append(node("small", "Приоритет по срочности", "map-priority"));
-      const bar = node("span", null, `map-score-track${hasNegative ? " signed" : ""}`);
-      bar.setAttribute("aria-hidden", "true");
-      const fill = node("span", null, score < 0 ? "negative" : index === 0 ? "leading" : "");
-      fill.style.inlineSize = (Math.abs(score) / extent * (hasNegative ? 50 : 100)) + "%";
-      bar.append(fill);
-      control.append(label, bar);
-      control.addEventListener("click", () => {
-        for (const candidate of controls) candidate.setAttribute("aria-pressed", String(candidate === control));
-        details.replaceChildren(node("h5", item.title));
-        textLine(details, "Вес сработавших правил", format.format(item.score));
-        addList(details, "Вклад признаков", item.arguments.map((entry) =>
-          `${entry.title} · ${entry.contribution > 0 ? "+" : ""}${format.format(entry.contribution)}`));
-        traceFor(details, new Set(item.sources));
-      });
-      row.append(control);
-      list.append(row);
-      return control;
-    });
-    const axis = node("div", null, "map-axis");
-    axis.setAttribute("aria-hidden", "true");
-    if (hasNegative) axis.append(node("span", "−" + format.format(extent)));
-    axis.append(node("span", "0"), node("span", format.format(extent)));
-    container.append(list, axis, node("p", "Баллы показывают оценку по правилам базы. Вероятность заболевания по ним не вычисляется.", "map-note"), details);
-    controls[0].click();
+  let current = 0;
+  let mode = "step";
+  let redraw;
+  let narrowRedraw;
+  const picker = node("select");
+  picker.id = "inference-step";
+  picker.setAttribute("aria-label", "Шаг вывода");
+  picker.add(new Option("0 · Исходные данные", "0"));
+  for (const step of steps) picker.add(new Option(`${step.step} · ${step.title}`, step.step));
+  picker.addEventListener("change", () => selectStep(Number(picker.value)));
+  const prev = action("← Назад", "secondary", () => selectStep(current - 1));
+  const next = action("Вперёд →", "secondary", () => selectStep(current + 1));
+  const modeButton = action("Весь граф", "secondary", () => {
+    mode = mode === "step" ? "full" : "step";
+    render();
+  });
+  const live = node("p", null, "map-step-status");
+  live.setAttribute("role", "status");
+  controls.replaceChildren(prev, picker, next, modeButton, live);
+
+  function selectStep(number) {
+    current = number;
+    render();
   }
 
-  function showUrgency(container) {
-    container.append(node("h4", "Срочность"),
-      node("p", result.outcome.urgency || "Срочность пока не определена.",
-        result.outcome.kind === "emergency" ? "map-urgent" : ""));
-    const reasons = result.urgency?.reasons || [];
-    if (role !== "patient") {
-      addList(container, "Правила и признаки", reasons.map((item) => item.reason));
-      traceFor(container, new Set(reasons.map((item) => item.source)));
+  function kindLabel(fact) {
+    if (fact.kind !== "disease") return graphKinds[fact.kind] || fact.kind;
+    return fact.step && steps[fact.step - 1].iteration ? "Рабочий диагноз" : "Сообщённый диагноз";
+  }
+
+  function showFact(fact) {
+    factPanel.hidden = false;
+    factPanel.replaceChildren(node("h3", fact.label),
+      node("p", `${kindLabel(fact)} · ${fact.value}`));
+    if (fact.step) {
+      const producer = steps[fact.step - 1];
+      factPanel.append(action(`Получен на шаге ${fact.step} · ${producer.title}`, "text-btn", () => {
+        mode = "step";
+        selectStep(fact.step);
+        picker.focus();
+      }));
     } else {
-      addList(container, "Выявленные тревожные признаки", (result.red_flags || []).map((item) => item.title));
-      if (result.outcome.next_step) container.append(node("p", result.outcome.next_step));
+      factPanel.append(node("p", fact.absent ? "На этом шаге решатель проверил отсутствие значения." : "Значение поступило на вход решателя."));
+    }
+    const uses = consumers.get(fact.id) || [];
+    if (uses.length) {
+      const list = node("ul");
+      for (const step of uses) {
+        const item = node("li");
+        item.append(action(`Шаг ${step.step} · ${step.title}`, "text-btn", () => {
+          mode = "step";
+          selectStep(step.step);
+          picker.focus();
+        }));
+        list.append(item);
+      }
+      factPanel.append(node("h4", "Где использован"), list);
+    }
+    factPanel.tabIndex = -1;
+    factPanel.focus({preventScroll: true});
+    factPanel.scrollIntoView({block: "nearest"});
+  }
+
+  function factNode(id, highlight) {
+    const fact = nodes[id];
+    const tone = highlight || (fact.absent ? "missing" : "input");
+    const button = action(null, `graph-fact graph-${tone}`, () => showFact(fact));
+    button.append(node("small", kindLabel(fact)), node("strong", fact.label), node("span", String(fact.value)));
+    return button;
+  }
+
+  function transition(step, upcoming = false) {
+    const row = node("div", null, `graph-transition${upcoming ? " upcoming" : ""}`);
+    const input = node("div", null, "graph-stack inputs");
+    const output = node("div", null, "graph-stack outputs");
+    for (const id of step.inputs) input.append(factNode(id));
+    for (const id of step.outputs) output.append(factNode(id, upcoming ? "next" : "new"));
+    if (!step.inputs.length) input.append(node("p", "Без входного факта", "graph-empty"));
+    if (!step.outputs.length) output.append(node("p", "Значения фактов не изменились", "graph-empty"));
+    for (const stack of [input, output]) {
+      if (!stack.querySelector(".graph-fact")) continue;
+      stack.classList.add("linked");
+    }
+    const edge = node("div", null, "graph-edge");
+    edge.append(node("small", `Шаг ${step.step} · ${step.source}`), node("strong", step.title));
+    row.append(input, edge, output);
+    return row;
+  }
+
+  function showStep() {
+    const step = steps[current - 1];
+    const upcoming = steps[current];
+    if (step) {
+      panel.append(node("h3", "Текущий переход"), transition(step));
+      if (step.evidence.length || step.effects.length) {
+        const evidence = node("details", null, "graph-evidence");
+        evidence.append(node("summary", "Условия и действия решателя"));
+        addList(evidence, "Проверенные условия", step.evidence);
+        addList(evidence, "Что сделал решатель", step.effects);
+        panel.append(evidence);
+      }
+    } else {
+      panel.append(node("h3", "Исходные факты"));
+      const initial = node("div", null, "graph-initial");
+      for (const fact of nodes) if (fact.step === 0 && !fact.absent) initial.append(factNode(fact.id));
+      if (initial.children.length) panel.append(initial);
+      else panel.append(node("p", "Исходные факты не заданы."));
+    }
+    if (upcoming) {
+      panel.append(node("h3", "Следующий переход", "graph-next-title"), transition(upcoming, true));
+    } else {
+      panel.append(node("p", stop, "graph-end"));
     }
   }
 
-  function showRoute(container) {
-    const routing = result.routing || {};
-    container.append(node("h4", "Маршруты по текущим данным"));
-    const band = node("ul", null, "map-routes");
-    const details = node("div", null, "map-selection");
-    details.id = "decision-map-route";
-    details.setAttribute("aria-live", "polite");
-    const controls = [];
-    const questions = (result.questions || []).filter((item) => ["routing", "safety_check"].includes(item.kind));
-    const questionFields = (items) => [...new Set(items.flatMap((item) => item.inputs.map(fieldName)))];
-
-    function addRoute(tone, status, title, note, render) {
-      const row = node("li");
-      const control = button(null, `map-route ${tone}`);
-      control.setAttribute("aria-controls", details.id);
-      control.append(node("small", status), node("strong", title));
-      if (note) control.append(node("span", note));
-      controls.push(control);
-      control.addEventListener("click", () => {
-        for (const item of controls) item.setAttribute("aria-pressed", String(item === control));
-        details.replaceChildren();
-        render(details);
-      });
-      row.append(control);
-      band.append(row);
+  function showFullGraph() {
+    panel.append(node("h3", "Все связи между фактами"),
+      node("p", "Выберите факт, чтобы перейти к шагу, на котором он получен или использован."));
+    const layer = new Map(nodes.map((fact) => [fact.id, 0]));
+    const depth = new Map();
+    for (const step of steps) {
+      const column = 1 + Math.max(0, ...step.inputs.map((id) => layer.get(id)));
+      depth.set(step.step, column);
+      for (const id of step.outputs) layer.set(id, column + 1);
     }
-
-    const decisions = routing.decisions || [];
-    const origins = new Set(routing.sources || []);
-    const selected = decisions.filter((item) => origins.has(item.id) && item.route === routing.route);
-    addRoute(result.outcome.kind === "emergency" ? "critical" : routeName ? "chosen" : "neutral",
-      result.outcome.provisional && routeName ? "Предварительно выбран" : routeName ? "Выбран" : "Текущий результат",
-      routeName || "Маршрут пока не определён", routing.timeframe, (body) => {
-        if (selected.length) {
-          for (const item of selected) {
-            textLine(body, "Таблица решения", item.title);
-            addList(body, "Основание выбранной строки", item.because);
-          }
-        } else if (origins.size) {
-          traceFor(body, origins);
-        }
-        if (result.outcome.provisional) {
-          addList(body, "Что можно уточнить для маршрута и срочности", questionFields(questions));
-        }
-        if (result.outcome.summary) body.append(node("p", result.outcome.summary));
-        if (role === "patient" && result.outcome.next_step) body.append(node("p", result.outcome.next_step));
+    const viewport = node("div", null, "graph-viewport");
+    const board = node("div", null, "graph-board");
+    const canvas = node("canvas", null, "graph-lines");
+    canvas.setAttribute("aria-hidden", "true");
+    const columns = Array.from({length: 1 + Math.max(0, ...layer.values(), ...depth.values())},
+      () => node("div", null, "graph-column"));
+    const positions = new Map();
+    const junctions = new Map();
+    for (const fact of nodes) {
+      let tone;
+      if (fact.step > current + 1) tone = "future";
+      else if (fact.step === current + 1) tone = "next";
+      else if (fact.step && fact.step === current) tone = "new";
+      const button = factNode(fact.id, tone);
+      positions.set(fact.id, button);
+      columns[layer.get(fact.id)].append(button);
+    }
+    for (const step of steps) {
+      const label = action(`${step.step} · ${step.source}`, "graph-junction", () => {
+        mode = "step";
+        selectStep(step.step);
+        picker.focus();
       });
-    const alternatives = new Map();
-    for (const decision of decisions) {
-      for (const item of decision.unresolved || []) {
-        if (item.route === routing.route) continue;
-        if (!alternatives.has(item.label)) alternatives.set(item.label, []);
-        alternatives.get(item.label).push({id: decision.id, title: decision.title, row: item.row});
+      label.title = step.title;
+      label.setAttribute("aria-label", `Шаг ${step.step} · ${step.title}`);
+      if (step.step === current + 1) label.classList.add("upcoming");
+      if (step.step > current + 1) label.classList.add("future");
+      junctions.set(step.step, label);
+      columns[depth.get(step.step)].append(label);
+    }
+    board.append(canvas, ...columns);
+    viewport.append(board);
+    panel.append(viewport);
+
+    function draw() {
+      const bounds = board.getBoundingClientRect();
+      canvas.width = Math.ceil(bounds.width);
+      canvas.height = Math.ceil(bounds.height);
+      const ctx = canvas.getContext("2d");
+      const point = (el, side) => {
+        const rect = el.getBoundingClientRect();
+        return [rect[side] - bounds.left, rect.top + rect.height / 2 - bounds.top];
+      };
+      function line(from, to, stepNumber) {
+        const isNext = stepNumber === current + 1;
+        const [x1, y1] = point(from, "right");
+        const [x2, y2] = point(to, "left");
+        const middle = (x1 + x2) / 2;
+        ctx.strokeStyle = isNext ? "#7036a1" : stepNumber > current + 1 ? "#afbdb8" : "#68857b";
+        ctx.lineWidth = isNext ? 2.5 : 1;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.bezierCurveTo(middle, y1, middle, y2, x2 - 1, y2);
+        ctx.moveTo(x2 - 6, y2 - 4);
+        ctx.lineTo(x2 - 1, y2);
+        ctx.lineTo(x2 - 6, y2 + 4);
+        ctx.stroke();
+      }
+      for (const step of steps) {
+        const junction = junctions.get(step.step);
+        for (const id of step.inputs) line(positions.get(id), junction, step.step);
+        for (const id of step.outputs) line(junction, positions.get(id), step.step);
       }
     }
-    for (const [label, entries] of alternatives) {
-      addRoute("possible", "Не хватает данных", label, "", (body) => {
-        addList(body, "Таблицы, для которых нужны данные", entries.map((item) => `${item.title} · строка ${item.row + 1}`));
-        const ids = new Set(entries.map((item) => item.id));
-        addList(body, "Уточнения для этих таблиц", questionFields(questions.filter((item) => ids.has(item.source))));
-      });
+    redraw = new ResizeObserver(draw);
+    redraw.observe(board);
+    const upcoming = junctions.get(current + 1) || junctions.get(current);
+    if (upcoming && current && dialog.open) {
+      const rect = upcoming.getBoundingClientRect();
+      const frame = viewport.getBoundingClientRect();
+      viewport.scrollTo(rect.left - frame.left - frame.width / 2 + rect.width / 2,
+        rect.top - frame.top - frame.height / 2 + rect.height / 2);
     }
-    container.append(band);
-    if (alternatives.size) container.append(node("p", "Выбери вариант, чтобы увидеть его основание или уточнения к таблице.", "map-note"));
-    container.append(details);
-    controls[0].click();
   }
 
-  function showTrace(container) {
-    container.append(node("h4", "Порядок выполнения шагов"));
-    const path = node("ol", null, "map-steps");
-    const details = node("div", null, "map-selection");
-    details.id = "decision-map-step";
-    details.setAttribute("aria-live", "polite");
-    const controls = result.trace.map((step) => {
-      const item = node("li");
-      const control = button(null, "map-node");
-      control.setAttribute("aria-controls", details.id);
-      control.append(node("small", `Шаг ${step.step} · ${traceKinds[step.kind] || step.kind}`), node("strong", step.title));
-      control.addEventListener("click", () => {
-        for (const stepButton of controls) stepButton.setAttribute("aria-pressed", String(stepButton === control));
-        details.replaceChildren();
-        showStep(details, step);
-      });
-      item.append(control);
-      path.append(item);
-      return control;
+  function render() {
+    redraw?.disconnect();
+    narrowRedraw?.disconnect();
+    redraw = undefined;
+    picker.value = String(current);
+    prev.disabled = current === 0;
+    next.disabled = current === steps.length;
+    modeButton.textContent = mode === "step" ? "Весь граф" : "Пошаговый вид";
+    byId("graph-future-key").hidden = mode !== "full";
+    const step = steps[current - 1];
+    live.textContent = step
+      ? `Шаг ${current} из ${steps.length} · ${step.iteration ? "Итерация " + step.iteration : "Подготовка данных"}`
+      : `Исходные данные · ${steps.length} переходов`;
+    panel.replaceChildren();
+    factPanel.hidden = true;
+    factPanel.replaceChildren();
+    if (mode === "full") {
+      showFullGraph();
+      return;
+    }
+    showStep();
+    narrowRedraw = new ResizeObserver((entries) => {
+      for (const {target} of entries) {
+        const first = target.firstElementChild.getBoundingClientRect();
+        const last = target.lastElementChild.getBoundingClientRect();
+        target.style.setProperty("--join-top", first.height / 2 + "px");
+        target.style.setProperty("--join-bottom", last.height / 2 + "px");
+      }
     });
-    container.append(path, details);
-    controls[0].click();
+    for (const stack of panel.querySelectorAll(".graph-stack.linked")) narrowRedraw.observe(stack);
   }
 
-  tree.replaceChildren();
-  addTab(tree, "Введённые данные", "Жалобы, параметры и результаты", showInputs).classList.add("map-root");
-  const branches = node("div", null, "map-branches");
-  tree.append(branches);
-  const hypothesis = role === "patient" ? null : addTab(branches, "Гипотезы", hypotheses[0]?.title || "Пока нет гипотез", showHypotheses);
-  const urgency = addTab(branches, "Срочность", result.outcome.urgency || "Уточняется", showUrgency);
-  const route = addTab(branches, "Маршрут", routeName || "Уточняется", showRoute);
-  if (result.trace?.length) addTab(tree, "Весь ход вывода", `${result.trace.length} шагов`, showTrace).classList.add("map-trace-tab");
-  byId("decision-map-context").textContent = result.outcome.title;
-  const initial = result.outcome.kind === "emergency" ? urgency : hypotheses.length && ["professional", "student"].includes(role) ? hypothesis : route;
-  initial.click();
+  dialog.addEventListener("close", () => {
+    redraw?.disconnect();
+    narrowRedraw?.disconnect();
+    controls.replaceChildren();
+    panel.replaceChildren();
+    factPanel.replaceChildren();
+    factPanel.hidden = true;
+  }, {once: true});
+  render();
   dialog.showModal();
 }
-
-byId("decision-map").addEventListener("close", (event) => {
-  if (event.currentTarget.open) return;
-  byId("decision-map-tree").replaceChildren();
-  byId("decision-map-panel").replaceChildren();
-  byId("decision-map-context").textContent = "";
-});

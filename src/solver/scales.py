@@ -16,6 +16,7 @@ from typing import Any
 from ..conditions import PatientFacts, Truth, collect_references, evaluate
 from ..models import KnowledgeCard
 from ..schema import Schema
+from .explain import remember_atom
 
 
 @dataclass
@@ -56,7 +57,7 @@ def _interpret(card: KnowledgeCard, total: float) -> dict[str, Any] | None:
     return None
 
 
-def compute_scale(card: KnowledgeCard, facts: PatientFacts, schema: Schema) -> ScaleResult:
+def compute_scale(card: KnowledgeCard, facts: PatientFacts, schema: Schema, *, reads=None) -> ScaleResult:
     meta = card.metadata
     result = ScaleResult(scale_id=card.id, title=card.title, low=0.0, high=0.0)
     policy = meta.get("missing_policy") or "skip"
@@ -64,6 +65,8 @@ def compute_scale(card: KnowledgeCard, facts: PatientFacts, schema: Schema) -> S
         code, label = str(param.get("code")), str(param.get("label", param.get("code")))
         if param.get("points_from"):
             name = param["points_from"]
+            if reads is not None:
+                reads.append(("param", name))
             value = facts.params.get(name)
             if isinstance(value, (int, float)) and not isinstance(value, bool):
                 result.low += float(value)
@@ -80,7 +83,11 @@ def compute_scale(card: KnowledgeCard, facts: PatientFacts, schema: Schema) -> S
         chosen = None
         undecided = []
         for option in options:
-            truth = evaluate(option["when"], facts, schema)
+            trace = [] if reads is not None else None
+            truth = evaluate(option["when"], facts, schema, trace=trace)
+            if trace is not None:
+                for step in trace:
+                    remember_atom(step.node, schema, reads)
             if truth is Truth.TRUE:
                 chosen = option
                 break

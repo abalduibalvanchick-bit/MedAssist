@@ -29,6 +29,7 @@ from typing import Any
 
 from ..conditions import PatientFacts, Truth, compare, evaluate
 from .explain import justify, justify_false
+from .inference_graph import InferenceGraph
 from .knowledge import KnowledgeBase
 
 
@@ -75,7 +76,7 @@ def check_input_constraints(facts: PatientFacts, schema) -> list[str]:
     return messages
 
 
-def derive_facts(facts: PatientFacts, kb: KnowledgeBase) -> list[tuple[str, str]]:
+def derive_facts(facts: PatientFacts, kb: KnowledgeBase, graph: InferenceGraph | None = None) -> list[tuple[str, str]]:
     """Достраивает факты по словарю схемы. Возвращает предупреждения (код, текст).
 
     derived_from: факт, не сообщённый явно, выводится из измерения (САД 80 →
@@ -95,7 +96,9 @@ def derive_facts(facts: PatientFacts, kb: KnowledgeBase) -> list[tuple[str, str]
         if truth is Truth.UNKNOWN:
             continue
         value = truth is Truth.TRUE
-        because = justify(condition, facts, kb) if value else [f"нет: {line}" for line in justify_false(condition, facts, kb)]
+        reads = [] if graph is not None else None
+        because = (justify(condition, facts, kb, reads=reads) if value else
+                   [f"нет: {line}" for line in justify_false(condition, facts, kb, reads=reads)])
         reported = facts.facts.get(name)
         if reported is not None and reported == value:
             continue
@@ -106,6 +109,8 @@ def derive_facts(facts: PatientFacts, kb: KnowledgeBase) -> list[tuple[str, str]
                              f"— {'да' if value else 'нет'}; используется значение по измерению."))
         facts.facts[name] = value
         facts.derived.append({"code": name, "kind": "fact", "value": value, "because": because, "source": "schema.facts"})
+        if graph is not None:
+            graph.record(label, "schema.facts", 0, reads, {("fact", name): value}, evidence=because)
     for name, spec in sorted(schema.facts.items()):
         disease = spec.get("implies_disease")
         # Установленный диагноз, переданный списком diseases, означает и факт анамнеза.
@@ -113,11 +118,15 @@ def derive_facts(facts: PatientFacts, kb: KnowledgeBase) -> list[tuple[str, str]
             facts.facts[name] = True
             facts.derived.append({"code": name, "kind": "fact", "value": True,
                                   "because": [f"установленный диагноз: {kb.title(disease)}"], "source": "schema.facts"})
+            if graph is not None:
+                graph.record("Анамнез по сообщённому диагнозу", "schema.facts", 0, [("disease", disease)], {("fact", name): True})
             continue
         if disease and facts.facts.get(name) is True and disease not in facts.diseases:
             facts.diseases.add(disease)
             facts.derived.append({"code": disease, "kind": "disease", "value": True,
                                   "because": [spec.get("label", name)], "source": "schema.facts"})
+            if graph is not None:
+                graph.record("Сообщённый диагноз по анамнезу", "schema.facts", 0, [("fact", name)], {("disease", disease): True})
     return warnings
 
 
@@ -125,7 +134,7 @@ _LIST_KEYS = ("symptoms", "features", "denied_symptoms", "denied_features", "dis
 _KNOWN_KEYS = set(_LIST_KEYS) | {"age", "params", "facts", "exam_results", "sex", "note"}
 
 
-def parse_case(data: Any, kb: KnowledgeBase) -> ParsedCase:
+def parse_case(data: Any, kb: KnowledgeBase, *, graph: InferenceGraph | None = None) -> ParsedCase:
     """Строит факты о пациенте из входного словаря и проверяет их."""
     issues: list[InputIssue] = []
 
@@ -156,6 +165,7 @@ def parse_case(data: Any, kb: KnowledgeBase) -> ParsedCase:
         lists[key] = {str(v).strip() for v in value if str(v).strip()}
 
     facts = PatientFacts()
+    implied_symptoms = {}
     schema = kb.schema
 
     # --- симптомы и признаки
@@ -177,6 +187,7 @@ def parse_case(data: Any, kb: KnowledgeBase) -> ParsedCase:
                 # Сообщённый признак подразумевает наличие самого симптома.
                 if owner not in facts.symptoms and owner not in facts.denied_symptoms:
                     facts.symptoms.add(owner)
+                    implied_symptoms[owner] = code
             else:
                 facts.denied_features.add(code)
 
@@ -263,7 +274,12 @@ def parse_case(data: Any, kb: KnowledgeBase) -> ParsedCase:
         facts.facts[name] = value
 
     # --- факты, выводимые из измерений, и ранее установленные диагнозы (словарь схемы)
-    for issue_code, message in derive_facts(facts, kb):
+    if graph is not None:
+        graph.seed(facts, skip=frozenset(("symptom", code) for code in implied_symptoms))
+        for symptom, feature in implied_symptoms.items():
+            graph.record("Симптом по указанному признаку", "schema.features", 0,
+                         [("feature", feature)], {("symptom", symptom): True})
+    for issue_code, message in derive_facts(facts, kb, graph):
         warn(issue_code, message)
 
     # --- ограничения согласованности из схемы (input_constraints)

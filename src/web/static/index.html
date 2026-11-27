@@ -160,13 +160,20 @@
   </main>
   <dialog id="decision-map" aria-labelledby="decision-map-title" class="decision-map">
     <div class="map-header">
-      <div><h2 id="decision-map-title">Карта решения</h2><p id="decision-map-context"></p></div>
+      <div><h2 id="decision-map-title">Граф прямого вывода</h2><p>От входных данных до заключений решателя</p></div>
       <form method="dialog"><button class="secondary" autofocus>Закрыть</button></form>
     </div>
     <div class="map-body">
-      <p class="map-instruction">Выбери узел, чтобы посмотреть данные и основания вывода.</p>
-      <div id="decision-map-tree" class="map-tree" aria-label="Ветви решения" role="group"></div>
-      <section id="decision-map-panel" class="map-panel" aria-live="polite"></section>
+      <div id="decision-map-controls" class="map-controls"></div>
+      <ul class="graph-legend" aria-label="Цвета графа">
+        <li class="graph-input">Ранее известный факт</li>
+        <li class="graph-new">Факт этого шага</li>
+        <li class="graph-next">Следующий переход</li>
+        <li class="graph-missing">Значение неизвестно</li>
+        <li id="graph-future-key" class="graph-future" hidden>Факт появится позднее</li>
+      </ul>
+      <section id="decision-map-panel" class="map-panel" aria-label="Факты и переходы"></section>
+      <section id="decision-map-fact" class="map-fact-detail" aria-live="polite" hidden></section>
     </div>
   </dialog>
 </body>

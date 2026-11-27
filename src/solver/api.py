@@ -30,6 +30,7 @@ from .differential import assess_differential
 from .engine import URGENCY_LABELS, InferenceEngine
 from .explain import render_explanation
 from .facts import parse_case
+from .inference_graph import InferenceGraph
 from .knowledge import KnowledgeBase, known_exam_results, load_default_kb
 from .outcome import summarize_outcome
 from .questions import build_questions, fallback_questions, rank_questions
@@ -78,7 +79,7 @@ def _patient_advice(kb: KnowledgeBase, diagnoses: list[str]) -> list[dict[str, A
 
 
 def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeBase | None = None,
-          include_trace: bool = True) -> dict[str, Any]:
+          include_trace: bool = True, include_graph: bool = False) -> dict[str, Any]:
     """Решает задачу для описания пациента. Никогда не бросает исключений на плохих данных."""
     kb = kb or load_default_kb()          # загрузка базы не входит в замер времени решения
     started = time.perf_counter()
@@ -87,7 +88,8 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
                 "message": f"Неизвестная роль «{role}»; допустимо: {', '.join(ROLES)}."}]}
         return {**solution, "outcome": summarize_outcome(solution)}
 
-    parsed = parse_case(request, kb)
+    graph = InferenceGraph(kb) if include_graph and role != "patient" else None
+    parsed = parse_case(request, kb, graph=graph)
     issues = [{"severity": i.severity, "code": i.code, "message": i.message} for i in parsed.issues]
     if parsed.has_errors:
         solution = {"status": "invalid", "role": role, "input_issues": issues,
@@ -95,7 +97,7 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
                     "stats": {"time_ms": round((time.perf_counter() - started) * 1000, 2)}}
         return {**solution, "outcome": summarize_outcome(solution)}
 
-    engine = InferenceEngine(kb)
+    engine = InferenceEngine(kb, graph=graph)
     memory = engine.run(parsed.facts)
     routing = select_routes(memory, kb)          # T1: после неподвижной точки, до вопросов
     questions = build_questions(memory, kb) if memory.refusal is None else []
@@ -193,6 +195,8 @@ def solve(request: dict[str, Any], role: str = "professional", *, kb: KnowledgeB
         emergency_message = next((str(card.metadata["text"]) for card in kb.category("disclaimer")
                                   if card.urgency == "emergency" and card.metadata.get("text")), "")
     solution["outcome"] = summarize_outcome(solution, emergency_message)
+    if graph is not None:
+        solution["inference_graph"] = graph.as_dict()
     if role == "patient":
         # Пациенту — куда и когда обращаться, без служебных таблиц решений.
         solution["routing"] = {k: solution["routing"][k] for k in ("route", "label", "timeframe", "provisional")}

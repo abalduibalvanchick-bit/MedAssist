@@ -178,7 +178,7 @@ class Handler(BaseHTTPRequestHandler):
             kb = load_default_kb()
             request = {"patient": patient}
             request, issues = apply_answers(request, answers, kb) if answers else (request, [])
-            solution = solve(request, role=role, kb=kb)
+            solution = solve(request, role=role, kb=kb, include_graph=True)
             for decision in solution.get("routing", {}).get("decisions", []):
                 card = kb.get(decision["id"])
                 decision["source_available"] = bool(card and can_read_card(card.metadata.get("access_level", "professional"), role))

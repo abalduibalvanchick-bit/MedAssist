@@ -22,7 +22,8 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from ..conditions import PatientFacts, Truth, evaluate
-from .explain import justify
+from .explain import justify, justify_false
+from .inference_graph import InferenceGraph
 from .knowledge import KnowledgeBase, Rule
 from .scales import ScaleResult, compute_scale
 
@@ -101,9 +102,10 @@ def raise_urgency(memory: Conclusions, level: str, source: str, reason: str, eff
 
 class InferenceEngine:
     def __init__(self, kb: KnowledgeBase, *, working_diagnosis_score: int | None = None,
-                 max_iterations: int | None = None) -> None:
+                 max_iterations: int | None = None, graph: InferenceGraph | None = None) -> None:
         self.kb = kb
         self.schema = kb.schema
+        self.graph = graph
         self.working_diagnosis_score = int(working_diagnosis_score if working_diagnosis_score is not None
                                            else self.schema.solver_setting("working_diagnosis_score", WORKING_DIAGNOSIS_SCORE))
         self.max_iterations = int(max_iterations if max_iterations is not None
@@ -112,6 +114,8 @@ class InferenceEngine:
     # ------------------------------------------------------------------ запуск
     def run(self, facts: PatientFacts) -> Conclusions:
         memory = Conclusions(facts=facts)
+        if self.graph is not None:
+            self.graph.seed(facts)
         self._iteration = 0
         for item in facts.derived:
             if item["kind"] == "disease":
@@ -123,6 +127,7 @@ class InferenceEngine:
                              [f"{label}: {'да' if item['value'] else 'нет'}"])
         known_diseases = set(facts.diseases)
         memory.working_diagnoses = sorted(known_diseases)
+        changed = False
         for iteration in range(1, self.max_iterations + 1):
             self._iteration = iteration
             memory.iterations = iteration
@@ -136,6 +141,13 @@ class InferenceEngine:
                 break
         if memory.refusal is None:
             self._mark_excluded(memory)
+        if self.graph is not None:
+            if memory.refusal is not None:
+                self.graph.stop = "Вывод остановлен правилом о границе применимости."
+            elif changed:
+                self.graph.stop = "Достигнут предел итераций прямого вывода."
+            else:
+                self.graph.stop = "Рабочая память больше не меняется. Маршрут и протоколы рассчитываются после прямого вывода."
         return memory
 
     def _mark_excluded(self, memory: Conclusions) -> None:
@@ -153,6 +165,11 @@ class InferenceEngine:
                 condition = card.metadata.get(field_name)
                 if card.id not in derived and condition and evaluate(condition, facts, self.schema) is Truth.FALSE:
                     facts.excluded.add(card.id)
+                    if self.graph is not None:
+                        reads = []
+                        evidence = justify_false(condition, facts, self.kb, reads=reads)
+                        self.graph.record("Исключение после завершения вывода", card.id, self._iteration,
+                                          reads, {(category, card.id): False}, evidence=evidence)
 
     # ------------------------------------------------------------------ шаги
     def _record(self, memory: Conclusions, kind: str, source: str, title: str,
@@ -166,33 +183,46 @@ class InferenceEngine:
                 continue
             condition = card.metadata.get("criteria")
             if condition and evaluate(condition, memory.facts, self.schema) is Truth.TRUE:
+                reads = [] if self.graph is not None else None
+                because = justify(condition, memory.facts, self.kb, reads=reads)
                 memory.facts.profiles.add(card.id)
-                self._record(memory, "profile", card.id, card.title,
-                             justify(condition, memory.facts, self.kb), [f"профиль пациента: {card.title}"])
+                effects = [f"профиль пациента: {card.title}"]
+                self._record(memory, "profile", card.id, card.title, because, effects)
+                if self.graph is not None:
+                    self.graph.record(card.title, card.id, self._iteration, reads,
+                                      {("profile", card.id): True}, evidence=because, effects=effects)
                 changed = True
         return changed
 
     def _derive_scales(self, memory: Conclusions) -> bool:
         changed = False
         for card in self.kb.category("scale"):
-            result = compute_scale(card, memory.facts, self.schema)
+            reads = [] if self.graph is not None else None
+            result = compute_scale(card, memory.facts, self.schema, reads=reads)
+            updated = {}
             memory.scales[card.id] = result
             bounds = (result.low, result.high)
             if card.metadata.get("missing_policy") != "fail" and memory.facts.scale_bounds.get(card.id) != bounds:
                 memory.facts.scale_bounds[card.id] = bounds
+                updated["scale", card.id] = result.value if result.complete else bounds
                 changed = True
             effects = []
             if result.complete and memory.facts.scales.get(card.id) != result.value:
                 memory.facts.scales[card.id] = result.value
+                updated["scale", card.id] = result.value
                 effects.append(f"{card.title}: {result.value:g} балл(ов)")
             if result.category and memory.facts.scale_categories.get(card.id) != result.category:
                 memory.facts.scale_categories[card.id] = result.category
+                updated["scale_category", card.id] = result.category
                 effects.append(f"категория: {result.category_label}"
                                + ("" if result.complete else f" (сумма {result.low:g}–{result.high:g}, часть данных отсутствует)"))
+            known = [f"{item.label}: {item.points:g}" + (f" ({item.detail})" if item.detail else "")
+                     for item in result.items if item.points is not None] if effects or (self.graph is not None and updated) else []
             if effects:
-                known = [f"{i.label}: {i.points:g}" + (f" ({i.detail})" if i.detail else "") for i in result.items if i.points is not None]
                 self._record(memory, "scale", card.id, card.title, known, effects)
                 changed = True
+            if self.graph is not None and updated:
+                self.graph.record(card.title, card.id, self._iteration, reads, updated, evidence=known, effects=effects)
         return changed
 
     def _derive_cards(self, memory: Conclusions, category: str, field_name: str, target: set[str]) -> bool:
@@ -203,6 +233,9 @@ class InferenceEngine:
             condition = card.metadata.get(field_name)
             if not condition or evaluate(condition, memory.facts, self.schema) is not Truth.TRUE:
                 continue
+            reads = [] if self.graph is not None else None
+            before = self._graph_state(memory) if self.graph is not None else None
+            because = justify(condition, memory.facts, self.kb, reads=reads)
             target.add(card.id)
             kind_label = "красный флаг" if category == "redflag" else "неотложное состояние"
             effects = [f"{kind_label}: {card.title}"]
@@ -210,7 +243,8 @@ class InferenceEngine:
             follow = card.metadata.get("action") or card.metadata.get("emergency_protocol")
             if follow:
                 self._add_protocol(memory, follow, card.id, effects)
-            self._record(memory, category, card.id, card.title, justify(condition, memory.facts, self.kb), effects)
+            self._record(memory, category, card.id, card.title, because, effects)
+            self._record_graph_changes(memory, before, card.id, card.title, reads, because, effects)
             changed = True
         return changed
 
@@ -221,13 +255,38 @@ class InferenceEngine:
                 continue
             if evaluate(rule.condition, memory.facts, self.schema) is not Truth.TRUE:
                 continue
+            reads = [] if self.graph is not None else None
+            before = self._graph_state(memory) if self.graph is not None else None
+            evidence = justify(rule.condition, memory.facts, self.kb, reads=reads) if self.graph is not None else None
             memory.fired_rules.append(rule.id)
             effects = self._apply_actions(memory, rule)
-            self._record(memory, "rule", rule.id, rule.title, justify(rule.condition, memory.facts, self.kb), effects)
+            because = justify(rule.condition, memory.facts, self.kb)
+            self._record(memory, "rule", rule.id, rule.title, because, effects)
+            self._record_graph_changes(memory, before, rule.id, rule.title, reads, evidence, effects)
             changed = True
             if memory.refusal is not None:
                 break
         return changed
+
+    def _graph_state(self, memory: Conclusions) -> dict:
+        state = self.graph.fact_values(memory.facts)
+        state.update((("hypothesis", target), hyp.score) for target, hyp in memory.hypotheses.items())
+        state["urgency", "urgency"] = URGENCY_LABELS[memory.urgency]
+        state.update((("exam", code), ", ".join(value["roles"])) for code, value in memory.exams.items())
+        for kind, items in (("protocol", memory.protocols), ("routing_ref", memory.routing_refs)):
+            state.update(((kind, item["id"]), "активирован") for item in items)
+        for kind, items in (("warning", memory.warnings), ("clarification", memory.clarifications)):
+            state.update(((kind, item["source"] + "#" + str(index + 1)), item["text"]) for index, item in enumerate(items))
+        state.update((("route", item["source"] + "#" + str(index + 1)), (item["route"], item["timeframe"])) for index, item in enumerate(memory.routes))
+        if memory.refusal is not None:
+            state["refusal", memory.refusal["source"]] = memory.refusal["text"]
+        return state
+
+    def _record_graph_changes(self, memory, before, source, title, reads, evidence, effects):
+        if self.graph is None:
+            return
+        changes = {key: value for key, value in self._graph_state(memory).items() if before.get(key) != value}
+        self.graph.record(title, source, self._iteration, reads, changes, evidence=evidence, effects=effects)
 
     # ------------------------------------------------------------------ действия
     def _apply_actions(self, memory: Conclusions, rule: Rule) -> list[str]:

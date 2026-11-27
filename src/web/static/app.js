@@ -686,14 +686,16 @@ function moveTo(element) {
   target.scrollIntoView({block: "start"});
 }
 
-function renderResultNav(root, sections, result, role) {
+function renderResultNav(root, sections, result) {
   const nav = node("nav", null, "result-nav");
   nav.setAttribute("aria-label", "Разделы результата");
-  const map = node("button", "Карта решения", "primary open-decision-map");
-  map.type = "button";
-  map.setAttribute("aria-haspopup", "dialog");
-  map.addEventListener("click", () => showDecisionMap(result, role));
-  nav.append(map);
+  if (result.inference_graph) {
+    const map = node("button", "Граф прямого вывода", "primary open-decision-map");
+    map.type = "button";
+    map.setAttribute("aria-haspopup", "dialog");
+    map.addEventListener("click", () => showDecisionMap(result.inference_graph));
+    nav.append(map);
+  }
   for (const section of sections) {
     const button = node("button", section.querySelector("summary").textContent, "secondary");
     button.type = "button";
@@ -747,6 +749,7 @@ function renderSolution(data) {
   addList(root, "Замечания к данным", (result.input_issues || []).concat(data.answer_issues || []).map((item) => item.message));
   const disclaimers = result.disclaimer?.filter((text) => text !== result.outcome.next_step);
   if (result.status === "invalid" || result.status === "refused") {
+    if (result.inference_graph) root.append(renderResultNav(root, [], result));
     addList(root, "Справочная информация", disclaimers, true);
     return;
   }
@@ -890,7 +893,7 @@ function renderSolution(data) {
   if (leadingPanel && result.outcome.kind === "emergency") root.append(leadingPanel);
   root.append(...available);
   const navigation = [...root.children].filter((element) => element.classList.contains("result-group"));
-  root.insertBefore(renderResultNav(root, navigation, result, role), root.children[position] || null);
+  root.insertBefore(renderResultNav(root, navigation, result), root.children[position] || null);
   addList(root, "Справочная информация", disclaimers, true);
 }
 
