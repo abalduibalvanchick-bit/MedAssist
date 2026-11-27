@@ -15,7 +15,7 @@ from .models import normalize_text
 from .solver import ROLES, load_default_kb
 
 _WORD = re.compile(r"[a-zа-я0-9]+")
-_STOP = set("а без в во для до и из или к как какие какой ли на над о об от по при с со у что чего это есть где когда кто мне такой такое объясни объясните".split())
+_STOP = set("а без в во для до и из или к как какие какой ли на над о об от по при с со у что чего это есть где куда когда кто мне такой такое объясни объясните".split())
 _ENDINGS = re.compile(r"(иями|ами|ями|ого|ему|ому|ыми|ими|ой|ый|ая|ое|ее|ий|ую|ым|ом|ах|ях|ов|ев|ие|ия|ии|ы|и|а|я|е|у|о|ю|ь)$")
 _HEADING = re.compile(r"^#{1,6}\s+(.+)$", re.MULTILINE)
 _LOW_SIGNAL = ("синоним", "связанн", "метадан", "источник")
@@ -23,8 +23,9 @@ _INTENTS = {
     "definition": ("означ", "что такое", "определен"),
     "calculation": ("состоит", "расчет", "рассчитыв", "посчит", "балл"),
     "criteria": ("критер", "когда", "основан", "показан"),
-    "routing": ("направ", "маршрут", "куда обращ", "госпитализ"),
+    "routing": ("направ", "маршрут", "обращ", "госпитализ"),
     "symptoms": ("признак", "симптом", "проявля"),
+    "measurement": ("измеря", "для чего нуж", "что показывает"),
 }
 _INTENT_HEADINGS = {
     "definition": ("определен", "описани", "назначени"),
@@ -32,6 +33,7 @@ _INTENT_HEADINGS = {
     "criteria": ("критер", "показан", "услови", "маршру", "тактик"),
     "routing": ("категории маршрута", "направлен", "принцип маршрутизации"),
     "symptoms": ("клиническ", "симптом", "признак", "жалоб", "критери"),
+    "measurement": ("определен", "назначени", "показан", "описани", "измер"),
 }
 _SENTENCE = re.compile(r"(?<=[.!?])\s+|\n+")
 
@@ -142,6 +144,8 @@ def search_reference(query: str, role="professional", *, kb_root=None, limit=5):
         return []
     if intents:
         vague = {term for term in terms if any(term.startswith(pattern) for patterns in _INTENTS.values() for pattern in patterns if " " not in pattern)}
+        if "measurement" in intents:
+            vague |= {term for term in terms if term.startswith(("измеря", "нуж", "показыва"))}
         terms = terms - vague or terms
         vocabulary = terms & frequencies.keys()
     if not vocabulary:
@@ -165,6 +169,8 @@ def search_reference(query: str, role="professional", *, kb_root=None, limit=5):
             score *= 2
         if "symptoms" in intents and section.category in ("disease", "symptom"):
             score *= 1.5
+        if "measurement" in intents and section.category == "exam":
+            score *= 1.6
         if "calculation" in intents and section.category == "scale" and "параметры оценки" in heading:
             score *= 2
         if len(overlap) >= min(2, len(terms)) and score >= .82:

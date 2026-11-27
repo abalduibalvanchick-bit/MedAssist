@@ -65,6 +65,12 @@ def test_reference_finds_expected_card_and_declines_unrelated_query():
     assert all(word in result["answer"][0]["text"].lower() for word in ("спутанность", "мочевина", "частота дыхания", "сад", "возраст"))
     routing = search_reference("Как направить пациента с бронхиальной астмой?")
     assert routing[0]["id"] == "PROT-ROUTING-005"
+    for question, card in (
+        ("Куда обращаться при астме?", "PROT-ROUTING-005"),
+        ("Что измеряет пульсоксиметр?", "DIAG-EXAM-010"),
+        ("Для чего нужна спирометрия при астме?", "DIAG-EXAM-008"),
+    ):
+        assert search_reference(question)[0]["id"] == card
     assert result["answer"][0]["source"] == 1
     assert answer_reference("Рецепт карамельного торта")["status"] == "not_found"
     patient_result = search_reference("Противопоказания эналаприла", "patient")
