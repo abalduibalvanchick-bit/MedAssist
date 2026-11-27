@@ -62,6 +62,9 @@ def test_reference_finds_expected_card_and_declines_unrelated_query():
     result = answer_reference("Из чего состоит шкала CURB-65?")
     assert result["status"] == "ok" and result["mode"] == "extracts"
     assert result["sources"][0]["id"] == "PROT-SCALE-004"
+    assert all(word in result["answer"][0]["text"].lower() for word in ("спутанность", "мочевина", "частота дыхания", "сад", "возраст"))
+    routing = search_reference("Как направить пациента с бронхиальной астмой?")
+    assert routing[0]["id"] == "PROT-ROUTING-005"
     assert result["answer"][0]["source"] == 1
     assert answer_reference("Рецепт карамельного торта")["status"] == "not_found"
     patient_result = search_reference("Противопоказания эналаприла", "patient")
@@ -75,6 +78,8 @@ def test_reference_verifies_generated_evidence_and_falls_back():
     result = answer_reference(question, generator=generator)
     assert result["mode"] == "generated"
     assert result["answer"][0]["source"] == 1
+    assert result["answer"][0]["text"] == result["answer"][0]["evidence"]
+    assert result["answer"][0]["text"] != "Ответ по карточке"
     fallback = answer_reference(question, generator=lambda *_: [{"source": 22, "text": "Ответ", "evidence": "Посторонняя цитата"}])
     assert fallback["mode"] == "extracts"
 

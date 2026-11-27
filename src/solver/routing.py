@@ -38,7 +38,7 @@ from typing import TYPE_CHECKING, Any
 from ..conditions import ConditionRefs, Truth, evaluate
 from .engine import raise_urgency, record_step
 from .explain import justify
-from .inputs import inputs_from_refs, label_of, missing_inputs_deep
+from .inputs import describe_input, inputs_from_refs, is_known, label_of, missing_inputs_deep
 
 if TYPE_CHECKING:  # pragma: no cover
     from .engine import Conclusions
@@ -163,6 +163,11 @@ def select_routes(memory: "Conclusions", kb: "KnowledgeBase") -> RoutingResult:
                 refs.features |= missing.features
                 refs.card_ids |= missing.card_ids
             inputs = inputs_from_refs(refs, kb)
+            for scale_id in sorted(refs.card_ids & memory.scales.keys()):
+                for code in sorted(memory.scales[scale_id].missing):
+                    field = describe_input(code, kb)
+                    if field and not is_known(field, memory.facts) and field not in inputs:
+                        inputs.append(field)
             if inputs:
                 worst = max(decision.unresolved, key=lambda u: _sev_index(severity, u["route"]))
                 result.questions.append({

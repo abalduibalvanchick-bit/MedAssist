@@ -177,6 +177,10 @@ class InferenceEngine:
         for card in self.kb.category("scale"):
             result = compute_scale(card, memory.facts, self.schema)
             memory.scales[card.id] = result
+            bounds = (result.low, result.high)
+            if card.metadata.get("missing_policy") != "fail" and memory.facts.scale_bounds.get(card.id) != bounds:
+                memory.facts.scale_bounds[card.id] = bounds
+                changed = True
             effects = []
             if result.complete and memory.facts.scales.get(card.id) != result.value:
                 memory.facts.scales[card.id] = result.value

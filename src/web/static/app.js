@@ -417,8 +417,10 @@ function renderQuestions(root, data) {
   const ordered = role === "patient" || role === "nursing"
     ? [...questions.filter(triage), ...questions.filter((question) => !triage(question))] : questions;
   const fields = new Map();
+  const triageCodes = new Set();
   for (const question of ordered) {
     for (const field of question.inputs || []) {
+      if (triage(question)) triageCodes.add(field.code);
       if ((field.type !== "choice" || field.options?.length) && !fields.has(field.code)) {
         fields.set(field.code, field);
       }
@@ -453,7 +455,11 @@ function renderQuestions(root, data) {
     const rest = node("div", null, "question-grid");
     more.append(node("summary", "Другие уточнения"), rest);
     const controls = [];
-    for (const field of fields.values()) {
+    const prioritizeTriage = role === "patient" || role === "nursing";
+    const isTriage = (field) => Number(prioritizeTriage && triageCodes.has(field.code));
+    const sortedFields = [...fields.values()].sort((left, right) =>
+      isTriage(right) - isTriage(left) || (right.priority || 0) - (left.priority || 0));
+    for (const field of sortedFields) {
       const [label, input] = fieldLabel(field);
       (controls.length < 6 ? grid : rest).append(label);
       controls.push([field, input]);
@@ -745,9 +751,9 @@ function renderReference(result) {
     root.append(node("div", "В базе знаний не нашлось достаточно сведений по этому вопросу.", "message"));
     return;
   }
-  root.append(node("div", result.mode === "generated" ? "Ответ по источникам" : "Фрагменты из базы знаний", "message"));
+  root.append(node("div", result.mode === "generated" ? "Выдержки из источников, отобранные моделью" : "Фрагменты из базы знаний", "message"));
   for (const claim of result.answer) {
-    const paragraph = node("p", claim.text + " ");
+    const paragraph = node("p", claim.text + " ", "reference-excerpt");
     const link = node("a", "[" + claim.source + "]");
     link.href = "#source-" + claim.source;
     link.addEventListener("click", (event) => {
@@ -756,11 +762,7 @@ function renderReference(result) {
     });
     paragraph.append(link);
     root.append(paragraph);
-    if (claim.evidence) {
-      const citation = node("details");
-      citation.append(node("summary", "Цитата из источника"), node("p", claim.evidence));
-      root.append(citation);
-    }
+
   }
   const section = node("section");
   section.append(node("h3", "Источники"));
@@ -770,7 +772,7 @@ function renderReference(result) {
     item.id = "source-" + source.n;
     item.tabIndex = -1;
     item.append(node("strong", `[${source.n}] ${source.title}`),
-      node("small", source.id + " · " + source.section), node("p", source.excerpt));
+      node("small", source.id + " · " + source.section), node("p", source.excerpt, "reference-excerpt"));
     const fullCard = node("button", "Открыть карточку", "text-btn");
     fullCard.type = "button";
     fullCard.addEventListener("click", () => openKnowledge("knowledge", source.id));

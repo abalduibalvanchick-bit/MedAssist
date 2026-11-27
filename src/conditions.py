@@ -110,6 +110,7 @@ class PatientFacts:
     # после неподвижной точки вывода: их условие ложно при данных фактах. Заполняет
     # InferenceEngine.run; до этого невыведенная сущность — «неизвестно».
     excluded: set[str] = field(default_factory=set)
+    scale_bounds: dict[str, tuple[float, float]] = field(default_factory=dict)
 
     def has_symptom(self, symptom_id: str) -> Truth:
         if symptom_id in self.symptoms:
@@ -153,6 +154,25 @@ _COMPARISONS: dict[str, Callable[[float, Any], bool]] = {
 def compare(left: float, op: str, right: Any) -> bool:
     """Сравнение по оператору языка условий (используется и вне условий)."""
     return _COMPARISONS[op](left, right)
+
+
+def _compare_bounds(low: float, high: float, op: str, right: Any) -> Truth:
+    """Использует только выводы, верные для всего интервала баллов."""
+    if op in ("==", "!="):
+        equal = (Truth.TRUE if low == high == right else
+                 Truth.UNKNOWN if low <= right <= high else Truth.FALSE)
+        return _not(equal) if op == "!=" else equal
+    if op == "between":
+        if right[0] <= low and high <= right[1]:
+            return Truth.TRUE
+        if high < right[0] or low > right[1]:
+            return Truth.FALSE
+        return Truth.UNKNOWN
+    lower = compare(low, op, right)
+    upper = compare(high, op, right)
+    if lower != upper:
+        return Truth.UNKNOWN
+    return Truth.TRUE if lower else Truth.FALSE
 
 
 def _atom_kind(node: dict[str, Any], schema: Schema) -> str | None:
@@ -471,7 +491,11 @@ def evaluate(
         return record(Truth.TRUE if ok else Truth.FALSE, f"{value}={actual} {node['op']} {node['value']}")
     if atom == "scale":
         if value not in facts.scales:
-            return record(Truth.UNKNOWN, f"шкала {value} не вычислена")
+            bounds = facts.scale_bounds.get(value)
+            if bounds is None:
+                return record(Truth.UNKNOWN, f"шкала {value} не вычислена")
+            truth = _compare_bounds(*bounds, node["op"], node["value"])
+            return record(truth, f"{value}: {bounds[0]:g}–{bounds[1]:g}")
         ok = _COMPARISONS[node["op"]](float(facts.scales[value]), node["value"])
         return record(Truth.TRUE if ok else Truth.FALSE, f"{value}={facts.scales[value]} {node['op']} {node['value']}")
     if atom == "scale_category":

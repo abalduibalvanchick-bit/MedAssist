@@ -199,16 +199,24 @@ def rank_questions(questions, memory, kb, *, include_hypotheses=True):
 
     scores = defaultdict(float)
     evaluated = []
+    counted = set()
     for question in questions:
         codes = {item["code"] for item in question["inputs"]}
         importance = weight(question)
-        for code in codes:
-            scores[code] += importance / len(codes)
+        dependency = (question["kind"], question["source"], question.get("target"),
+                      frozenset(codes))
+        if dependency not in counted:
+            counted.add(dependency)
+            for code in codes:
+                scores[code] += importance / len(codes)
         evaluated.append((question, codes, importance))
 
     ranked = []
     for question, codes, importance in evaluated:
-        inputs = sorted(question["inputs"], key=lambda item: (-scores[item["code"]], item["code"]))
+        inputs = sorted(
+            ({**item, "priority": round(scores[item["code"]], 4)} for item in question["inputs"]),
+            key=lambda item: (-item["priority"], item["code"]),
+        )
         ranked.append({**question, "inputs": inputs, "ask": [label_of(item) for item in inputs],
                        "priority": round(max((scores[code] for code in codes), default=importance), 4)})
     ranked.sort(key=lambda q: (-q["priority"], q["inputs"][0]["code"] if q["inputs"] else "",

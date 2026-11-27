@@ -47,6 +47,9 @@ def describe_atom(node: dict[str, Any], facts: PatientFacts, kb: "KnowledgeBase"
         return f"сообщено: {kb.label(kind, value)}"
     if atom == "scale":
         actual = facts.scales.get(value, "не вычислена")
+        if value not in facts.scales and value in facts.scale_bounds:
+            low, high = facts.scale_bounds[value]
+            actual = f"{low:g}–{high:g}"
         return f"{kb.title(value)} = {actual} ({_OPS.get(node['op'], node['op'])} {node['value']})"
     if atom == "scale_category":
         return f"{kb.title(value)}: категория {facts.scale_categories.get(value, '?')}"

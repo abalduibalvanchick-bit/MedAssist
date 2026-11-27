@@ -203,3 +203,12 @@ def test_describe_is_russian_and_uses_labels():
     assert "Боль в груди" in text
     assert "Систолическое АД >= 180" in text
     assert "НЕ Беременность" in text
+
+
+def test_scale_threshold_uses_only_information_supported_by_entire_interval():
+    scale = "PROT-SCALE-004"
+    facts = PatientFacts(scale_bounds={scale: (1, 2)})
+    assert evaluate({"scale": scale, "op": ">=", "value": 3}, facts) is Truth.FALSE
+    assert evaluate({"scale": scale, "op": ">=", "value": 1}, facts) is Truth.TRUE
+    assert evaluate({"scale": scale, "op": "==", "value": 2}, facts) is Truth.UNKNOWN
+    assert evaluate({"scale": scale, "op": "between", "value": [1.5, 3]}, facts) is Truth.UNKNOWN

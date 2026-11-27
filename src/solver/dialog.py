@@ -58,7 +58,7 @@ def pending_inputs(solution: dict[str, Any], asked: set[str] | None = None) -> l
                 continue
             seen.add(code)
             result.append(item)
-    return result
+    return sorted(result, key=lambda item: -item.get("priority", 0))
 
 
 def _to_bool(value: Any) -> bool | None:

@@ -222,3 +222,5 @@ body[data-role="patient"] {
   .hero { min-height: 130px; padding: 21px; }
   .knowledge-summary { padding-inline: 15px; }
 }
+
+.reference-excerpt { white-space: pre-line; overflow-wrap: anywhere; }
