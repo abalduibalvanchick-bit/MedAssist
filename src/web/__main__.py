@@ -13,6 +13,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlsplit
 
+from ..reference_embeddings import OllamaRanker
 from ..reference import answer_reference, can_read_card, ollama_generator
 from ..solver import ROLES, apply_answers, load_default_kb, solve
 from ..solver.inputs import describe_input
@@ -65,8 +66,9 @@ def scenario_runner():
 
 
 class Handler(BaseHTTPRequestHandler):
-    def __init__(self, *args, generator=None, **kwargs):
+    def __init__(self, *args, generator=None, ranker=None, **kwargs):
         self.generator = generator
+        self.ranker = ranker
         super().__init__(*args, **kwargs)
 
     def _reply(self, status, body, content_type):
@@ -159,7 +161,12 @@ class Handler(BaseHTTPRequestHandler):
                 question = data.get("question")
                 if not isinstance(question, str) or not 3 <= len(question.strip()) <= 500:
                     raise ValueError("Введите вопрос от 3 до 500 символов.")
-                return self._json(answer_reference(question.strip(), role, generator=self.generator))
+                route = data.get("route_source")
+                if route is not None and (not isinstance(route, dict)
+                        or set(route) != {"id", "row"} or not isinstance(route["id"], str)
+                        or (route["row"] is not None and type(route["row"]) is not int)):
+                    raise ValueError("Укажите карточку маршрута и номер строки.")
+                return self._json(answer_reference(question.strip(), role, generator=self.generator, ranker=self.ranker, route=route))
 
             patient = data.get("patient")
             answers = data.get("answers", {})
@@ -171,6 +178,9 @@ class Handler(BaseHTTPRequestHandler):
             request = {"patient": patient}
             request, issues = apply_answers(request, answers, kb) if answers else (request, [])
             solution = solve(request, role=role, kb=kb)
+            for decision in solution.get("routing", {}).get("decisions", []):
+                card = kb.get(decision["id"])
+                decision["source_available"] = bool(card and can_read_card(card.metadata.get("access_level", "professional"), role))
             return self._json({"patient": request["patient"], "solution": solution, "answer_issues": issues})
         except (ValueError, RecursionError) as error:
             return self._json({"error": str(error)}, HTTPStatus.BAD_REQUEST)
@@ -181,9 +191,11 @@ def main():
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--ollama-model", default=os.environ.get("MEDASSIST_OLLAMA_MODEL"))
+    parser.add_argument("--ollama-embed-model", default=os.environ.get("MEDASSIST_OLLAMA_EMBED_MODEL"))
     args = parser.parse_args()
     generator = ollama_generator(args.ollama_model) if args.ollama_model else None
-    with ThreadingHTTPServer((args.host, args.port), partial(Handler, generator=generator)) as server:
+    ranker = OllamaRanker(args.ollama_embed_model) if args.ollama_embed_model else None
+    with ThreadingHTTPServer((args.host, args.port), partial(Handler, generator=generator, ranker=ranker)) as server:
         print(f"MedAssist: http://{args.host}:{server.server_port}", flush=True)
         try:
             server.serve_forever()

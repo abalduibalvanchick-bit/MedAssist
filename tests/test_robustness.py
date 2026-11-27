@@ -80,3 +80,22 @@ def test_non_finite_numbers_are_rejected(value):
     solution = solve({"patient": {"age": 40, "params": {"sbp": value}}}, kb=KB)
     assert solution["status"] == "invalid"
     assert any(i["code"] == "BAD_VALUE" for i in solution["input_issues"])
+
+
+def test_conflicting_age_and_invalid_collections():
+    for patient in ({"age": 18, "params": {"age": 80}}, {"params": []}, {"features": False},
+                    {"facts": {1: True, "pregnant": False}}, {"params": {"age": 10**500}}):
+        solution = solve({"patient": patient})
+        assert solution["outcome"]["kind"] == "invalid" and solution["input_issues"]
+    assert solve({"patient": {"age": 18, "params": {"age": "18"}}})["status"] != "invalid"
+
+
+def test_clarification_handles_malformed_collections_and_scalar_symptoms():
+    from src.solver import apply_answers
+    code = "DIAG-SYMPTOM-007"
+    original = {"patient": {"symptoms": 1}}
+    updated, issues = apply_answers(original, {code: True})
+    assert updated == original and issues
+    updated, issues = apply_answers({"patient": {"denied_symptoms": code}}, {code: True})
+    assert not issues and updated["patient"]["denied_symptoms"] == []
+    assert updated["patient"]["symptoms"] == [code]

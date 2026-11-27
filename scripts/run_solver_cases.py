@@ -36,6 +36,9 @@ def expected_summary(exp: dict) -> str:
             parts.append(", ".join(exp[key]))
     if exp.get("input_issues"):
         parts.append("замечания: " + ", ".join(exp["input_issues"]))
+    for field, label in (("route", "маршрут"), ("route_timeframe", "срок"), ("route_provisional", "предварительный")):
+        if field in exp:
+            parts.append(f"{label}: {exp[field]}")
     return "; ".join(parts) or "см. сценарий"
 
 
@@ -50,6 +53,12 @@ def actual_summary(sol: dict) -> str:
         parts.append(", ".join(flags))
     if sol.get("input_issues"):
         parts.append("замечаний: " + str(len(sol["input_issues"])))
+    routing = sol.get("routing") or {}
+    if routing.get("route"):
+        parts.append(f"маршрут: {routing['route']}")
+        if routing.get("timeframe"):
+            parts.append(f"срок: {routing['timeframe']}")
+        parts.append(f"предварительный: {routing['provisional']}")
     return "; ".join(parts)
 
 
@@ -58,6 +67,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--repeat", type=int, default=20)
     parser.add_argument("--out", default=str(ROOT / "docs" / "solver_test_report.md"))
     args = parser.parse_args(argv)
+    if args.repeat < 1:
+        parser.error("--repeat должен быть положительным")
     t0 = time.perf_counter()
     kb = load_default_kb()
     load_ms = (time.perf_counter() - t0) * 1000

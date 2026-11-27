@@ -101,6 +101,8 @@ def _add_to_list(patient: dict[str, Any], key: str, code: str) -> None:
 
 def _remove_from_list(patient: dict[str, Any], key: str, code: str) -> None:
     values = patient.get(key) or []
+    if isinstance(values, str):
+        values = [values]
     if isinstance(values, list) and code in values:
         patient[key] = [v for v in values if v != code]
 
@@ -119,6 +121,15 @@ def apply_answers(request: dict[str, Any], answers: dict[str, Any],
 
     def issue(code: str, message: str) -> None:
         issues.append({"severity": "warning", "code": code, "message": message})
+
+    for key in ("facts", "params", "exam_results"):
+        if key in patient and not isinstance(patient[key], dict):
+            issue("BAD_INPUT", f"Поле «{key}» должно быть словарём. Исправьте исходные данные.")
+            return new_request, issues
+    for key in ("features", "denied_features", "symptoms", "denied_symptoms"):
+        if key in patient and not isinstance(patient[key], (list, str)):
+            issue("BAD_INPUT", f"Поле «{key}» должно быть списком. Исправьте исходные данные.")
+            return new_request, issues
 
     for code, raw in answers.items():
         if raw is None or (isinstance(raw, str) and not raw.strip()):
@@ -155,8 +166,9 @@ def apply_answers(request: dict[str, Any], answers: dict[str, Any],
             options = {o["value"]: o["value"] for o in item["options"]}
             options.update({o["label"].lower(): o["value"] for o in item["options"]})
             choice = options.get(str(raw).strip()) or options.get(str(raw).strip().lower())
-            if choice is None and str(raw).strip().isdigit():
-                index = int(str(raw).strip()) - 1
+            token = str(raw).strip()
+            if choice is None and token.isascii() and token.isdigit() and len(token) <= len(str(len(item["options"]))):
+                index = int(token) - 1
                 if 0 <= index < len(item["options"]):
                     choice = item["options"][index]["value"]
             if choice is None:

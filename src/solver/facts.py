@@ -140,12 +140,14 @@ def parse_case(data: Any, kb: KnowledgeBase) -> ParsedCase:
     if not isinstance(data, dict):
         err("BAD_INPUT", "Описание пациента должно быть словарём.")
         return ParsedCase(PatientFacts(), issues)
-    for key in sorted(set(data) - _KNOWN_KEYS):
+    for key in sorted(set(data) - _KNOWN_KEYS, key=str):
         warn("UNKNOWN_KEY", f"Поле «{key}» не используется решателем и пропущено.")
 
     lists: dict[str, set[str]] = {}
     for key in _LIST_KEYS:
-        value = data.get(key) or []
+        value = data.get(key)
+        if value is None:
+            value = []
         if isinstance(value, str):
             value = [value]
         if not isinstance(value, list):
@@ -203,14 +205,22 @@ def parse_case(data: Any, kb: KnowledgeBase) -> ParsedCase:
         facts.medications.add(cid)
 
     # --- параметры
-    raw_params = data.get("params") or {}
+    raw_params = {} if data.get("params") is None else data["params"]
     if not isinstance(raw_params, dict):
         err("BAD_INPUT", "Поле «params» должно быть словарём вида {код: значение}.")
         raw_params = {}
     params = dict(raw_params)
     if data.get("age") is not None:
+        if "age" in params:
+            try:
+                consistent = (not isinstance(data["age"], bool) and not isinstance(params["age"], bool)
+                              and float(params["age"]) == float(data["age"]))
+            except (TypeError, ValueError, OverflowError):
+                consistent = False
+            if not consistent:
+                err("CONTRADICTION", "Указаны разные или некорректные значения возраста в age и params.age.")
         params.setdefault("age", data["age"])
-    for name, value in sorted(params.items()):
+    for name, value in sorted(params.items(), key=lambda item: str(item[0])):
         spec = schema.parameters.get(name)
         if spec is None:
             err("UNKNOWN_PARAM", f"Параметр {name} не описан в схеме базы знаний.")
@@ -226,7 +236,7 @@ def parse_case(data: Any, kb: KnowledgeBase) -> ParsedCase:
             continue
         try:
             number = float(value)
-        except (TypeError, ValueError):
+        except (TypeError, ValueError, OverflowError):
             err("BAD_VALUE", f"Параметр «{spec.get('label', name)}» должен быть числом, получено {value!r}.")
             continue
         if not math.isfinite(number):
@@ -239,11 +249,11 @@ def parse_case(data: Any, kb: KnowledgeBase) -> ParsedCase:
         facts.params[name] = int(number) if number.is_integer() else number
 
     # --- факты
-    raw_facts = data.get("facts") or {}
+    raw_facts = {} if data.get("facts") is None else data["facts"]
     if not isinstance(raw_facts, dict):
         err("BAD_INPUT", "Поле «facts» должно быть словарём вида {код: true/false}.")
         raw_facts = {}
-    for name, value in sorted(raw_facts.items()):
+    for name, value in sorted(raw_facts.items(), key=lambda item: str(item[0])):
         if name not in schema.facts:
             err("UNKNOWN_FACT", f"Факт {name} не описан в схеме базы знаний.")
             continue
@@ -261,11 +271,11 @@ def parse_case(data: Any, kb: KnowledgeBase) -> ParsedCase:
         err("CONTRADICTION", message)
 
     # --- результаты обследований
-    raw_exams = data.get("exam_results") or {}
+    raw_exams = {} if data.get("exam_results") is None else data["exam_results"]
     if not isinstance(raw_exams, dict):
         err("BAD_INPUT", "Поле «exam_results» должно быть словарём вида {ID обследования: код результата}.")
         raw_exams = {}
-    for exam_id, value in sorted(raw_exams.items()):
+    for exam_id, value in sorted(raw_exams.items(), key=lambda item: str(item[0])):
         card = kb.get(exam_id)
         if card is None or card.category != "exam":
             err("UNKNOWN_EXAM", f"Обследование {exam_id} отсутствует в базе знаний.")
@@ -276,6 +286,7 @@ def parse_case(data: Any, kb: KnowledgeBase) -> ParsedCase:
             continue
         facts.exam_results[exam_id] = str(value)
 
-    if not (facts.symptoms or facts.params or facts.facts or facts.diseases or facts.exam_results):
+    if not (facts.symptoms or facts.params or facts.facts or facts.diseases or facts.exam_results
+            or facts.denied_symptoms or facts.denied_features or facts.medications):
         warn("EMPTY_INPUT", "О пациенте ничего не сообщено.")
     return ParsedCase(facts, issues)

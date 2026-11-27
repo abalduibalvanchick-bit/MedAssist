@@ -630,6 +630,18 @@ function renderSolution(data) {
     ]), role !== "nursing");
     addList(care, "Основания маршрутизации", routing?.decisions?.map((item) =>
       [item.title, item.label, item.timeframe, item.explanation, ...item.actions].filter(Boolean).join(" · ")), true);
+    for (const item of routing?.decisions || []) {
+      if (!item.source_available) continue;
+      const link = node("button", "Источник маршрута · " + item.title, "text-btn");
+      link.type = "button";
+      link.addEventListener("click", () => {
+        location.hash = "reference";
+        const question = "Какие основания и действия указаны в выбранной строке маршрута?";
+        byId("question").value = question;
+        submitReference({id: item.id, row: item.row});
+      });
+      care.append(link);
+    }
   }
 
   const therapy = panel("therapy");
@@ -752,6 +764,12 @@ function renderReference(result) {
     return;
   }
   root.append(node("div", result.mode === "generated" ? "Выдержки из источников, отобранные моделью" : "Фрагменты из базы знаний", "message"));
+  const modelNote = {unavailable: "Локальная модель не ответила. Приведены исходные выдержки.",
+    invalid_evidence: "Модель не вернула проверяемую цитату. Приведены исходные выдержки."};
+  if (modelNote[result.generation]) root.append(node("p", modelNote[result.generation]));
+  const retrieval = result.sources[0]?.retrieval;
+  if (retrieval === "hybrid_fallback") root.append(node("p", "Модель смыслового поиска недоступна. Показаны результаты локального поиска."));
+  if (retrieval === "hybrid_semantic") root.append(node("p", "Порядок источников учитывает смысловую близость к вопросу."));
   for (const claim of result.answer) {
     const paragraph = node("p", claim.text + " ", "reference-excerpt");
     const link = node("a", "[" + claim.source + "]");
@@ -783,22 +801,29 @@ function renderReference(result) {
   root.append(section);
 }
 
-byId("reference-form").addEventListener("submit", async (event) => {
-  event.preventDefault();
+async function submitReference(routeSource = null) {
+  emptyResult("answer", referenceEmpty);
   showError("reference-error");
   const stamp = ++referenceRevision;
   const button = byId("search-button");
   button.disabled = true;
   button.setAttribute("aria-busy", "true");
   try {
-    const result = await request("/api/reference", {question: byId("question").value, role: currentRole()});
+    const result = await request("/api/reference", {question: byId("question").value, role: currentRole(), route_source: routeSource});
     if (stamp === referenceRevision) renderReference(result);
   } catch (error) {
     if (stamp === referenceRevision) showError("reference-error", error.message);
   } finally {
-    button.disabled = false;
-    button.removeAttribute("aria-busy");
+    if (stamp === referenceRevision) {
+      button.disabled = false;
+      button.removeAttribute("aria-busy");
+    }
   }
+}
+
+byId("reference-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  submitReference();
 });
 
 function renderViewLabels() {
@@ -812,6 +837,20 @@ function renderViewLabels() {
   byId("solve-label").textContent = view.action;
   byId("result-hint").textContent = view.result;
   byId("reference-intro").textContent = view.reference;
+  const suggestions = byId("suggestions");
+  suggestions.replaceChildren();
+  const questions = role === "professional"
+    ? ["Из чего состоит шкала CURB-65?", "Куда обращаться при астме?", "Что означает пульсоксиметрия?"]
+    : ["Памятка по бронхиальной астме", "Памятка по мигрени", "Памятка по артериальной гипертензии"];
+  for (const text of questions) {
+    const button = node("button", text);
+    button.type = "button";
+    button.addEventListener("click", () => {
+      byId("question").value = text;
+      byId("question").focus();
+    });
+    suggestions.append(button);
+  }
   const symptoms = byId("symptom-section");
   const measurements = byId("primary-section");
   if (role === "patient") measurements.before(symptoms);
@@ -823,6 +862,8 @@ function updateRoleViews() {
   const repeat = hasCaseResult;
   revision += 1;
   referenceRevision += 1;
+  byId("search-button").disabled = false;
+  byId("search-button").removeAttribute("aria-busy");
   renderViewLabels();
   if (catalog) syncForm();
   emptyResult("result-content", caseEmpty);
@@ -865,16 +906,6 @@ byId("medications").addEventListener("change", (event) => {
   patient.medications = [...event.target.selectedOptions].map((option) => option.value);
   edit();
 });
-
-for (const text of ["Из чего состоит шкала CURB-65?", "Что такое бронхиальная астма?", "Что означает пульсоксиметрия?"]) {
-  const button = node("button", text);
-  button.type = "button";
-  button.addEventListener("click", () => {
-    byId("question").value = text;
-    byId("question").focus();
-  });
-  byId("suggestions").append(button);
-}
 
 window.addEventListener("hashchange", showView);
 showView();

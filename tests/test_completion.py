@@ -124,6 +124,15 @@ def test_web_runs_example_and_reference_on_same_server():
             assert result["patient"]["params"]["urea"] == 8
             assert result["solution"]["explanation"]
             assert fetch("/api/reference", {"question": "Из чего состоит шкала CURB-65?"})["sources"]
+            decision = result["solution"]["routing"]["decisions"][0]
+            scope = {"id": decision["id"], "row": decision["row"]}
+            query = {"question": "На чём основан маршрут?", "route_source": scope}
+            source, = fetch("/api/reference", query)["sources"]
+            assert source["id"] == scope["id"] and decision["explanation"] in source["excerpt"]
+            assert fetch("/api/reference", {**query, "role": "patient"})["status"] == "not_found"
+            with pytest.raises(HTTPError) as bad_route:
+                fetch("/api/reference", {**query, "route_source": {"id": scope["id"]}})
+            assert bad_route.value.code == 400
             regression = {case["id"]: case for case in load_cases()}
             assert {example["code"] for example in overview["examples"] if "code" in example} == regression.keys()
             assert {example["id"] for example in overview["examples"] if "code" not in example} == {
