@@ -456,6 +456,7 @@ function renderQuestions(root, data) {
   }
   const content = node(fieldCodes.size ? "form" : "div", null, "question-content");
   const controls = [];
+  if (fieldCodes.size) content.append(node("p", "Ответьте на те вопросы, для которых есть данные. Остальные можно пропустить."));
   const visible = buckets.filter((bucket) => bucket.fields.length || bucket.texts.size);
   const firstInput = visible.find((bucket) => bucket.fields.length);
   for (const bucket of visible) {
@@ -496,7 +497,7 @@ function renderQuestions(root, data) {
       const answers = readAnswers();
       message.hidden = Boolean(Object.keys(answers).length);
       if (!message.hidden) {
-        message.textContent = "Заполните хотя бы одно уточнение.";
+        message.textContent = "Внесите известный ответ для пересчёта или нажмите «Завершить уточнения».";
         return;
       }
       await solveCase(answers, apply, message);
@@ -738,7 +739,8 @@ function renderSolution(data) {
   addList(root, role === "patient" ? "Выявленные тревожные признаки" : "Тревожные признаки и неотложные состояния",
     [...(result.red_flags || []), ...(role === "patient" ? [] : result.emergencies || [])].map((item) => item.title));
 
-  if (role === "professional" && result.hypotheses?.length) {
+  if (role === "professional" && result.hypotheses?.length &&
+      (result.outcome.kind !== "incomplete" || result.working_diagnoses?.length)) {
     const preview = node("p", "Первая гипотеза · " + result.hypotheses[0].title, "result-preview");
     root.append(preview);
   }

@@ -157,6 +157,27 @@ def test_fully_described_fatigue_asks_for_missing_related_symptoms(kb):
     assert not pending_inputs(solution)
 
 
+def test_fever_dialog_can_check_cough_with_rash_unreported(kb):
+    request = {"patient": {
+        "symptoms": ["DIAG-SYMPTOM-004"],
+        "features": ["fever.chills", "fever.acute", "fever.prolonged", "fever.antipyretic_unresponsive"],
+    }}
+    initial = solve(request, kb=kb)
+    assert initial["status"] == "need_more_data"
+    assert initial["fired_rules"] == [] and initial["outcome"]["urgency"] is None
+    fields = [item["code"] for item in pending_inputs(initial)]
+    assert "DIAG-SYMPTOM-008" in fields and "fever.petechial_rash" not in fields
+
+    updated, issues = apply_answers(request, {"DIAG-SYMPTOM-008": True}, kb)
+    assert issues == []
+    result = solve(updated, kb=kb)
+    assert "RULE-DIAG-022" in result["fired_rules"]
+    assert result["hypotheses"][0]["id"] == "DIAG-DISEASE-003"
+    assert result["outcome"]["title"] == "Есть диагностическая гипотеза"
+    assert result["outcome"]["urgency"] is None and result["routing"]["route"] is None
+    assert {"age", "rr", "sbp"}.issubset({item["code"] for item in pending_inputs(result)})
+
+
 def test_patient_polyuria_dialog_always_has_visible_outcome(kb):
     case = {"patient": {
         "age": 20, "symptoms": ["DIAG-SYMPTOM-011"],

@@ -35,7 +35,8 @@ def summarize_outcome(solution: dict[str, Any], emergency_message: str = "") -> 
 
     if routing["route"] or urgency_label:
         if provisional:
-            summary = "Для проверки более срочного варианта ещё нужны сведения."
+            summary = ("Для проверки более срочного варианта нужны дополнительные сведения."
+                       if routing["route"] else "Указана предварительная срочность. Маршрут пока не определён.")
         elif routing["route"]:
             summary = "Маршрут выбран по введённым данным."
         else:
@@ -61,12 +62,15 @@ def summarize_outcome(solution: dict[str, Any], emergency_message: str = "") -> 
                 "next_step": "Если жалобы сохраняются или усиливаются, обратитесь за медицинской помощью."}
 
     if solution["working_diagnoses"]:
-        summary = "В разборе есть рабочие диагнозы. Срок и маршрут по этим данным пока не определены."
+        title = "Есть рабочий диагноз"
+        summary = "Срочность и маршрут по этому случаю пока не определены."
     elif solution["hypotheses"]:
-        summary = "Получены диагностические гипотезы. Данных для рабочего диагноза и маршрута пока недостаточно."
+        title = "Есть диагностическая гипотеза"
+        summary = f"Первая гипотеза — {solution['hypotheses'][0]['title']}. Срочность и маршрут пока не определены."
     else:
-        summary = "По введённым данным программа пока не определила срочность и маршрут."
+        title = "Срочность и маршрут пока не определены"
+        summary = "По введённым данным программа пока не сформировала диагностическую гипотезу."
     if provisional:
         summary += " Для проверки опасных состояний ещё нужны данные."
-    return {**result, "kind": "incomplete", "title": "Оценка по имеющимся данным", "summary": summary,
+    return {**result, "kind": "incomplete", "title": title, "summary": summary,
             "next_step": "Проверьте доступные уточнения и используйте клиническую оценку для выбора дальнейших действий."}

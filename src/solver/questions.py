@@ -8,8 +8,8 @@
    опасное состояние (безопасность прежде всего);
 3. шкалы, относящиеся к рабочим диагнозам, которые не удалось
    вычислить из-за нехватки данных;
-4. признаки жалобы и недостающие данные применимых диагностических правил,
-   если результата и более конкретных вопросов ещё нет.
+4. недостающие данные частично выполненных диагностических правил,
+   затем признаки жалобы, если результата и более конкретных вопросов ещё нет.
 
 Функция rank_questions назначает приоритет по влиянию недостающих данных.
 
@@ -99,11 +99,8 @@ def detail_questions(memory: "Conclusions", kb: "KnowledgeBase") -> list[dict[st
 
 
 def fallback_questions(memory: "Conclusions", kb: "KnowledgeBase") -> list[dict[str, Any]]:
-    """Уточнить жалобу, затем проверить ещё не полностью оценённые гипотезы."""
-    questions = detail_questions(memory, kb)
-    if questions:
-        return questions
-
+    """Сначала запросить данные, которые могут изменить вывод по гипотезе."""
+    questions = []
     facts = memory.facts
     depth = kb.schema.solver_setting("question_dependency_depth", 3)
     seen = set()
@@ -123,7 +120,7 @@ def fallback_questions(memory: "Conclusions", kb: "KnowledgeBase") -> list[dict[
         seen.add(codes)
         questions.append(_question("rule_inputs", rule.id, "Уточните известные сопутствующие признаки или измерения.", inputs))
 
-    return questions or [
+    return questions or detail_questions(memory, kb) or [
         _question("additional_context", "", "По введённым данным решатель не сформировал вывод и не нашёл конкретных уточнений. "
                   "Если известны другие симптомы или результаты обследований, добавьте их в форму.", [])
     ]
