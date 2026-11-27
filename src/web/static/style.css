@@ -353,3 +353,194 @@ body[data-role="patient"] {
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
+
+.open-decision-map { padding: 6px 10px; font-size: .8rem; }
+.decision-map {
+  width: min(860px, calc(100% - 32px));
+  max-height: calc(100% - 34px);
+  max-height: calc(100dvh - 34px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 0;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  box-shadow: 0 18px 70px #1725234d;
+}
+.decision-map::backdrop { background: #172523a8; }
+.map-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 22px 12px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+.map-header h2 { font-size: 1.2rem; }
+.map-header p, .map-instruction, .map-note { color: var(--muted); font-size: .83rem; }
+.map-body { padding: 14px 22px 22px; }
+.map-tree { display: grid; justify-items: center; margin: 12px 0; }
+.map-node {
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  width: 100%;
+  min-width: 0;
+  padding: 8px 12px;
+  color: var(--ink);
+  border: 1px solid var(--view-border);
+  border-radius: 9px;
+  background: var(--surface);
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.map-node > * { display: block; }
+.map-node strong { font-size: .9rem; line-height: 1.35; }
+.map-node span, .map-node small { font-size: .78rem; color: var(--muted); }
+.map-node:hover, .map-score:hover { background: #f4f7f5; }
+.map-node[aria-pressed="true"], .map-score[aria-pressed="true"] {
+  border-color: var(--view-ink);
+  background: var(--view-soft);
+  box-shadow: inset 0 -2px var(--view-ink);
+}
+.map-root { width: max-content; max-width: 100%; text-align: center; }
+.map-branches {
+  position: relative;
+  display: flex;
+  width: 100%;
+  gap: 12px;
+  padding-top: 22px;
+}
+.map-branches::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  height: 12px;
+  left: 50%;
+  border-left: 1px solid #758e85;
+}
+.map-branches > .map-node { flex: 1 1 0; position: relative; }
+.map-branches > .map-node::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: -7px;
+  right: -7px;
+  height: 12px;
+  border-top: 1px solid #758e85;
+  background: linear-gradient(#758e85, #758e85) center / 1px 100% no-repeat;
+  pointer-events: none;
+}
+.map-branches > :first-child::before { left: 50%; background-position: left; }
+.map-branches > :last-child::before { right: 50%; background-position: right; }
+.map-branches > .map-node::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: calc(50% - 3px);
+  width: 6px;
+  height: 6px;
+  border: solid #758e85;
+  border-width: 0 1px 1px 0;
+  transform: rotate(45deg);
+}
+.map-trace-tab { justify-self: end; width: auto; margin-top: 9px; }
+.map-panel {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #f8faf8;
+  overflow-wrap: anywhere;
+  font-size: .88rem;
+}
+.map-panel h4, .map-panel h5 { margin: 0 0 3px; font-size: .96rem; }
+.map-panel > p + p, .map-panel > section, .map-panel > p:not(:first-child) { margin-top: 7px; }
+.map-panel section h3 { font-size: .83rem; }
+.map-panel ul { margin: 4px 0 8px; padding-inline-start: 1.25rem; }
+.map-panel .map-scores, .map-panel .map-routes, .map-panel .map-steps {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0;
+}
+.map-scores { display: grid; gap: 6px; }
+.map-score {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 10px;
+  color: var(--ink);
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.map-score-label { display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px 10px; }
+.map-score-label small { color: var(--view-ink); font-weight: 650; }
+.map-score-label .map-priority { color: #81382e; }
+.map-score-track { position: relative; display: block; height: 8px; border-radius: 4px; background: #e0e7e3; }
+.map-score-track.signed::after { content: ""; position: absolute; inset: -2px auto -2px 50%; width: 1px; background: #495e57; }
+.map-score-track > span { position: absolute; inset: 0 auto 0 0; border-radius: 4px; background: #50778e; }
+.map-score-track > span.leading { background: #137b6a; }
+.map-score-track.signed > span { inset-inline-start: 50%; }
+.map-score-track.signed > span.negative { inset-inline: auto 50%; background: #a65340; }
+.map-axis, .map-routes { display: flex; justify-content: space-between; gap: 7px; }
+.map-axis { padding: 2px 11px 0; color: var(--muted); font-size: .75rem; }
+.map-routes { flex-wrap: wrap; }
+.map-routes > li { flex: 1 1 9rem; display: flex; min-width: 0; }
+.map-route {
+  width: 100%;
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  padding: 8px 10px;
+  color: var(--ink);
+  background: var(--surface);
+  text-align: left;
+  overflow-wrap: anywhere;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+}
+.map-route[aria-pressed="true"] { box-shadow: inset 0 -2px currentColor; }
+.map-route small { font-size: .77rem; }
+.map-route.chosen { background: #e0f3e9; color: #175b4e; border-color: #a7d2bd; }
+.map-route.possible { background: #fff2d9; color: #70451b; border: 1px dashed #b98744; }
+.map-route.critical { background: #fbe9e5; color: #812e26; border-color: #cf938a; }
+.map-urgent { color: #812e26; font-weight: 700; }
+.map-selection, .map-evidence {
+  padding: 9px 10px;
+  margin-top: 9px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.map-evidence small { display: block; color: var(--muted); margin-bottom: 4px; }
+.map-steps {
+  display: flex;
+  gap: 17px;
+  overflow-x: auto;
+  padding-bottom: 8px !important;
+}
+.map-steps > li { position: relative; flex: 0 0 clamp(142px, 32%, 200px); display: flex; }
+.map-steps > li + li::before {
+  content: "→";
+  position: absolute;
+  left: -15px;
+  top: 40%;
+  color: var(--view-ink);
+  pointer-events: none;
+}
+@media (max-width: 600px) {
+  .decision-map { width: calc(100% - 16px); max-height: calc(100dvh - 16px); }
+  .map-header, .map-body { padding-inline: 11px; }
+  .map-branches { gap: 6px; }
+  .map-branches .map-node { padding-inline: 6px; }
+  .map-branches > .map-node::before { inset-inline: -4px; }
+  .map-branches > :first-child::before { left: 50%; }
+  .map-branches > :last-child::before { right: 50%; }
+}

@@ -105,6 +105,12 @@ def test_web_runs_example_and_reference_on_same_server():
 
         try:
             kb = load_default_kb()
+            with urlopen(root + "/", timeout=5) as response:
+                html = response.read().decode()
+            assert 'id="decision-map"' in html and 'src="/decision-map.js"' in html
+            with urlopen(root + "/decision-map.js", timeout=5) as response:
+                assert response.headers.get_content_type() in ("text/javascript", "application/javascript")
+                assert b"function showDecisionMap" in response.read()
             overview = fetch("/api/catalog")
             assert overview["counts"] == {"cards": len(kb.cards), "rules": len(kb.rules)}
             expected_fields = {

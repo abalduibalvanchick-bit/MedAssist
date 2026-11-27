@@ -22,7 +22,7 @@ from ..scenarios import ScenarioRunner
 from .scenarios import QUICK_EXAMPLES, scenario_list, scenarios
 
 STATIC = Path(__file__).resolve().parent / "static"
-FILES = {"/": "index.html", "/app.js": "app.js", "/style.css": "style.css",
+FILES = {"/": "index.html", "/app.js": "app.js", "/decision-map.js": "decision-map.js", "/style.css": "style.css",
          "/OpenSans-Regular.woff2": "OpenSans-Regular.woff2", "/OpenSans-Bold.woff2": "OpenSans-Bold.woff2"}
 MAX_BODY = 65536
 CASE_MAPS = ("params", "facts", "exam_results")

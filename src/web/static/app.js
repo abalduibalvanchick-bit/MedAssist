@@ -686,9 +686,14 @@ function moveTo(element) {
   target.scrollIntoView({block: "start"});
 }
 
-function renderResultNav(root, sections) {
+function renderResultNav(root, sections, result, role) {
   const nav = node("nav", null, "result-nav");
   nav.setAttribute("aria-label", "Разделы результата");
+  const map = node("button", "Карта решения", "primary open-decision-map");
+  map.type = "button";
+  map.setAttribute("aria-haspopup", "dialog");
+  map.addEventListener("click", () => showDecisionMap(result, role));
+  nav.append(map);
   for (const section of sections) {
     const button = node("button", section.querySelector("summary").textContent, "secondary");
     button.type = "button";
@@ -885,7 +890,7 @@ function renderSolution(data) {
   if (leadingPanel && result.outcome.kind === "emergency") root.append(leadingPanel);
   root.append(...available);
   const navigation = [...root.children].filter((element) => element.classList.contains("result-group"));
-  if (navigation.length) root.insertBefore(renderResultNav(root, navigation), root.children[position]);
+  root.insertBefore(renderResultNav(root, navigation, result, role), root.children[position] || null);
   addList(root, "Справочная информация", disclaimers, true);
 }
 
