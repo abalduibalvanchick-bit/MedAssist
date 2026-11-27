@@ -35,7 +35,7 @@ const views = {
     measurements: "Измерения в сценарии", symptoms: "Признаки учебного случая",
     primary: ["age", "temperature", "spo2", "sbp", "dbp", "hr"],
     action: "Запустить учебный разбор", result: "Ход вывода и разбор гипотез по шагам.",
-    reference: "Задайте вопрос по доступным карточкам и памяткам. Правила всего справочника доступны в режиме специалиста.",
+    reference: "Ищите по доступным карточкам или откройте каталог правил вывода.",
     sections: [["reasoning", "Как решатель пришёл к выводу"], ["diagnosis", "Гипотезы и шкалы"],
       ["care", "Протоколы и наблюдение"], ["therapy", "Терапия и безопасность"]],
   },
@@ -59,6 +59,9 @@ const extraLabels = {symptom: "Жалобы", feature: "Характер жал�
   fact: "Самочувствие и анамнез", exam_result: "Известные результаты обследований"};
 const patientLabels = {
   sbp: "Верхнее давление", dbp: "Нижнее давление", hr: "Пульс", spo2: "Насыщение крови кислородом",
+  "dyspnea.cyanosis": "Посинели губы или кожа",
+  "dyspnea.unable_full_sentences": "Из-за одышки трудно говорить целыми фразами",
+  "dyspnea.accessory_muscles": "При дыхании заметно напрягаются мышцы груди или шеи",
   glucose: "Глюкоза крови", confusion: "Есть ли спутанность сознания?",
   "DIAG-SYMPTOM-006": "Повышенная жажда", "DIAG-SYMPTOM-007": "Частое мочеиспускание",
   "DIAG-SYMPTOM-010": "Внезапное нарушение речи, движений или чувствительности",
@@ -73,7 +76,11 @@ let referenceRevision = 0;
 let selectedExample = "";
 let hasCaseResult = false;
 let questionsFinished = false;
+let lastSolution;
+let lastUpdate;
 let knowledgeRevision = 0;
+let cardRevision = 0;
+let caseReturn;
 let knowledgeData;
 const groups = {example: "Учебные примеры", published: "По публикации",
   typical: "Типовые", boundary: "Граничные", negative: "Проверки ошибок"};
@@ -184,6 +191,7 @@ function fieldName(field) {
 function edit() {
   revision += 1;
   hasCaseResult = false;
+  lastSolution = lastUpdate = undefined;
   questionsFinished = false;
   selectedExample = "";
   byId("scenario-info").hidden = true;
@@ -413,59 +421,63 @@ function renderQuestions(root, data) {
   const section = node("details", null, "result-group questions-group");
   section.open = !emergency && (needsData || outcome.provisional || role === "nursing" || role === "patient");
   section.append(node("summary", emergency ? "Уточнения для последующего разбора" : "Что можно уточнить"));
-  const triage = (question) => ["safety_check", "routing"].includes(question.kind);
-  const ordered = role === "patient" || role === "nursing"
-    ? [...questions.filter(triage), ...questions.filter((question) => !triage(question))] : questions;
-  const fields = new Map();
-  const triageCodes = new Set();
-  for (const question of ordered) {
-    for (const field of question.inputs || []) {
-      if (triage(question)) triageCodes.add(field.code);
-      if ((field.type !== "choice" || field.options?.length) && !fields.has(field.code)) {
-        fields.set(field.code, field);
+  section.id = "result-questions";
+  const buckets = [
+    {title: "Срочность и маршрут", kinds: ["safety_check", "routing"], open: true},
+    {title: "Симптомы и оценка", kinds: []},
+    {title: "Применимость протоколов", kinds: ["protocol"]},
+    {title: "Безопасность терапии", kinds: ["therapy"]},
+  ].map((bucket) => ({...bucket, fields: [], texts: new Set()}));
+  const fieldCodes = new Set();
+  for (const bucket of buckets) {
+    for (const question of questions) {
+      const target = buckets.find((entry) => entry.kinds.includes(question.kind)) || buckets[1];
+      if (target !== bucket) continue;
+      if (question.text) bucket.texts.add(question.text);
+      for (const field of question.inputs || []) {
+        if (fieldCodes.has(field.code) || (field.type === "choice" && !field.options?.length)) continue;
+        fieldCodes.add(field.code);
+        bucket.fields.push(field);
       }
     }
   }
-  if (questionsFinished && fields.size) {
+  if (questionsFinished && fieldCodes.size) {
     section.open = true;
     const resume = node("button", "Вернуться к вопросам", "secondary edit-case");
     resume.type = "button";
     resume.addEventListener("click", () => {
       questionsFinished = false;
       renderSolution(data);
-      root.querySelector(".questions-group form input, .questions-group form select")?.focus();
+      root.querySelector(".questions-group details[open] input, .questions-group details[open] select")?.focus();
     });
     section.append(node("p", "Оценка показана по введённым данным. Пропущенные ответы остаются неизвестными."), resume);
     root.append(section);
     return;
   }
-  const texts = [...new Set(ordered.map((question) => question.text))];
-  const shown = texts.slice(0, 4);
-  const notes = node("ul");
-  for (const text of shown) notes.append(node("li", text));
-  if (!shown.length) notes.append(node("li", "Можно внести другие известные жалобы, измерения или результаты обследований."));
-  section.append(notes);
-  if (texts.length > shown.length) {
-    addList(section, "Все формулировки уточнений", texts.slice(shown.length), true);
-  }
-  if (fields.size) {
-    const form = node("form");
-    const grid = node("div", null, "question-grid");
-    const more = node("details");
-    const rest = node("div", null, "question-grid");
-    more.append(node("summary", "Другие уточнения"), rest);
-    const controls = [];
-    const prioritizeTriage = role === "patient" || role === "nursing";
-    const isTriage = (field) => Number(prioritizeTriage && triageCodes.has(field.code));
-    const sortedFields = [...fields.values()].sort((left, right) =>
-      isTriage(right) - isTriage(left) || (right.priority || 0) - (left.priority || 0));
-    for (const field of sortedFields) {
-      const [label, input] = fieldLabel(field);
-      (controls.length < 6 ? grid : rest).append(label);
-      controls.push([field, input]);
+  const content = node(fieldCodes.size ? "form" : "div", null, "question-content");
+  const controls = [];
+  const visible = buckets.filter((bucket) => bucket.fields.length || bucket.texts.size);
+  const firstInput = visible.find((bucket) => bucket.fields.length);
+  for (const bucket of visible) {
+    const group = node("details", null, "question-bucket");
+    group.open = bucket.open || bucket === firstInput;
+    group.append(node("summary", bucket.title + (bucket.fields.length ? ` · ${bucket.fields.length}` : "")));
+    if (bucket.fields.length) {
+      const grid = node("div", null, "question-grid");
+      bucket.fields.sort((a, b) => (b.priority || 0) - (a.priority || 0));
+      for (const field of bucket.fields) {
+        const [label, input] = fieldLabel(field);
+        grid.append(label);
+        controls.push([field, input]);
+      }
+      group.append(grid);
     }
-    form.append(grid);
-    if (rest.children.length) form.append(more);
+    addList(group, "Зачем нужны эти сведения", [...bucket.texts], Boolean(bucket.fields.length));
+    content.append(group);
+  }
+  if (!visible.length) content.append(node("p", "Можно внести другие известные жалобы, измерения или результаты обследований."));
+  if (fieldCodes.size) {
+    const form = content;
     const apply = node("button", "Пересчитать с ответами", "primary");
     apply.type = "submit";
     const finish = node("button", "Завершить уточнения", "secondary");
@@ -499,7 +511,6 @@ function renderQuestions(root, data) {
         root.querySelector(".case-outcome h3").focus();
       }
     });
-    section.append(form);
   } else if (needsData) {
     const editCase = node("button", "Дополнить данные", "secondary edit-case");
     editCase.type = "button";
@@ -512,11 +523,13 @@ function renderQuestions(root, data) {
     });
     section.append(editCase);
   }
+  section.append(content);
   root.append(section);
 }
 
-function subsection(title) {
+function subsection(title, key) {
   const group = node("details", null, "result-group");
+  group.id = "result-" + key;
   group.append(node("summary", title), node("div", null, "result-group-body"));
   return group;
 }
@@ -549,14 +562,170 @@ function renderOutcome(root, result, role) {
   root.append(block);
 }
 
+function listItems(root, title, items, render, open = false) {
+  if (!items?.length) return;
+  const group = node("details", null, "detail-list");
+  group.open = open;
+  const list = node("ul", null, "item-list");
+  for (const item of items) {
+    const entry = node("li");
+    render(entry, item);
+    list.append(entry);
+  }
+  group.append(node("summary", title), list);
+  root.append(group);
+}
+
+function bulletList(items) {
+  const list = node("ul");
+  list.append(...items.map((item) => node("li", item)));
+  return list;
+}
+
+function textLine(root, label, value) {
+  if (!value) return;
+  const line = node("p", null, "detail-line");
+  line.append(node("strong", label), document.createTextNode(" " + value));
+  root.append(line);
+}
+
+function formatValue(field, value) {
+  if (typeof value === "boolean") return value ? "да" : "нет";
+  if (field.type === "choice") return field.options.find((item) => item.value === value)?.label || value;
+  return [value, field.unit].filter((item) => item != null && item !== "").join(" ");
+}
+
+function renderMeasurements(root) {
+  const fields = (catalog?.fields.param || []).filter((field) => fieldValue(field) != null);
+  if (!fields.length) return;
+  const section = node("section", null, "role-highlight");
+  const list = node("dl", null, "measurement-list");
+  for (const field of fields) {
+    const pair = node("div");
+    pair.append(node("dt", fieldName(field)), node("dd", formatValue(field, fieldValue(field))));
+    list.append(pair);
+  }
+  section.append(node("h3", "Уже измерено"), list);
+  root.append(section);
+}
+
+function openReferenceFromCase(button) {
+  caseReturn = button;
+  byId("back-to-case").hidden = false;
+  location.hash = "reference";
+  showView();
+}
+
+byId("back-to-case").addEventListener("click", () => {
+  location.hash = "case";
+  showView();
+  if (caseReturn?.isConnected) moveTo(caseReturn);
+  else moveTo(byId("case-form-title"));
+});
+
+const traceKinds = {input: "Входные данные", profile: "Профиль", scale: "Шкала", redflag: "Красный флаг",
+  emergency: "Неотложное состояние", rule: "Правило", routing: "Маршрутизация", ranking: "Оценка гипотезы",
+  protocol: "Протокол", differential: "Дифференциальная диагностика", therapy: "Терапия"};
+
+function renderTrace(root, result, role) {
+  if (!result.explanation) return;
+  const details = node("details", null, "trace-view");
+  details.open = role === "student";
+  details.append(node("summary", "Ход вывода"));
+  if (result.trace?.length) {
+    const list = node("ol", null, "trace-list");
+    list.tabIndex = 0;
+    list.setAttribute("aria-label", "Шаги хода вывода");
+    for (const step of result.trace) {
+      const entry = node("li");
+      entry.append(node("small", `${traceKinds[step.kind] || step.kind} · ${step.source}`), node("h4", step.title));
+      if (step.because.length) {
+        entry.append(node("strong", "На каких данных"), bulletList(step.because));
+      }
+      if (step.effects.length) {
+        entry.append(node("strong", "Что получилось"), bulletList(step.effects));
+      }
+      if (step.kind === "rule" && (role === "student" || role === "professional")) {
+        const link = node("button", "Открыть " + step.source, "text-btn");
+        link.type = "button";
+        link.addEventListener("click", () => {
+          openReferenceFromCase(link);
+          openKnowledge("knowledge-rules", step.source);
+        });
+        entry.append(link);
+      }
+      list.append(entry);
+    }
+    details.append(list);
+  }
+  const raw = node("details");
+  const trace = node("pre", result.explanation, "result-trace");
+  trace.tabIndex = 0;
+  raw.append(node("summary", "Полная текстовая трасса"), trace);
+  details.append(raw);
+  root.append(details);
+}
+
+function moveTo(element) {
+  if (element.tagName === "DETAILS") element.open = true;
+  const target = element.querySelector(":scope > summary") || element;
+  target.focus({preventScroll: true});
+  target.scrollIntoView({block: "start"});
+}
+
+function renderResultNav(root, sections) {
+  const nav = node("nav", null, "result-nav");
+  nav.setAttribute("aria-label", "Разделы результата");
+  for (const section of sections) {
+    const button = node("button", section.querySelector("summary").textContent, "secondary");
+    button.type = "button";
+    button.addEventListener("click", () => moveTo(section));
+    nav.append(button);
+  }
+  const expand = node("button", "Раскрыть все разделы", "text-btn");
+  expand.type = "button";
+  expand.addEventListener("click", () => {
+    for (const detail of root.querySelectorAll("details")) detail.open = true;
+  });
+  const editLink = node("button", "К данным пациента", "text-btn");
+  editLink.type = "button";
+  editLink.addEventListener("click", () => moveTo(byId("case-form-title")));
+  nav.append(expand, editLink);
+  return nav;
+}
+
+function renderRouteEvidence(root, result) {
+  const routing = result.routing;
+  const origins = new Set(routing?.sources || []);
+  const decisive = (routing?.decisions || []).filter((item) => origins.has(item.id) && item.route === routing.route);
+  const evidence = [...new Set(decisive.flatMap((item) => item.because || []))];
+  if (!evidence.length) {
+    for (const step of result.trace || []) {
+      if (origins.has(step.source) && step.kind !== "routing") evidence.push(...step.because);
+    }
+  }
+  if (evidence.length) {
+    const content = node("div", null, "route-evidence");
+    const clean = (fact) => fact.replace(/^Клиническая шкала: /, "")
+      .replace(/ = (\d+)\.0(?=\s|$)/g, " = $1")
+      .replace(/ = (\d+) \(= \1\)$/, " — $1");
+    content.append(node("h4", "Что определило маршрут"), bulletList([...new Set(evidence.map(clean))]));
+    root.append(content);
+  }
+}
+
 function renderSolution(data) {
   const result = data.solution;
   const root = byId("result-content");
   const role = currentRole();
   root.className = "output";
   root.replaceChildren();
+  byId("back-to-case").hidden = true;
+  caseReturn = undefined;
   const routing = result.routing;
   renderOutcome(root, result, role);
+  if (lastUpdate) root.append(node("p", lastUpdate, "update-note"));
+  if (role !== "patient" && result.routing?.route) renderRouteEvidence(root.firstElementChild, result);
   addList(root, "Замечания к данным", (result.input_issues || []).concat(data.answer_issues || []).map((item) => item.message));
   const disclaimers = result.disclaimer?.filter((text) => text !== result.outcome.next_step);
   if (result.status === "invalid" || result.status === "refused") {
@@ -577,33 +746,39 @@ function renderSolution(data) {
   if (role === "student" && result.trace?.length) {
     root.append(node("p", "Шагов вывода · " + result.trace.length, "result-preview"));
   }
-  renderQuestions(root, data);
+  if (role === "nursing") renderMeasurements(root);
 
   const groups = {};
-  for (const [key, title] of currentView().sections) groups[key] = subsection(title);
+  for (const [key, title] of currentView().sections) groups[key] = subsection(title, key);
   const panel = (key) => groups[key]?.lastElementChild;
   const diagnosis = panel("diagnosis");
   if (diagnosis) {
     addList(diagnosis, "Профили", result.profiles?.map((item) => item.title), true);
     addList(diagnosis, "Рабочие диагнозы", result.working_diagnoses?.map((item) => item.title), true);
-    addList(diagnosis, "Гипотезы", result.hypotheses?.map((item) => {
-      const argumentsText = item.arguments.map((argument) =>
-        (argument.contribution > 0 ? "+" : "−") + " " + argument.title).join(", ");
+    listItems(diagnosis, "Гипотезы", result.hypotheses, (entry, item) => {
+      entry.append(node("h4", item.title));
       const rank = item.rank_score ?? item.score;
-      return item.title + " · " + rank + " балл." + (argumentsText ? " · " + argumentsText : "");
-    }), true);
+      textLine(entry, "Оценка гипотезы", `${rank} · вес сработавших правил ${item.score}`);
+      const names = (sign) => item.arguments.filter((argument) => sign * argument.contribution > 0)
+        .map((argument) => `${argument.title} (${sign > 0 ? "+" : "−"}${Math.abs(argument.contribution)})`).join(", ");
+      textLine(entry, "За", names(1));
+      textLine(entry, "Против", names(-1));
+    }, role === "professional");
     for (const table of result.differential || []) {
-      addList(diagnosis, table.title, table.branches.map((branch) => {
+      listItems(diagnosis, table.title, table.branches, (entry, branch) => {
+        entry.append(node("h4", branch.title), node("p", branch.label, "item-status"));
+        textLine(entry, "За", branch.for.join(", "));
+        textLine(entry, "Против", branch.against.join(", "));
         const exam = branch.key_exam;
-        return [branch.title + " — " + branch.label,
-          branch.for.length ? "за: " + branch.for.join(", ") : "",
-          branch.against.length ? "против: " + branch.against.join(", ") : "",
-          exam?.recommended ? (exam.completed ? "уже выполнено: " : "ключевое обследование: ") + exam.title : "",
-        ].filter(Boolean).join(" · ");
-      }), true);
+        if (exam?.recommended) textLine(entry, exam.completed ? "Уже выполнено" : "Ключевое обследование", exam.title);
+      });
     }
-    addList(diagnosis, "Шкалы", result.scales?.map((item) =>
-      `${item.title} · ${item.value ?? item.range.join("–")} · ${item.category_label}`), true);
+    listItems(diagnosis, "Шкалы", result.scales, (entry, item) => {
+      entry.append(node("h4", item.title));
+      textLine(entry, "Баллы шкалы", `${item.value ?? item.range.join("–")} · ${item.category_label}`);
+      addList(entry, "Как посчитано", item.items?.map((part) =>
+        [part.label, `${part.points ?? "нет данных"} балл.`, part.detail].filter(Boolean).join(" · ")), true);
+    });
   }
 
   const care = panel("care");
@@ -628,30 +803,39 @@ function renderSolution(data) {
     addList(care, "Наблюдение", result.follow_up?.flatMap((item) => [
       item.title, ...(item.schedule || []).map((row) => [row.after, row.interval, row.purpose].filter(Boolean).join(" · ")),
     ]), role !== "nursing");
-    addList(care, "Основания маршрутизации", routing?.decisions?.map((item) =>
-      [item.title, item.label, item.timeframe, item.explanation, ...item.actions].filter(Boolean).join(" · ")), true);
-    for (const item of routing?.decisions || []) {
-      if (!item.source_available) continue;
-      const link = node("button", "Источник маршрута · " + item.title, "text-btn");
-      link.type = "button";
-      link.addEventListener("click", () => {
-        location.hash = "reference";
-        const question = "Какие основания и действия указаны в выбранной строке маршрута?";
-        byId("question").value = question;
-        submitReference({id: item.id, row: item.row});
-      });
-      care.append(link);
-    }
+    listItems(care, "Основания маршрутизации", routing?.decisions, (entry, item) => {
+      entry.append(node("h4", item.title));
+      textLine(entry, "Маршрут", [item.label, item.timeframe].filter(Boolean).join(" · "));
+      if (item.because?.length) {
+        entry.append(node("strong", "Условия, которые сработали"), bulletList(item.because));
+      }
+      textLine(entry, "Описание строки в базе", item.explanation);
+      addList(entry, "Действия по этой строке", item.actions);
+      if (item.source_available) {
+        const link = node("button", "Источник маршрута · " + item.title, "text-btn");
+        link.type = "button";
+        link.addEventListener("click", () => {
+          openReferenceFromCase(link);
+          byId("question").value = "Какие основания и действия указаны в выбранной строке маршрута?";
+          submitReference({id: item.id, row: item.row}, true);
+        });
+        entry.append(link);
+      }
+    });
   }
 
   const therapy = panel("therapy");
   if (therapy) {
     for (const regimen of result.therapy?.regimens || []) {
-      addList(therapy, regimen.title, regimen.lines.flatMap((line) => line.options.map((option) =>
-        [`Линия ${line.line} · ${option.title} — ${option.label}`, option.note,
-          ...option.reasons.map((reason) => reason.text + " [" + reason.source + "]"),
-          ...option.dose_notes.map((reason) => reason.text + " [" + reason.source + "]"),
-        ].filter(Boolean).join(" · "))), true);
+      listItems(therapy, regimen.title,
+        regimen.lines.flatMap((line) => line.options.map((option) => ({...option, line: line.line}))),
+        (entry, option) => {
+          entry.append(node("h4", option.title));
+          textLine(entry, "Линия " + option.line, option.label);
+          if (option.note) entry.append(node("p", option.note));
+          const reasons = [...option.reasons, ...option.dose_notes].map((r) => `${r.text} [${r.source}]`);
+          if (reasons.length) entry.append(bulletList(reasons));
+        });
     }
     addList(therapy, "Взаимодействия", result.therapy?.interactions?.map((item) => item.title + " · " + item.text), true);
     addList(therapy, "Предупреждения", result.warnings?.map((item) => item.text), true);
@@ -674,19 +858,25 @@ function renderSolution(data) {
     addList(reasoning, "Введённые значения", measurements.map((field) =>
       [`${fieldName(field)} — ${showValue(fieldValue(field))}`, field.unit].filter(Boolean).join(" ")));
   } else {
-    addList(reasoning, "Основания оценки", result.urgency?.reasons?.map((item) => item.reason));
-  }
-  if (result.explanation) {
-    const details = node("details");
-    details.open = role === "student";
-    const trace = node("pre", result.explanation, "result-trace");
-    trace.tabIndex = 0;
-    details.append(node("summary", "Ход вывода"), trace);
-    reasoning.append(details);
+    const reasons = result.urgency?.reasons || [];
+    listItems(reasoning, "Основания оценки срочности", reasons, (entry, item) => {
+      const step = result.trace?.find((row) => row.source === item.source && row.because.length);
+      if (step) entry.append(bulletList(step.because));
+      textLine(entry, "Источник", [item.source, item.reason].filter(Boolean).join(" · "));
+    });
+    renderTrace(reasoning, result, role);
   }
   const available = Object.values(groups).filter((group) => group.lastElementChild.children.length);
   if (available.length && (role !== "patient" || advice?.children.length)) available[0].open = true;
+  const position = root.children.length;
+  const leadingPanel = role === "student" && available[0] === groups.reasoning ? available.shift() : null;
+  // Экстренный итог и тревожные признаки всегда остаются первыми.
+  if (leadingPanel && result.outcome.kind !== "emergency") root.append(leadingPanel);
+  renderQuestions(root, data);
+  if (leadingPanel && result.outcome.kind === "emergency") root.append(leadingPanel);
   root.append(...available);
+  const navigation = [...root.children].filter((element) => element.classList.contains("result-group"));
+  if (navigation.length) root.insertBefore(renderResultNav(root, navigation), root.children[position]);
   addList(root, "Справочная информация", disclaimers, true);
 }
 
@@ -704,7 +894,28 @@ async function solveCase(answers, button, inlineError, focusResult = true, finis
       return;
     }
     if (data.solution.status !== "invalid") {
+      const fields = Object.values(catalog.fields).flat().filter((field) => Object.hasOwn(answers, field.code));
+      const previous = fields.map((field) => fieldValue(field));
       patient = data.patient;
+      if (fields.length) {
+        const applied = fields.filter((field, index) => previous[index] !== fieldValue(field))
+          .map((field) => `${fieldName(field)} — ${formatValue(field, fieldValue(field))}`);
+        const route = (value) => currentRole() === "patient" ? patientRoutes[value?.route] || value?.label : value?.label;
+        const before = route(lastSolution?.routing);
+        const after = route(data.solution.routing);
+        const notes = [];
+        if (applied.length) notes.push("Учтены ответы — " + applied.join(", ") + ".");
+        if (before !== after) {
+          if (after) notes.push(before ? `Маршрут изменился (${before} → ${after}).` : `Определён маршрут — ${after}.`);
+          else if (before) notes.push("По обновлённым данным маршрут пока не определён.");
+        } else if (lastSolution?.outcome.provisional && !data.solution.outcome.provisional && after) {
+          notes.push("Пометка о предварительности маршрута снята.");
+        }
+        lastUpdate = notes.join(" ");
+      } else {
+        lastUpdate = undefined;
+      }
+      lastSolution = data.solution;
       syncForm();
     }
     if (finishQuestions) questionsFinished = true;
@@ -734,6 +945,7 @@ async function loadExample(example) {
     patient = data.request.patient || data.request;
     selectedExample = data.title;
     hasCaseResult = false;
+    lastSolution = lastUpdate = undefined;
     questionsFinished = false;
     const info = byId("scenario-info");
     info.replaceChildren(node("strong", data.title));
@@ -761,6 +973,10 @@ function renderReference(result) {
   root.replaceChildren();
   if (result.status === "not_found") {
     root.append(node("div", "В базе знаний не нашлось достаточно сведений по этому вопросу.", "message"));
+    const retry = node("button", "Уточнить вопрос", "text-btn");
+    retry.type = "button";
+    retry.addEventListener("click", () => moveTo(byId("question")));
+    root.append(retry);
     return;
   }
   root.append(node("div", result.mode === "generated" ? "Выдержки из источников, отобранные моделью" : "Фрагменты из базы знаний", "message"));
@@ -801,8 +1017,12 @@ function renderReference(result) {
   root.append(section);
 }
 
-async function submitReference(routeSource = null) {
-  emptyResult("answer", referenceEmpty);
+async function submitReference(routeSource = null, focusAnswer = false) {
+  const answer = byId("answer");
+  answer.className = "output";
+  answer.replaceChildren(node("p", "Поиск по базе знаний…", "message"));
+  byId("reference-query").hidden = false;
+  byId("reference-query").textContent = routeSource ? "Основание маршрута" : byId("question").value.trim();
   showError("reference-error");
   const stamp = ++referenceRevision;
   const button = byId("search-button");
@@ -810,9 +1030,16 @@ async function submitReference(routeSource = null) {
   button.setAttribute("aria-busy", "true");
   try {
     const result = await request("/api/reference", {question: byId("question").value, role: currentRole(), route_source: routeSource});
-    if (stamp === referenceRevision) renderReference(result);
+    if (stamp === referenceRevision) {
+      renderReference(result);
+      if (focusAnswer || window.matchMedia("(max-width: 760px)").matches) moveTo(byId("answer-title"));
+    }
   } catch (error) {
-    if (stamp === referenceRevision) showError("reference-error", error.message);
+    if (stamp === referenceRevision) {
+      emptyResult("answer", referenceEmpty);
+      byId("reference-query").hidden = true;
+      showError("reference-error", error.message);
+    }
   } finally {
     if (stamp === referenceRevision) {
       button.disabled = false;
@@ -842,6 +1069,7 @@ function renderViewLabels() {
   const questions = role === "professional"
     ? ["Из чего состоит шкала CURB-65?", "Куда обращаться при астме?", "Что означает пульсоксиметрия?"]
     : ["Памятка по бронхиальной астме", "Памятка по мигрени", "Памятка по артериальной гипертензии"];
+  byId("question").placeholder = "Например, " + questions[0].replace(/^./u, (letter) => letter.toLowerCase());
   for (const text of questions) {
     const button = node("button", text);
     button.type = "button";
@@ -853,8 +1081,8 @@ function renderViewLabels() {
   }
   const symptoms = byId("symptom-section");
   const measurements = byId("primary-section");
-  if (role === "patient") measurements.before(symptoms);
-  else symptoms.before(measurements);
+  if (role === "nursing") symptoms.before(measurements);
+  else measurements.before(symptoms);
   byId("examples").hidden = role === "patient";
 }
 
@@ -868,6 +1096,7 @@ function updateRoleViews() {
   if (catalog) syncForm();
   emptyResult("result-content", caseEmpty);
   emptyResult("answer", referenceEmpty);
+  byId("reference-query").hidden = true;
   showError("case-error");
   showError("reference-error");
   loadKnowledge();
@@ -935,6 +1164,7 @@ function renderKnowledgeList() {
 
 async function loadKnowledge() {
   const stamp = ++knowledgeRevision;
+  cardRevision += 1;
   knowledgeData = undefined;
   byId("knowledge-content").replaceChildren(node("p", "Выберите карточку для просмотра."));
   byId("knowledge-list").replaceChildren();
@@ -970,13 +1200,13 @@ function appendKnowledgeText(root, content, title) {
 
 async function openKnowledge(collection, id) {
   if (!id) return;
-  const stamp = ++knowledgeRevision;
+  const stamp = ++cardRevision;
   byId("knowledge-browser").open = true;
   const root = byId("knowledge-content");
   root.replaceChildren(node("p", "Загрузка…"));
   try {
     const card = await request(knowledgePath(collection, id));
-    if (stamp !== knowledgeRevision) return;
+    if (stamp !== cardRevision) return;
     root.replaceChildren(node("h3", card.title));
     if (card.id) root.append(node("p", card.id, "knowledge-id"));
     if (card.content) appendKnowledgeText(root, card.content, card.title);
@@ -1004,7 +1234,7 @@ async function openKnowledge(collection, id) {
     }
     root.focus();
   } catch (error) {
-    if (stamp === knowledgeRevision) root.textContent = error.message;
+    if (stamp === cardRevision) root.textContent = error.message;
   }
 }
 
@@ -1020,6 +1250,7 @@ byId("knowledge-domain").add(new Option("Все разделы", ""));
 for (const [id, label] of Object.entries(domains)) byId("knowledge-domain").add(new Option(label, id));
 byId("knowledge-domain").addEventListener("change", renderKnowledgeList);
 byId("knowledge-search").addEventListener("input", renderKnowledgeList);
+byId("browse-knowledge").addEventListener("click", () => moveTo(byId("knowledge-browser")));
 byId("open-card").addEventListener("click", () => openKnowledge("knowledge", byId("knowledge-list").value));
 byId("knowledge-list").addEventListener("dblclick", () => byId("open-card").click());
 byId("open-rule").addEventListener("click", () => openKnowledge("knowledge-rules", byId("knowledge-rule").value));

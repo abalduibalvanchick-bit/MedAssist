@@ -103,13 +103,14 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/knowledge" or path.startswith(("/api/knowledge/", "/api/knowledge-demos/", "/api/knowledge-rules/")):
             if role not in ROLES:
                 return self._json({"error": "Неизвестный режим просмотра."}, HTTPStatus.BAD_REQUEST)
+            can_view_rules = role in ("professional", "student")
             if path == "/api/knowledge":
                 professional = role == "professional"
-                rules = [{"id": rule.id, "title": rule.title} for rule in load_default_kb().rules] if professional else []
+                rules = [{"id": rule.id, "title": rule.title} for rule in load_default_kb().rules] if can_view_rules else []
                 return self._json({"cards": knowledge_catalog(role), "rules": rules,
                                    "demos": ScenarioRunner.TITLES if professional else {}})
             rule_match = re.fullmatch(r"/api/knowledge-rules/([A-Z0-9_-]+)", path)
-            if rule_match and role == "professional":
+            if rule_match and can_view_rules:
                 rule = next((item for item in load_default_kb().rules if item.id == rule_match[1]), None)
                 if rule:
                     return self._json({"id": rule.id, "title": rule.title, "content": rule.explanation,

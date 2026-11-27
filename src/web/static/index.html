@@ -47,7 +47,7 @@
 
       <div class="workspace">
         <form id="case-form" class="panel" novalidate>
-          <div class="panel-head"><div><h2>Данные пациента</h2><p>Заполните известные значения или загрузите учебный пример.</p></div><button type="button" id="clear" class="text-btn">Очистить</button></div>
+          <div class="panel-head"><div><h2 id="case-form-title" tabindex="-1">Данные пациента</h2><p>Заполните известные значения или загрузите учебный пример.</p></div><button type="button" id="clear" class="text-btn">Очистить</button></div>
           <div class="examples" id="examples" aria-label="Учебные примеры"></div>
           <div class="form-body">
             <details class="browser-box" id="scenario-browser">
@@ -108,20 +108,21 @@
     </section>
 
     <section id="reference-view" hidden>
+      <button type="button" id="back-to-case" class="text-btn" hidden>← Вернуться к разбору случая</button>
       <div class="hero reference-hero"><div><h1>Справочник</h1><p id="reference-intro">Задайте вопрос по базе знаний и откройте карточки, на которые опирается ответ.</p></div><div class="hero-mark" aria-hidden="true"><i></i><i></i><i></i><span>⌕</span></div></div>
       <div class="reference-layout">
         <form class="panel reference-form" id="reference-form">
-          <div class="panel-head"><div><h2>Вопрос к базе знаний</h2><p>Можно указать шкалу, термин или протокол.</p></div></div>
+          <div class="panel-head"><div><h2>Вопрос к базе знаний</h2><p>Введите вопрос или выберите пример.</p></div></div>
           <div class="form-body">
             <label class="sr" for="question">Вопрос</label>
             <textarea id="question" rows="3" minlength="3" maxlength="500" required placeholder="Например, из чего состоит шкала CURB-65?"></textarea>
             <div id="suggestions" class="examples"></div>
             <div id="reference-error" class="message error" role="alert" hidden></div>
           </div>
-          <div class="panel-foot"><button class="primary" id="search-button">Найти в базе <span aria-hidden="true">→</span></button></div>
+          <div class="panel-foot reference-actions"><button class="primary" id="search-button">Найти в базе <span aria-hidden="true">→</span></button><button type="button" id="browse-knowledge" class="text-btn">Перейти к каталогу</button></div>
         </form>
         <section class="panel" aria-labelledby="answer-title">
-          <div class="panel-head"><div><h2 id="answer-title">Ответ и источники</h2></div></div>
+          <div class="panel-head"><div><h2 id="answer-title" tabindex="-1">Ответ и источники</h2><p id="reference-query" hidden></p></div></div>
           <div id="answer" class="empty" aria-live="polite"><div class="empty-glyph" aria-hidden="true">⌕</div><h3>Задайте вопрос</h3><p>Здесь появятся ответ и фрагменты базы знаний.</p></div>
         </section>
       </div>

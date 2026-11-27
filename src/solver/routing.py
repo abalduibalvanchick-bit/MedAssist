@@ -210,7 +210,7 @@ def routing_to_dict(result: RoutingResult, kb: "KnowledgeBase") -> dict[str, Any
         "sources": result.sources,
         "decisions": [{
             "id": d.card_id, "title": d.title, "route": d.route, "label": labels.get(d.route, d.route),
-            "timeframe": d.timeframe, "row": d.row, "actions": d.actions, "explanation": d.explanation,
+            "timeframe": d.timeframe, "row": d.row, "actions": d.actions, "explanation": d.explanation, "because": d.because,
             "next": d.next, "activated_by": d.activated_by, "provisional": d.provisional,
             "unresolved": [{"row": u["row"], "route": u["route"], "label": labels.get(u["route"], u["route"])}
                            for u in d.unresolved],

@@ -125,6 +125,9 @@ def test_web_runs_example_and_reference_on_same_server():
             assert result["solution"]["explanation"]
             assert fetch("/api/reference", {"question": "Из чего состоит шкала CURB-65?"})["sources"]
             decision = result["solution"]["routing"]["decisions"][0]
+            assert len(decision["because"]) == 1
+            assert "CURB-65" in decision["because"][0] and "= 2" in decision["because"][0]
+            assert "Сатурация" not in decision["because"][0]
             scope = {"id": decision["id"], "row": decision["row"]}
             query = {"question": "На чём основан маршрут?", "route_source": scope}
             source, = fetch("/api/reference", query)["sources"]
@@ -162,7 +165,15 @@ def test_web_runs_example_and_reference_on_same_server():
                 assert fetch("/api/knowledge-rules/" + record["id"])["metadata"]["then"]
             for ident in library["demos"]:
                 assert fetch("/api/knowledge-demos/" + ident)["content"]
-            assert fetch("/api/knowledge?role=patient")["rules"] == []
+            student_library = fetch("/api/knowledge?role=student")
+            assert student_library["rules"] == library["rules"]
+            assert student_library["demos"] == {}
+            assert fetch("/api/knowledge-rules/RULE-DIAG-005?role=student")["metadata"]["if"]
+            for role in ("nursing", "patient"):
+                assert fetch("/api/knowledge?role=" + role)["rules"] == []
+                with pytest.raises(HTTPError) as hidden_rule:
+                    fetch("/api/knowledge-rules/RULE-DIAG-005?role=" + role)
+                assert hidden_rule.value.code == 404
             with pytest.raises(HTTPError) as exc:
                 fetch("/api/knowledge/PHARM-DRUG-001?role=patient")
             assert exc.value.code == 404
