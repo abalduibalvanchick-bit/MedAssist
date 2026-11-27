@@ -424,7 +424,7 @@ function renderQuestions(root, data) {
   section.id = "result-questions";
   const buckets = [
     {title: "Срочность и маршрут", kinds: ["safety_check", "routing"], open: true},
-    {title: "Симптомы и оценка", kinds: []},
+    {title: "Симптомы и оценка", kinds: [], open: needsData},
     {title: "Применимость протоколов", kinds: ["protocol"]},
     {title: "Безопасность терапии", kinds: ["therapy"]},
   ].map((bucket) => ({...bucket, fields: [], texts: new Set()}));
@@ -560,6 +560,15 @@ function renderOutcome(root, result, role) {
     block.append(list);
   }
   if (outcome.next_step) block.append(node("p", outcome.next_step, "outcome-next"));
+  const firstHypothesis = result.hypotheses?.[0];
+  if (role !== "patient" && firstHypothesis) {
+    const card = node("div", null, "hypothesis-card");
+    card.append(
+      node("span", "Первая гипотеза", "hypothesis-label"),
+      node("strong", firstHypothesis.title, "hypothesis-title"),
+    );
+    block.append(card);
+  }
   root.append(block);
 }
 
@@ -739,11 +748,6 @@ function renderSolution(data) {
   addList(root, role === "patient" ? "Выявленные тревожные признаки" : "Тревожные признаки и неотложные состояния",
     [...(result.red_flags || []), ...(role === "patient" ? [] : result.emergencies || [])].map((item) => item.title));
 
-  if (role === "professional" && result.hypotheses?.length &&
-      (result.outcome.kind !== "incomplete" || result.working_diagnoses?.length)) {
-    const preview = node("p", "Первая гипотеза · " + result.hypotheses[0].title, "result-preview");
-    root.append(preview);
-  }
   if (role === "nursing" && result.exams?.length) {
     const preview = node("p", "Предложено обследований · " + result.exams.length, "result-preview");
     root.append(preview);

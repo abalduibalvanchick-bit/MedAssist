@@ -8,7 +8,7 @@
    опасное состояние (безопасность прежде всего);
 3. шкалы, относящиеся к рабочим диагнозам, которые не удалось
    вычислить из-за нехватки данных;
-4. недостающие данные частично выполненных диагностических правил,
+4. недостающие данные правил диагностики и срочности, связанных с жалобами,
    затем признаки жалобы, если результата и более конкретных вопросов ещё нет.
 
 Функция rank_questions назначает приоритет по влиянию недостающих данных.
@@ -99,26 +99,36 @@ def detail_questions(memory: "Conclusions", kb: "KnowledgeBase") -> list[dict[st
 
 
 def fallback_questions(memory: "Conclusions", kb: "KnowledgeBase") -> list[dict[str, Any]]:
-    """Сначала запросить данные, которые могут изменить вывод по гипотезе."""
+    """Сначала запросить данные, которые могут уточнить гипотезу или срочность."""
     questions = []
     facts = memory.facts
     depth = kb.schema.solver_setting("question_dependency_depth", 3)
     seen = set()
     for rule in kb.rules:
-        if rule.domain != "diag" or not any("assert_hypothesis" in action for action in rule.actions):
+        urgency = next((action["set_urgency"] for action in rule.actions
+                        if action.get("set_urgency") in ("emergency", "urgent")), None)
+        if not urgency and (rule.domain != "diag" or not any("assert_hypothesis" in action for action in rule.actions)):
             continue
         if evaluate(rule.condition, facts, kb.schema) is not Truth.UNKNOWN:
             continue
-        if not _partially_met(rule.condition, memory, kb):
-            continue
         refs = missing_inputs_deep(rule.condition, facts, kb, depth=depth)
+        # Для проверки срочности достаточно исходной жалобы, если правило
+        # проверяет её ещё не уточнённый признак.
+        related_feature = urgency and any(kb.feature_owner.get(code) in facts.symptoms for code in refs.features)
+        if not related_feature and not _partially_met(rule.condition, memory, kb):
+            continue
         inputs = [item for item in inputs_from_refs(refs, kb, _ASKABLE_CATEGORIES)
                   if not is_known(item, facts) and (item["type"] != "choice" or item["options"])]
-        codes = frozenset(item["code"] for item in inputs)
-        if not codes or codes in seen:
+        key = (urgency, frozenset(item["code"] for item in inputs))
+        if not inputs or key in seen:
             continue
-        seen.add(codes)
-        questions.append(_question("rule_inputs", rule.id, "Уточните известные сопутствующие признаки или измерения.", inputs))
+        seen.add(key)
+        if urgency:
+            question = _question("safety_check", rule.id, "Уточните эти сведения для проверки срочности.", inputs)
+            question["urgency"] = urgency
+        else:
+            question = _question("rule_inputs", rule.id, "Уточните известные сопутствующие признаки или измерения.", inputs)
+        questions.append(question)
 
     return questions or detail_questions(memory, kb) or [
         _question("additional_context", "", "По введённым данным решатель не сформировал вывод и не нашёл конкретных уточнений. "

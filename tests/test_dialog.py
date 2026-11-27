@@ -178,6 +178,27 @@ def test_fever_dialog_can_check_cough_with_rash_unreported(kb):
     assert {"age", "rr", "sbp"}.issubset({item["code"] for item in pending_inputs(result)})
 
 
+@pytest.mark.parametrize(("symptom", "answers", "rule", "level"), [
+    ("DIAG-SYMPTOM-012", {"palpitations.with_syncope": True}, "RULE-DIAG-036", "emergency"),
+    ("DIAG-SYMPTOM-013", {"dizziness.sudden_onset": True, "dizziness.unable_to_walk": True}, "RULE-DIAG-037", "emergency"),
+    ("DIAG-SYMPTOM-016", {"edema.unilateral_leg": True}, "RULE-DIAG-035", "urgent"),
+])
+def test_dialog_requests_inputs_from_relevant_urgency_rules(kb, symptom, answers, rule, level):
+    request = {"patient": {"symptoms": [symptom]}}
+    initial = solve(request, kb=kb)
+    assert initial["outcome"]["urgency"] is None
+    question = next(q for q in initial["questions"] if q["source"] == rule)
+    assert question["kind"] == "safety_check"
+    assert answers.keys() <= {item["code"] for item in question["inputs"]}
+    assert all(q["kind"] != "symptom_details" for q in initial["questions"])
+
+    updated, issues = apply_answers(request, answers, kb)
+    assert not issues
+    result = solve(updated, kb=kb)
+    assert rule in result["fired_rules"]
+    assert result["urgency"]["level"] == level
+
+
 def test_patient_polyuria_dialog_always_has_visible_outcome(kb):
     case = {"patient": {
         "age": 20, "symptoms": ["DIAG-SYMPTOM-011"],

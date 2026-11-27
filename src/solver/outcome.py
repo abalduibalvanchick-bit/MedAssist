@@ -66,7 +66,7 @@ def summarize_outcome(solution: dict[str, Any], emergency_message: str = "") -> 
         summary = "Срочность и маршрут по этому случаю пока не определены."
     elif solution["hypotheses"]:
         title = "Есть диагностическая гипотеза"
-        summary = f"Первая гипотеза — {solution['hypotheses'][0]['title']}. Срочность и маршрут пока не определены."
+        summary = "Срочность и маршрут пока не определены."
     else:
         title = "Срочность и маршрут пока не определены"
         summary = "По введённым данным программа пока не сформировала диагностическую гипотезу."
